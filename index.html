@@ -4,347 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Die drei ??? - Ranking</title>
-    <!-- Google Fonts für einen authentischen Mystery-Look -->
+    
+    <!-- PWA / App Installation -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0B0E14">
+    <link rel="apple-touch-icon" href="icon.png">
+
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Die klassischen drei Fragezeichen Farben */
-            --white: #FFFFFF;
-            --red: #E62A35;
-            --blue: #235B9B;
-            --yellow: #F4D03F;
-            --black: #0B0E14;
-            --dark-gray: #1A1F2B;
-            --card-gray: #252B3A;
-            --text-light: #E2E8F0;
+            var(--white): #FFFFFF; var(--red): #E62A35; var(--blue): #235B9B;
+            var(--yellow): #F4D03F; var(--black): #0B0E14; var(--dark-gray): #1A1F2B;
+            var(--card-gray): #252B3A; var(--text-light): #E2E8F0;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--black);
-            color: var(--text-light);
-            line-height: 1.6;
-            padding-bottom: 80px; /* Platz für Mobile Tab-Bar */
-        }
-
-        /* HEADER */
-        header {
-            background-color: var(--dark-gray);
-            border-bottom: 2px solid var(--card-gray);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-family: 'Anton', sans-serif;
-            font-size: 24px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logo span:nth-child(1) { color: var(--red); }
-        .logo span:nth-child(2) { color: var(--blue); }
-        .logo span:nth-child(3) { color: var(--yellow); }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            background: var(--card-gray);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* NAVIGATION TABS */
-        .tabs {
-            display: flex;
-            justify-content: space-around;
-            background: var(--dark-gray);
-            padding: 10px;
-            border-bottom: 1px solid var(--card-gray);
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        .tab-btn {
-            background: none;
-            border: none;
-            color: #8892B0;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .tab-btn.active {
-            color: var(--white);
-            border-bottom-color: var(--yellow);
-        }
-
-        /* CONTENT BEREICH */
-        .content-section {
-            display: none;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        .content-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* KARTEN & LAYOUT */
-        .card {
-            background: var(--card-gray);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--blue);
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #0B0E14; color: #E2E8F0; line-height: 1.6; padding-bottom: 80px; }
         
-        /* Farbige Ränder für Abwechslung */
-        .card:nth-child(3n+1)::before { background: var(--red); }
-        .card:nth-child(3n+2)::before { background: var(--blue); }
-        .card:nth-child(3n+3)::before { background: var(--yellow); }
-
-        h2 {
-            font-family: 'Anton', sans-serif;
-            font-size: 22px;
-            letter-spacing: 0.5px;
-            margin-bottom: 15px;
-            color: var(--white);
-        }
-
-        h3 {
-            font-size: 18px;
-            margin-bottom: 5px;
-            color: var(--white);
-        }
-
-        .meta {
-            font-size: 13px;
-            color: #8892B0;
-            margin-bottom: 15px;
-        }
-
-        /* FALL DES TAGES (CASSETTE STYLE) */
-        .cassette-card {
-            background: #111;
-            border: 2px solid #333;
-            border-radius: 8px;
-            padding: 15px;
-            position: relative;
-            text-align: center;
-        }
-
-        .cassette-label {
-            background: #f0ebd8; /* Altweiß */
-            border-radius: 4px;
-            padding: 20px 10px;
-            border-top: 15px solid var(--red);
-            border-bottom: 15px solid var(--blue);
-            color: #111;
-        }
+        header { background-color: #1A1F2B; border-bottom: 2px solid #252B3A; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo { font-family: 'Anton', sans-serif; font-size: 24px; text-transform: uppercase; color: white; }
+        .logo span:nth-child(1) { color: #E62A35; } .logo span:nth-child(2) { color: #235B9B; } .logo span:nth-child(3) { color: #F4D03F; }
+        .user-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; background: #252B3A; padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); }
         
-        .cassette-label h3 { color: #111; font-weight: 900; font-size: 20px;}
+        .tabs { display: flex; justify-content: space-around; background: #1A1F2B; padding: 10px; border-bottom: 1px solid #252B3A; }
+        .tab-btn { background: none; border: none; color: #8892B0; font-size: 14px; font-weight: 600; padding: 10px 15px; cursor: pointer; border-bottom: 3px solid transparent; }
+        .tab-btn.active { color: white; border-bottom-color: #F4D03F; }
         
-        .cassette-holes {
-            display: flex;
-            justify-content: center;
-            gap: 50px;
-            margin-top: 20px;
-        }
+        .content-section { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .content-section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .hole {
-            width: 30px;
-            height: 30px;
-            background: #111;
-            border-radius: 50%;
-            border: 4px solid #d4d4d4;
-        }
-
-        /* BUTTONS & FORMULARE */
-        .btn {
-            background: var(--dark-gray);
-            color: var(--white);
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            font-size: 15px;
-            transition: all 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn:active { transform: scale(0.98); }
-
-        .btn-primary { background: var(--blue); border: none; }
-        .btn-action { background: var(--yellow); color: var(--black); border: none; margin-top: 15px;}
+        .card { background: #252B3A; border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        h2 { font-family: 'Anton', sans-serif; font-size: 22px; color: white; margin-bottom: 15px; }
         
-        input, select, textarea {
-            width: 100%;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            outline: none;
-        }
+        .btn { background: #1A1F2B; color: white; border: 1px solid rgba(255,255,255,0.2); padding: 12px 20px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
+        .btn-primary { background: #235B9B; border: none; }
+        .btn-action { background: #F4D03F; color: #0B0E14; border: none; }
         
-        input:focus, select:focus, textarea:focus { border-color: var(--blue); }
-
-        /* PUNKTE SKALA */
-        .rating-scale {
-            display: flex;
-            justify-content: space-between;
-            background: rgba(0,0,0,0.3);
-            border-radius: 8px;
-            padding: 5px;
-            margin-bottom: 20px;
-        }
-
-        .rating-btn {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #8892B0;
-            padding: 10px 0;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 6px;
-        }
-
-        .rating-btn.selected {
-            background: var(--blue);
-            color: white;
-        }
-
-        /* BEWERTUNGS-TAGS */
-        .rating-tag {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            background: rgba(35, 91, 155, 0.2);
-            color: #60A5FA;
-            border: 1px solid rgba(35, 91, 155, 0.5);
-        }
+        input, select, textarea { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
         
-        .rating-tag.high { background: rgba(39, 174, 96, 0.2); color: #2ECC71; border-color: rgba(39, 174, 96, 0.5);}
-        .rating-tag.low { background: rgba(230, 42, 53, 0.2); color: #FF6B6B; border-color: rgba(230, 42, 53, 0.5);}
-
-        /* MODAL */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal-content {
-            background: var(--card-gray);
-            width: 90%;
-            max-width: 400px;
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* LOADER */
-        .loader-container {
-            text-align: center;
-            padding: 40px;
-            color: var(--yellow);
-        }
+        .rating-scale { display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 5px; margin-bottom: 20px; }
+        .rating-btn { flex: 1; background: transparent; border: none; color: #8892B0; padding: 10px 0; font-weight: bold; font-size: 16px; border-radius: 6px; }
+        .rating-btn.selected { background: #235B9B; color: white; }
         
-        .spinner {
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top: 4px solid var(--blue);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px auto;
-        }
+        .rating-tag { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 14px; font-weight: bold; background: rgba(35, 91, 155, 0.2); color: #60A5FA; }
         
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
+        /* Cover Image Styles */
+        .cover-img-daily { width: 100%; max-width: 300px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin: 0 auto 20px auto; display: block; border: 2px solid #1A1F2B; }
+        .list-item { display: flex; gap: 15px; align-items: start; margin-bottom: 15px; }
+        .cover-img-list { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-content { background: #252B3A; width: 90%; max-width: 400px; padding: 25px; border-radius: 12px; }
     </style>
 </head>
 <body>
 
-    <!-- HEADER -->
     <header>
-        <div class="logo">
-            <span>?</span><span>?</span><span>?</span> Ranking
-        </div>
-        <div class="user-profile" onclick="openUserModal()">
-            👤 <span id="currentUserNameDisplay">Gast</span>
-        </div>
+        <div class="logo"><span>?</span><span>?</span><span>?</span> Ranking</div>
+        <div class="user-profile" onclick="openUserModal()">👤 <span id="currentUserNameDisplay">Gast</span></div>
     </header>
 
-    <!-- TABS -->
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('tab-daily')">🎲 Fall des Tages</button>
         <button class="tab-btn" onclick="switchTab('tab-rate')">✍️ Bewerten</button>
@@ -354,15 +74,10 @@
 
     <!-- TAB 1: FALL DES TAGES -->
     <div id="tab-daily" class="content-section active">
-        <div class="card">
+        <div class="card" style="text-align: center;">
             <h2>Dein Fall des Tages</h2>
-            <p class="meta">Eine zufällige Folge, die du noch nicht bewertet hast.</p>
-            
-            <div id="daily-content">
-                <!-- Wird per JS befüllt -->
-            </div>
-            
-            <button class="btn" style="margin-top: 15px;" onclick="generateDailyCase()">🔄 Neu Mischen</button>
+            <div id="daily-content">Lade Daten...</div>
+            <button class="btn" onclick="generateDailyCase()">🔄 Neu Mischen</button>
         </div>
     </div>
 
@@ -370,460 +85,199 @@
     <div id="tab-rate" class="content-section">
         <div class="card">
             <h2>Folge bewerten</h2>
-            
-            <label>Folge auswählen</label>
-            <select id="rate-select">
-                <option value="">-- Bitte laden... --</option>
-            </select>
-
+            <select id="rate-select"><option value="">Lade Folgen...</option></select>
             <label>Punkte (1-10)</label>
-            <div class="rating-scale" id="rating-scale-container">
-                <!-- Wird per JS befüllt (1-10 Buttons) -->
-            </div>
-
-            <label>Kommentar (Optional)</label>
+            <div class="rating-scale" id="rating-scale-container"></div>
             <textarea id="rate-comment" rows="3" placeholder="Wie fandest du die Folge?"></textarea>
-
-            <button class="btn btn-primary" id="submitRatingBtn" onclick="submitRating()">📝 Bewertung abgeben</button>
-            <div id="rate-status" style="margin-top: 10px; font-size: 14px; text-align: center; color: var(--yellow);"></div>
+            <button class="btn btn-primary" onclick="submitRating()">📝 Bewertung abgeben</button>
         </div>
     </div>
 
     <!-- TAB 3: ALLE FOLGEN -->
     <div id="tab-list" class="content-section">
-        <input type="text" id="search-input" placeholder="🔍 Suche nach Titel oder Nummer..." onkeyup="renderFolgenList()">
-        <div id="folgen-list">
-            <!-- Loader -->
-            <div class="loader-container">
-                <div class="spinner"></div>
-                Lade Daten aus Google Sheets...
-            </div>
-        </div>
+        <input type="text" id="search-input" placeholder="🔍 Suche Titel oder Nummer..." onkeyup="renderFolgenList()">
+        <div id="folgen-list" style="margin-top: 20px;">Lade Daten...</div>
     </div>
 
     <!-- TAB 4: REVIEWS -->
     <div id="tab-reviews" class="content-section">
-        <div class="card" style="padding: 10px 15px;">
-            <select id="review-filter-user" onchange="renderReviews()">
-                <option value="all">Alle Nutzer</option>
-            </select>
-        </div>
-        <div id="reviews-list">
-            <!-- Loader -->
-            <div class="loader-container">
-                <div class="spinner"></div>
-                Lade Bewertungen...
-            </div>
-        </div>
+        <select id="review-filter-user" onchange="renderReviews()"><option value="all">Alle Nutzer</option></select>
+        <div id="reviews-list" style="margin-top: 20px;">Lade Daten...</div>
     </div>
 
     <!-- USER MODAL -->
     <div class="modal-overlay" id="userModal">
         <div class="modal-content">
-            <h2 style="color: var(--white); margin-bottom: 20px;">Dein Profil</h2>
-            <label>Wer bist du?</label>
+            <h2 style="color: white; margin-bottom: 20px;">Dein Profil</h2>
             <input type="text" id="usernameInput" placeholder="Dein Name (z.B. Justus)">
-            
             <button class="btn btn-primary" onclick="saveUser()">Speichern</button>
-            <button class="btn" style="margin-top: 10px;" onclick="closeUserModal()">Abbrechen</button>
+            <button class="btn" onclick="closeUserModal()">Abbrechen</button>
         </div>
     </div>
 
-    <!-- Lade-Modal Blockierung während Speichern -->
-    <div class="modal-overlay" id="loadingModal">
-        <div class="modal-content" style="text-align: center; background: transparent; border: none;">
-            <div class="spinner" style="width: 60px; height: 60px; border-width: 6px;"></div>
-            <h2 style="color: white; margin-top: 20px;">Speichere in Google Sheets...</h2>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOKIK -->
     <script>
-        // HIER STEHT DEINE GOOGLE SCRIPT URL!
+        // --- PWA SERVICE WORKER REGISTRIERUNG ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registriert'))
+                    .catch(err => console.error('Service Worker Fehler:', err));
+            });
+        }
+
+        // --- HIER DEINE GOOGLE SCRIPT URL EINTRAGEN ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbypZi3LpWhk_Dwd69LbDV2BccuMb9BDdJUEv0rjGDBUQCaHvy_idQfzSg1KmsxpAwfJ4w/exec";
         
-        // Globale Daten
-        let stammdaten = [];
-        let bewertungen = [];
-        let nutzer = [];
-        let selectedPoints = 0;
-        let dailyFolge = null;
+        let stammdaten = [], bewertungen = [], nutzer = [];
+        let selectedPoints = 0, dailyFolge = null;
+        let currentUser = { id: localStorage.getItem('d3_userId') || 'user_' + Math.random().toString(36).substr(2, 9), name: localStorage.getItem('d3_userName') || '' };
 
-        // User Setup (LocalStorage)
-        let currentUser = {
-            id: localStorage.getItem('d3_userId') || 'user_' + Math.random().toString(36).substr(2, 9),
-            name: localStorage.getItem('d3_userName') || ''
-        };
+        window.onload = () => { initUser(); initRatingScale(); fetchData(); };
 
-        // INIT
-        window.onload = () => {
-            initUser();
-            initRatingScale();
-            fetchData();
-        };
-
-        // USER MANAGEMENT
         function initUser() {
-            if (!currentUser.name) {
-                openUserModal();
-            } else {
-                document.getElementById('currentUserNameDisplay').textContent = currentUser.name;
-            }
+            if (!currentUser.name) openUserModal();
+            else document.getElementById('currentUserNameDisplay').textContent = currentUser.name;
         }
-
-        function openUserModal() {
-            document.getElementById('usernameInput').value = currentUser.name;
-            document.getElementById('userModal').classList.add('active');
-        }
-
-        function closeUserModal() {
-            if(!currentUser.name) {
-                alert("Bitte gib einen Namen ein, um teilzunehmen.");
-                return;
-            }
-            document.getElementById('userModal').classList.remove('active');
-        }
-
+        function openUserModal() { document.getElementById('usernameInput').value = currentUser.name; document.getElementById('userModal').classList.add('active'); }
+        function closeUserModal() { if(currentUser.name) document.getElementById('userModal').classList.remove('active'); }
         function saveUser() {
             const name = document.getElementById('usernameInput').value.trim();
-            if (name) {
-                currentUser.name = name;
-                localStorage.setItem('d3_userId', currentUser.id);
-                localStorage.setItem('d3_userName', currentUser.name);
-                document.getElementById('currentUserNameDisplay').textContent = currentUser.name;
-                
-                // Falls Filter Dropdown existiert, User hinzufügen
-                updateUserFilterDropdown();
-                
-                closeUserModal();
-            }
+            if (name) { currentUser.name = name; localStorage.setItem('d3_userId', currentUser.id); localStorage.setItem('d3_userName', name); document.getElementById('currentUserNameDisplay').textContent = name; closeUserModal(); updateUserFilter(); renderReviews(); generateDailyCase(); }
         }
 
-        // TABS SWITCHER
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
-            
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             event.currentTarget.classList.add('active');
             document.getElementById(tabId).classList.add('active');
-            
-            // Re-Render falls nötig
             if(tabId === 'tab-daily') generateDailyCase();
         }
 
-        // DATEN AUS GOOGLE SHEETS LADEN (GET)
         async function fetchData() {
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL);
-                const data = await response.json();
-                
-                stammdaten = data.stammdaten;
-                bewertungen = data.bewertungen;
-                nutzer = data.nutzer;
-
-                populateDropdowns();
-                updateUserFilterDropdown();
-                renderFolgenList();
-                renderReviews();
-                generateDailyCase();
-
-            } catch (error) {
-                console.error("Fehler beim Laden:", error);
-                document.getElementById('folgen-list').innerHTML = `<div style="color: var(--red); padding: 20px;">Fehler beim Verbinden mit Google Sheets. Bitte lade die Seite neu.</div>`;
-            }
+                const res = await fetch(GOOGLE_SCRIPT_URL);
+                const data = await res.json();
+                stammdaten = data.stammdaten; bewertungen = data.bewertungen; nutzer = data.nutzer;
+                populateDropdown(); updateUserFilter(); renderFolgenList(); renderReviews(); generateDailyCase();
+            } catch (err) { console.error(err); }
         }
 
-        // DROPDOWNS BEFÜLLEN
-        function populateDropdowns() {
-            const select = document.getElementById('rate-select');
-            select.innerHTML = '<option value="">-- Folge auswählen --</option>';
-            
-            stammdaten.forEach(folge => {
-                const option = document.createElement('option');
-                option.value = folge.nr;
-                option.textContent = `Folge ${folge.nr}: ${folge.titel}`;
-                select.appendChild(option);
+        function populateDropdown() {
+            const sel = document.getElementById('rate-select');
+            sel.innerHTML = '<option value="">-- Folge auswählen --</option>';
+            stammdaten.forEach(f => {
+                let opt = document.createElement('option'); opt.value = f.nr; opt.textContent = `Folge ${f.nr}: ${f.titel}`; sel.appendChild(opt);
             });
         }
 
-        function updateUserFilterDropdown() {
-            const select = document.getElementById('review-filter-user');
-            select.innerHTML = '<option value="all">Alle Nutzer</option>';
-            
-            // Sammle alle einzigartigen Nutzernamen aus den Bewertungen
-            const uniqueUsers = [...new Set(bewertungen.map(b => b.nutzerName))].filter(n => n);
-            
-            uniqueUsers.forEach(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                option.textContent = name;
-                select.appendChild(option);
+        function updateUserFilter() {
+            const sel = document.getElementById('review-filter-user');
+            sel.innerHTML = '<option value="all">Alle Nutzer</option>';
+            [...new Set(bewertungen.map(b => b.nutzerName))].filter(n=>n).forEach(n => {
+                let opt = document.createElement('option'); opt.value = n; opt.textContent = n; sel.appendChild(opt);
             });
         }
 
-        // PUNKTE-SKALA INITIALISIEREN
         function initRatingScale() {
-            const container = document.getElementById('rating-scale-container');
-            container.innerHTML = '';
+            const c = document.getElementById('rating-scale-container'); c.innerHTML = '';
             for(let i=1; i<=10; i++) {
-                const btn = document.createElement('button');
-                btn.className = 'rating-btn';
-                btn.textContent = i;
-                btn.onclick = () => selectPoints(i, btn);
-                container.appendChild(btn);
+                let b = document.createElement('button'); b.className = 'rating-btn'; b.textContent = i;
+                b.onclick = () => { selectedPoints = i; document.querySelectorAll('.rating-btn').forEach(x => x.classList.remove('selected')); b.classList.add('selected'); };
+                c.appendChild(b);
             }
         }
 
-        function selectPoints(points, btnElement) {
-            selectedPoints = points;
-            document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
-            btnElement.classList.add('selected');
-        }
-
-        // BEWERTUNG SENDEN (POST)
         async function submitRating() {
-            const folgenNr = document.getElementById('rate-select').value;
+            const nr = document.getElementById('rate-select').value;
             const kommentar = document.getElementById('rate-comment').value;
-            const statusDiv = document.getElementById('rate-status');
+            if(!currentUser.name || !nr || selectedPoints === 0) return alert("Bitte alles ausfüllen!");
+
+            const payload = { action: 'addRating', nutzerId: currentUser.id, nutzerName: currentUser.name, folgenNr: parseInt(nr), punkte: selectedPoints, kommentar: kommentar };
             
-            if(!currentUser.name) { openUserModal(); return; }
-            if(!folgenNr) { statusDiv.textContent = "⚠️ Bitte wähle eine Folge aus."; return; }
-            if(selectedPoints === 0) { statusDiv.textContent = "⚠️ Bitte wähle eine Punktzahl (1-10)."; return; }
-
-            // Ladebildschirm zeigen
-            document.getElementById('loadingModal').classList.add('active');
-            statusDiv.textContent = "";
-
-            const payload = {
-                action: 'addRating',
-                nutzerId: currentUser.id,
-                nutzerName: currentUser.name,
-                folgenNr: parseInt(folgenNr),
-                punkte: selectedPoints,
-                kommentar: kommentar
-            };
-
-            try {
-                // Post Request an Google Apps Script
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // Wichtig für Web Apps ohne komplexes CORS setup
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                // Da 'no-cors' verwendet wird, bekommen wir keine detaillierte Antwort zurück,
-                // wir gehen bei keinem Catch-Error von Erfolg aus.
-                
-                // Wir fügen die Bewertung lokal hinzu, damit man sie sofort sieht
-                bewertungen.push({
-                    id: Date.now(),
-                    nutzerId: currentUser.id,
-                    nutzerName: currentUser.name,
-                    folgenNr: parseInt(folgenNr),
-                    punkte: selectedPoints,
-                    kommentar: kommentar,
-                    datum: new Date().toISOString()
-                });
-
-                // UI Reset
-                document.getElementById('rate-select').value = "";
-                document.getElementById('rate-comment').value = "";
-                document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
-                selectedPoints = 0;
-                
-                // Ansichten aktualisieren
-                updateUserFilterDropdown();
-                renderReviews();
-                renderFolgenList();
-                generateDailyCase();
-
-                // Ladebildschirm aus
-                document.getElementById('loadingModal').classList.remove('active');
-                
-                // Zum Review Tab springen
-                switchTab('tab-reviews');
-
-            } catch (error) {
-                console.error("Fehler beim Speichern:", error);
-                document.getElementById('loadingModal').classList.remove('active');
-                statusDiv.textContent = "❌ Fehler beim Speichern. Bitte versuche es noch einmal.";
-            }
-        }
-
-        // HILFSFUNKTION: DURCHSCHNITT BERECHNEN
-        function getFolgenStats(nr) {
-            const folgeBewertungen = bewertungen.filter(b => b.folgenNr === nr);
-            if(folgeBewertungen.length === 0) return { avg: '-', count: 0 };
+            fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             
-            const sum = folgeBewertungen.reduce((acc, curr) => acc + parseInt(curr.punkte), 0);
-            return {
-                avg: (sum / folgeBewertungen.length).toFixed(1),
-                count: folgeBewertungen.length
-            };
+            bewertungen.push({ id: Date.now(), nutzerId: currentUser.id, nutzerName: currentUser.name, folgenNr: parseInt(nr), punkte: selectedPoints, kommentar: kommentar, datum: new Date().toISOString() });
+            
+            document.getElementById('rate-select').value = ""; document.getElementById('rate-comment').value = "";
+            selectedPoints = 0; document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+            
+            updateUserFilter(); renderReviews(); renderFolgenList(); switchTab('tab-reviews');
         }
 
-        function getTagClass(avg) {
-            if(avg === '-') return '';
-            const num = parseFloat(avg);
-            if(num >= 8) return 'high';
-            if(num <= 4) return 'low';
-            return '';
+        function getStats(nr) {
+            const f = bewertungen.filter(b => b.folgenNr === nr);
+            if(f.length === 0) return { avg: '-', count: 0 };
+            return { avg: (f.reduce((a, c) => a + parseInt(c.punkte), 0) / f.length).toFixed(1), count: f.length };
         }
 
-        // RENDER: ALLE FOLGEN LISTE
+        function prefill(nr) { document.getElementById('rate-select').value = nr; switchTab('tab-rate'); }
+
+        // --- RENDER LISTENANSICHT (MIT COVER) ---
         function renderFolgenList() {
-            const container = document.getElementById('folgen-list');
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const term = document.getElementById('search-input').value.toLowerCase();
+            const c = document.getElementById('folgen-list'); c.innerHTML = '';
             
-            container.innerHTML = '';
-
-            const filtered = stammdaten.filter(f => 
-                f.titel.toLowerCase().includes(searchTerm) || 
-                f.nr.toString().includes(searchTerm)
-            );
-
-            if(filtered.length === 0) {
-                container.innerHTML = '<p style="text-align:center; margin-top:20px;">Keine Folgen gefunden.</p>';
-                return;
-            }
-
-            filtered.forEach(folge => {
-                const stats = getFolgenStats(folge.nr);
+            stammdaten.filter(f => f.titel.toLowerCase().includes(term) || f.nr.toString().includes(term)).forEach(f => {
+                const s = getStats(f.nr);
+                // Cover-Fallback falls keine URL eingetragen wurde
+                const coverHTML = f.cover ? `<img src="${f.cover}" class="cover-img-list">` : `<div class="cover-img-list" style="background:#111; display:flex; align-items:center; justify-content:center; font-size:10px;">Kein Bild</div>`;
                 
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: start;">
-                        <div>
-                            <div class="meta">Folge ${folge.nr} • ${folge.jahr}</div>
-                            <h3>${folge.titel}</h3>
+                c.innerHTML += `
+                    <div class="card list-item">
+                        ${coverHTML}
+                        <div style="flex: 1;">
+                            <div style="font-size:12px; color:#8892B0;">Folge ${f.nr} • ${f.jahr}</div>
+                            <h3 style="font-size:16px; margin:5px 0;">${f.titel}</h3>
+                            <div class="rating-tag">⭐ ${s.avg} (${s.count})</div>
                         </div>
-                        <div class="rating-tag ${getTagClass(stats.avg)}">
-                            ⭐ ${stats.avg}
-                        </div>
-                    </div>
-                    <div style="font-size: 13px; color: #8892B0; margin-top: 10px;">
-                        ${stats.count} Bewertung(en)
-                    </div>
-                    <button class="btn btn-action" style="padding: 8px; font-size: 13px;" onclick="prefillRate(${folge.nr})">
-                        Jetzt Bewerten
-                    </button>
-                `;
-                container.appendChild(card);
+                        <button class="btn btn-action" style="padding: 10px; width: auto;" onclick="prefill(${f.nr})">Bewerten</button>
+                    </div>`;
             });
         }
 
-        // PREFILL FÜR "JETZT BEWERTEN" BUTTONS
-        function prefillRate(nr) {
-            document.getElementById('rate-select').value = nr;
-            switchTab('tab-rate');
-        }
-
-        // RENDER: REVIEWS LISTE
         function renderReviews() {
-            const container = document.getElementById('reviews-list');
-            const filterUser = document.getElementById('review-filter-user').value;
+            const u = document.getElementById('review-filter-user').value;
+            const c = document.getElementById('reviews-list'); c.innerHTML = '';
             
-            container.innerHTML = '';
-
-            // Neueste zuerst
-            const sortedBewertungen = [...bewertungen].reverse();
-
-            const filtered = filterUser === 'all' 
-                ? sortedBewertungen 
-                : sortedBewertungen.filter(b => b.nutzerName === filterUser);
-
-            if(filtered.length === 0) {
-                container.innerHTML = '<p style="text-align:center; margin-top:20px;">Noch keine Bewertungen vorhanden.</p>';
-                return;
-            }
-
-            filtered.forEach(b => {
-                const folge = stammdaten.find(f => f.nr === b.folgenNr);
-                const titel = folge ? folge.titel : 'Unbekannte Folge';
-                
-                // Datumsformatierung
-                const dateObj = b.datum ? new Date(b.datum) : new Date();
-                const dateStr = dateObj.toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'});
-
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 10px;">
-                        <span style="font-weight: 600; color: var(--yellow);">👤 ${b.nutzerName || 'Anonym'}</span>
-                        <span style="font-size: 12px; color: #8892B0;">${dateStr}</span>
-                    </div>
-                    <div class="meta" style="margin-bottom: 5px;">Folge ${b.folgenNr}: ${titel}</div>
-                    
-                    <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
-                        <div class="rating-tag ${getTagClass(b.punkte)}" style="font-size: 16px;">
-                            ⭐ ${b.punkte}/10
+            [...bewertungen].reverse().filter(b => u === 'all' || b.nutzerName === u).forEach(b => {
+                const f = stammdaten.find(x => x.nr === b.folgenNr);
+                const t = f ? f.titel : 'Unbekannt';
+                c.innerHTML += `
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <b style="color:var(--yellow)">👤 ${b.nutzerName}</b> <span style="color:#8892B0; font-size:12px;">${new Date(b.datum).toLocaleDateString()}</span>
                         </div>
-                        <div style="font-style: italic; font-size: 14px; color: #E2E8F0; flex: 1;">
-                            ${b.kommentar ? `"${b.kommentar}"` : ''}
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
+                        <div style="font-size:13px; color:#8892B0; margin-bottom:10px;">Folge ${b.folgenNr}: ${t}</div>
+                        <div><span class="rating-tag">⭐ ${b.punkte}/10</span> <i style="margin-left:10px;">${b.kommentar || ''}</i></div>
+                    </div>`;
             });
         }
 
-        // FALL DES TAGES LOGIK
+        // --- FALL DES TAGES (MIT COVER) ---
         function generateDailyCase() {
-            const container = document.getElementById('daily-content');
+            const c = document.getElementById('daily-content');
+            if(stammdaten.length === 0) return c.innerHTML = "Lade Daten...";
             
-            if(stammdaten.length === 0) {
-                container.innerHTML = "Lade Daten...";
-                return;
-            }
-
-            // Filtere Folgen, die der aktuelle Nutzer bereits bewertet hat
-            const bewerteteFolgenNrs = bewertungen
-                .filter(b => b.nutzerName === currentUser.name)
-                .map(b => b.folgenNr);
-
-            const unbewerteteFolgen = stammdaten.filter(f => !bewerteteFolgenNrs.includes(f.nr));
-
-            if(unbewerteteFolgen.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 30px 0;">
-                        <div style="font-size: 40px; margin-bottom: 15px;">🏆</div>
-                        <h3>Wahnsinn!</h3>
-                        <p>Du hast bereits alle Folgen bewertet!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Zufällige Folge auswählen
-            const randomIndex = Math.floor(Math.random() * unbewerteteFolgen.length);
-            dailyFolge = unbewerteteFolgen[randomIndex];
+            const done = bewertungen.filter(b => b.nutzerName === currentUser.name).map(b => b.folgenNr);
+            const open = stammdaten.filter(f => !done.includes(f.nr));
             
-            const stats = getFolgenStats(dailyFolge.nr);
+            if(open.length === 0) return c.innerHTML = "<h3>Alle bewertet!🏆</h3>";
+            
+            dailyFolge = open[Math.floor(Math.random() * open.length)];
+            const s = getStats(dailyFolge.nr);
+            
+            const coverHTML = dailyFolge.cover 
+                ? `<img src="${dailyFolge.cover}" class="cover-img-daily">` 
+                : `<div class="cover-img-daily" style="height:250px; background:#111; display:flex; align-items:center; justify-content:center;">Kein Cover hinterlegt</div>`;
 
-            container.innerHTML = `
-                <div class="cassette-card">
-                    <div class="cassette-label">
-                        <div style="font-size: 12px; color: #555; font-weight: bold; margin-bottom: 5px;">FOLGE ${dailyFolge.nr}</div>
-                        <h3>${dailyFolge.titel}</h3>
-                        <div style="font-size: 12px; color: #555; margin-top: 5px;">${dailyFolge.jahr}</div>
-                    </div>
-                    <div class="cassette-holes">
-                        <div class="hole"></div>
-                        <div class="hole"></div>
-                    </div>
-                </div>
-                
-                <div style="text-align: center; margin-top: 20px;">
-                    <div style="font-size: 14px; color: #8892B0; margin-bottom: 5px;">Community-Schnitt:</div>
-                    <div class="rating-tag ${getTagClass(stats.avg)}">⭐ ${stats.avg} (${stats.count} Votes)</div>
-                </div>
-
-                <button class="btn btn-action" onclick="prefillRate(${dailyFolge.nr})">Diese Folge bewerten</button>
+            c.innerHTML = `
+                ${coverHTML}
+                <div style="color: #8892B0; font-size:14px; font-weight:bold;">FOLGE ${dailyFolge.nr} • ${dailyFolge.jahr}</div>
+                <h3 style="font-size:24px; margin: 10px 0;">${dailyFolge.titel}</h3>
+                <div class="rating-tag" style="margin-bottom: 20px;">⭐ Community: ${s.avg} (${s.count} Votes)</div>
+                <button class="btn btn-action" onclick="prefill(${dailyFolge.nr})">Diesen Fall bewerten</button>
             `;
         }
-
     </script>
 </body>
 </html>
