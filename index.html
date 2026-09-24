@@ -1,893 +1,829 @@
 <!DOCTYPE html>
-<html lang="de" class="dark">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Die drei ??? - Fall-Archiv & Ranking Tool</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        ddf: {
-                            bg: '#121212',
-                            card: '#1e1e24',
-                            cardHover: '#262630',
-                            border: '#2e2e38',
-                            red: '#e60000',
-                            blue: '#0055ff',
-                            yellow: '#ffcc00',
-                            tape: '#22252e'
-                        }
-                    },
-                    fontFamily: {
-                        typewriter: ['"Special Elite"', 'monospace'],
-                        sans: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <title>Die drei ??? - Ranking</title>
+    <!-- Google Fonts für einen authentischen Mystery-Look -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* Custom Cassette Tape Visuals */
-        .tape-stripes {
-            background: linear-gradient(90deg, #e60000 0% 33.3%, #0055ff 33.3% 66.6%, #ffcc00 66.6% 100%);
-        }
-        
-        .spool-spin {
-            animation: spin 8s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        :root {
+            /* Die klassischen drei Fragezeichen Farben */
+            --white: #FFFFFF;
+            --red: #E62A35;
+            --blue: #235B9B;
+            --yellow: #F4D03F;
+            --black: #0B0E14;
+            --dark-gray: #1A1F2B;
+            --card-gray: #252B3A;
+            --text-light: #E2E8F0;
         }
 
-        /* Touch Friendly Scrollbars */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #121212; }
-        ::-webkit-scrollbar-thumb { background: #2e2e38; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #e60000; }
-
-        /* Ensure 48px touch targets */
-        .touch-btn {
-            min-height: 48px;
-            min-width: 48px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Smooth tab transition */
-        .tab-content {
-            animation: fadeIn 0.2s ease-in-out;
+        body {
+            background-color: var(--black);
+            color: var(--text-light);
+            line-height: 1.6;
+            padding-bottom: 80px; /* Platz für Mobile Tab-Bar */
         }
+
+        /* HEADER */
+        header {
+            background-color: var(--dark-gray);
+            border-bottom: 2px solid var(--card-gray);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Anton', sans-serif;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span:nth-child(1) { color: var(--red); }
+        .logo span:nth-child(2) { color: var(--blue); }
+        .logo span:nth-child(3) { color: var(--yellow); }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            background: var(--card-gray);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* NAVIGATION TABS */
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            background: var(--dark-gray);
+            padding: 10px;
+            border-bottom: 1px solid var(--card-gray);
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #8892B0;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--white);
+            border-bottom-color: var(--yellow);
+        }
+
+        /* CONTENT BEREICH */
+        .content-section {
+            display: none;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4deg); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* KARTEN & LAYOUT */
+        .card {
+            background: var(--card-gray);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--blue);
+        }
+        
+        /* Farbige Ränder für Abwechslung */
+        .card:nth-child(3n+1)::before { background: var(--red); }
+        .card:nth-child(3n+2)::before { background: var(--blue); }
+        .card:nth-child(3n+3)::before { background: var(--yellow); }
+
+        h2 {
+            font-family: 'Anton', sans-serif;
+            font-size: 22px;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            color: var(--white);
+        }
+
+        h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: var(--white);
+        }
+
+        .meta {
+            font-size: 13px;
+            color: #8892B0;
+            margin-bottom: 15px;
+        }
+
+        /* FALL DES TAGES (CASSETTE STYLE) */
+        .cassette-card {
+            background: #111;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            text-align: center;
+        }
+
+        .cassette-label {
+            background: #f0ebd8; /* Altweiß */
+            border-radius: 4px;
+            padding: 20px 10px;
+            border-top: 15px solid var(--red);
+            border-bottom: 15px solid var(--blue);
+            color: #111;
+        }
+        
+        .cassette-label h3 { color: #111; font-weight: 900; font-size: 20px;}
+        
+        .cassette-holes {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 20px;
+        }
+        
+        .hole {
+            width: 30px;
+            height: 30px;
+            background: #111;
+            border-radius: 50%;
+            border: 4px solid #d4d4d4;
+        }
+
+        /* BUTTONS & FORMULARE */
+        .btn {
+            background: var(--dark-gray);
+            color: var(--white);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 15px;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .btn-primary { background: var(--blue); border: none; }
+        .btn-action { background: var(--yellow); color: var(--black); border: none; margin-top: 15px;}
+        
+        input, select, textarea {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        
+        input:focus, select:focus, textarea:focus { border-color: var(--blue); }
+
+        /* PUNKTE SKALA */
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+
+        .rating-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #8892B0;
+            padding: 10px 0;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .rating-btn.selected {
+            background: var(--blue);
+            color: white;
+        }
+
+        /* BEWERTUNGS-TAGS */
+        .rating-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            background: rgba(35, 91, 155, 0.2);
+            color: #60A5FA;
+            border: 1px solid rgba(35, 91, 155, 0.5);
+        }
+        
+        .rating-tag.high { background: rgba(39, 174, 96, 0.2); color: #2ECC71; border-color: rgba(39, 174, 96, 0.5);}
+        .rating-tag.low { background: rgba(230, 42, 53, 0.2); color: #FF6B6B; border-color: rgba(230, 42, 53, 0.5);}
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: var(--card-gray);
+            width: 90%;
+            max-width: 400px;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* LOADER */
+        .loader-container {
+            text-align: center;
+            padding: 40px;
+            color: var(--yellow);
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid var(--blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px auto;
+        }
+        
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
     </style>
 </head>
-<body class="bg-ddf-bg text-gray-100 font-sans min-h-screen flex flex-col justify-between selection:bg-ddf-yellow selection:text-black">
+<body>
 
-    <!-- 1. KOPFZEILE (Header) -->
-    <header class="bg-ddf-card/95 backdrop-blur-md border-b border-ddf-border sticky top-0 z-40 shadow-lg">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-            <!-- App-Titel mit den drei Fragezeichen -->
-            <div class="flex items-center gap-3">
-                <div class="flex text-2xl sm:text-3xl font-black font-typewriter tracking-tighter select-none">
-                    <span class="text-ddf-red drop-shadow">?</span>
-                    <span class="text-ddf-blue drop-shadow">?</span>
-                    <span class="text-ddf-yellow drop-shadow">?</span>
-                </div>
-                <div>
-                    <h1 class="text-base sm:text-lg font-extrabold font-typewriter tracking-tight text-white uppercase leading-tight">
-                        Die drei ???
-                    </h1>
-                    <p class="text-[10px] sm:text-xs text-gray-400 font-mono tracking-widest uppercase">Fall-Archiv & Ranking</p>
-                </div>
-            </div>
-
-            <!-- User Status & Switch Button (Oben Rechts) -->
-            <button onclick="openUserModal()" class="touch-btn flex items-center gap-2 bg-ddf-bg hover:bg-ddf-border border border-ddf-border px-3 py-2 rounded-xl transition-all active:scale-95 text-left">
-                <div class="w-8 h-8 rounded-lg bg-ddf-yellow/10 border border-ddf-yellow/30 text-ddf-yellow flex items-center justify-center font-typewriter font-bold text-sm">
-                    <i data-lucide="user" class="w-4 h-4"></i>
-                </div>
-                <div class="hidden sm:block">
-                    <span class="text-[10px] text-gray-400 block font-mono leading-none">Ermittler</span>
-                    <span id="headerUserName" class="text-xs font-bold text-white truncate max-w-[100px] block">Justus</span>
-                </div>
-                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
-            </button>
+    <!-- HEADER -->
+    <header>
+        <div class="logo">
+            <span>?</span><span>?</span><span>?</span> Ranking
+        </div>
+        <div class="user-profile" onclick="openUserModal()">
+            👤 <span id="currentUserNameDisplay">Gast</span>
         </div>
     </header>
 
-    <!-- MAIN CONTAINER -->
-    <main class="max-w-4xl mx-auto px-4 py-4 sm:py-6 flex-grow w-full space-y-6">
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-daily')">🎲 Fall des Tages</button>
+        <button class="tab-btn" onclick="switchTab('tab-rate')">✍️ Bewerten</button>
+        <button class="tab-btn" onclick="switchTab('tab-list')">📚 Folgen</button>
+        <button class="tab-btn" onclick="switchTab('tab-reviews')">⭐ Reviews</button>
+    </div>
 
-        <!-- 2. DER FALL DES TAGES (Zentral oben) -->
-        <section id="fallDesTagesSection" class="bg-ddf-card border border-ddf-border rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
-            <!-- Cassette Tape Decorative Stripe -->
-            <div class="tape-stripes h-1.5 w-full absolute top-0 left-0"></div>
+    <!-- TAB 1: FALL DES TAGES -->
+    <div id="tab-daily" class="content-section active">
+        <div class="card">
+            <h2>Dein Fall des Tages</h2>
+            <p class="meta">Eine zufällige Folge, die du noch nicht bewertet hast.</p>
+            
+            <div id="daily-content">
+                <!-- Wird per JS befüllt -->
+            </div>
+            
+            <button class="btn" style="margin-top: 15px;" onclick="generateDailyCase()">🔄 Neu Mischen</button>
+        </div>
+    </div>
 
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4">
-                <div class="flex items-center gap-2">
-                    <span class="p-1.5 bg-ddf-red/10 text-ddf-red rounded-lg border border-ddf-red/20">
-                        <i data-lucide="radio" class="w-4 h-4 animate-pulse"></i>
-                    </span>
-                    <h2 class="text-sm font-bold font-typewriter uppercase tracking-wider text-gray-300">
-                        Der Fall des Tages
-                    </h2>
-                </div>
-                
-                <span id="dailyDateBadge" class="text-[11px] font-mono text-gray-400 bg-ddf-bg px-2.5 py-1 rounded-md border border-ddf-border">
-                    Tagesauswahl
-                </span>
+    <!-- TAB 2: BEWERTEN -->
+    <div id="tab-rate" class="content-section">
+        <div class="card">
+            <h2>Folge bewerten</h2>
+            
+            <label>Folge auswählen</label>
+            <select id="rate-select">
+                <option value="">-- Bitte laden... --</option>
+            </select>
+
+            <label>Punkte (1-10)</label>
+            <div class="rating-scale" id="rating-scale-container">
+                <!-- Wird per JS befüllt (1-10 Buttons) -->
             </div>
 
-            <!-- Daily Episode Card Content -->
-            <div id="dailyEpisodeCard" class="bg-ddf-tape rounded-xl border border-ddf-border p-4 sm:p-5 relative">
-                <!-- Content inserted dynamically by JS -->
-            </div>
-        </section>
+            <label>Kommentar (Optional)</label>
+            <textarea id="rate-comment" rows="3" placeholder="Wie fandest du die Folge?"></textarea>
 
-        <!-- 3. TAB NAVIGATION -->
-        <section class="space-y-4">
-            <nav class="grid grid-cols-3 gap-1 sm:gap-2 bg-ddf-card p-1.5 rounded-xl border border-ddf-border">
-                <button id="tabBtn-alle" onclick="switchMainTab('alle')" class="touch-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1.5 transition-all text-white bg-ddf-border">
-                    <i data-lucide="library" class="w-4 h-4 text-ddf-yellow"></i>
-                    <span class="truncate">Alle Folgen</span>
-                </button>
-                <button id="tabBtn-bewertungen" onclick="switchMainTab('bewertungen')" class="touch-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1.5 transition-all text-gray-400 hover:text-white">
-                    <i data-lucide="star" class="w-4 h-4 text-ddf-blue"></i>
-                    <span class="truncate">Bewertungen</span>
-                </button>
-                <button id="tabBtn-bewerten" onclick="switchMainTab('bewerten')" class="touch-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1.5 transition-all text-gray-400 hover:text-white">
-                    <i data-lucide="edit-3" class="w-4 h-4 text-ddf-red"></i>
-                    <span class="truncate">Bewerten</span>
-                </button>
-            </nav>
+            <button class="btn btn-primary" id="submitRatingBtn" onclick="submitRating()">📝 Bewertung abgeben</button>
+            <div id="rate-status" style="margin-top: 10px; font-size: 14px; text-align: center; color: var(--yellow);"></div>
+        </div>
+    </div>
 
-            <!-- TAB 1: ALLE FOLGEN -->
-            <div id="tabContent-alle" class="tab-content space-y-4">
-                <!-- Search and Filters Bar -->
-                <div class="bg-ddf-card p-3.5 rounded-xl border border-ddf-border space-y-3">
-                    <div class="relative">
-                        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3.5 text-gray-400"></i>
-                        <input type="text" id="catalogSearch" oninput="renderCatalog()" placeholder="Suche z.B. 'Super-Papagei' oder '100'..." class="w-full bg-ddf-bg border border-ddf-border rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-ddf-yellow">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2">
-                        <select id="catalogFilter" onchange="renderCatalog()" class="bg-ddf-bg border border-ddf-border text-xs sm:text-sm text-white rounded-lg p-2.5 focus:outline-none">
-                            <option value="all">Alle Folgen</option>
-                            <option value="unrated">Nur unbewertete</option>
-                            <option value="rated">Nur bereits bewertete</option>
-                        </select>
-                        <select id="catalogSort" onchange="renderCatalog()" class="bg-ddf-bg border border-ddf-border text-xs sm:text-sm text-white rounded-lg p-2.5 focus:outline-none">
-                            <option value="number-asc">Folge 1 → 230+</option>
-                            <option value="number-desc">Folge 230+ → 1</option>
-                            <option value="score-desc">Höchste Note</option>
-                            <option value="score-asc">Niedrigste Note</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Catalog Grid -->
-                <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-
-            <!-- TAB 2: ABGEGEBENE BEWERTUNGEN -->
-            <div id="tabContent-bewertungen" class="tab-content hidden space-y-4">
-                <div class="bg-ddf-card p-3.5 rounded-xl border border-ddf-border flex items-center justify-between gap-3">
-                    <span class="text-xs font-mono text-gray-400 uppercase">Gefiltert nach Ermittler:</span>
-                    <select id="reviewUserFilter" onchange="renderReviewsFeed()" class="bg-ddf-bg border border-ddf-border text-xs sm:text-sm text-white rounded-lg px-3 py-2 focus:outline-none">
-                        <option value="all">Alle Ermittler</option>
-                        <!-- Options populated dynamically -->
-                    </select>
-                </div>
-
-                <div id="reviewsFeed" class="space-y-3">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-
-            <!-- TAB 3: FOLGE BEWERTEN -->
-            <div id="tabContent-bewerten" class="tab-content hidden">
-                <form id="ratingForm" onsubmit="handleRatingSubmit(event)" class="bg-ddf-card border border-ddf-border rounded-2xl p-4 sm:p-6 space-y-5">
-                    <div class="border-b border-ddf-border pb-3">
-                        <h3 class="text-base font-bold font-typewriter text-white uppercase">Ermittlungs-Akte Bewerten</h3>
-                        <p class="text-xs text-gray-400">Gib deine Wertung als <span id="formCurrentUserName" class="text-ddf-yellow font-bold">Justus</span> ab</p>
-                    </div>
-
-                    <!-- Dropdown for Episode -->
-                    <div>
-                        <label class="block text-xs font-mono text-gray-300 uppercase mb-2">Folge Auswählen</label>
-                        <select id="formEpisodeSelect" required class="w-full bg-ddf-bg border border-ddf-border text-white text-sm rounded-xl p-3 focus:outline-none focus:border-ddf-yellow font-mono">
-                            <!-- Populated dynamically -->
-                        </select>
-                    </div>
-
-                    <!-- Interactive 1-10 Score Selection -->
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="block text-xs font-mono text-gray-300 uppercase">Deine Note (1-10)</label>
-                            <span id="formScoreValueDisplay" class="text-lg font-black font-typewriter text-ddf-yellow">10 / 10</span>
-                        </div>
-
-                        <!-- Touch-friendly score buttons grid for mobile -->
-                        <div class="grid grid-cols-5 sm:grid-cols-10 gap-1.5 mb-2">
-                            <button type="button" onclick="setFormScore(1)" class="score-btn touch-btn py-2 bg-ddf-bg border border-ddf-border rounded-lg text-xs font-bold font-mono hover:border-ddf-yellow">1</button>
-                            <button type="button" onclick="setFormScore(2)" class="score-btn touch-btn py-2 bg-ddf-bg border border-ddf-border rounded-lg text-xs font-bold font-mono hover:border-ddf-yellow">2</button>
-                            <button type="button" onclick="setFormScore(3)" class="score-btn touch-btn py-2 bg-ddf-bg border border-ddf-border rounded-lg text-xs font-bold font-mono hover:border-ddf-yellow">3</button>
-                            <button type="button" onclick="setFormScore(4)" class="score-btn touch-btn py-2 bg-ddf-bg border border-ddf-border rounded-lg text-xs font-bold font-mono hover:border-ddf-yellow">4</button>
-                            <button type="button" onclick="setFormScore(5)" class="score-btn touch-btn py-2 bg-ddf-bg border border-ddf-border rounded-lg text-xs font-bold font-mono hover:border-ddf-yellow">5</button>
-                            <button type="button" onclick="setFormScore(6)" class="score-btn touch-btn py-2 bg-ddf-bg border border-ddf-border rounded-lg text-xs font-bold font-mono hover:border-ddf-yellow">6</button>
-                            <button type="button" onclick="setFormScore(7)" class="score-btn touch-btn py-2 bg-ddf-bg border border-ddf-border rounded-lg text-xs font-bold font-mono hover:border-ddf-yellow">7</button>
-                            <button type="button" onclick="setFormScore(8)" class="score-btn touch-btn py-2 bg-ddf-bg border border-ddf-border rounded-lg text-xs font-bold font-mono hover:border-ddf-yellow">8</button>
-                            <button type="button" onclick="setFormScore(9)" class="score-btn touch-btn py-2 bg-ddf-bg border border-ddf-border rounded-lg text-xs font-bold font-mono hover:border-ddf-yellow">9</button>
-                            <button type="button" onclick="setFormScore(10)" class="score-btn touch-btn py-2 bg-ddf-bg border border-ddf-yellow bg-ddf-yellow/10 text-ddf-yellow rounded-lg text-xs font-bold font-mono">10</button>
-                        </div>
-                        
-                        <p id="formScoreFeedback" class="text-xs text-center text-gray-400 font-mono italic">
-                            10 - Absoluter Klassiker & Meisterwerk
-                        </p>
-                    </div>
-
-                    <!-- Review Text area -->
-                    <div>
-                        <label class="block text-xs font-mono text-gray-300 uppercase mb-2">Kommentar / Notizen (Optional)</label>
-                        <textarea id="formCommentInput" rows="3" placeholder="Was macht die Folge besonders? Wer ist der Täter? Lieblingszitat..." class="w-full bg-ddf-bg border border-ddf-border rounded-xl p-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-ddf-blue"></textarea>
-                    </div>
-
-                    <button type="submit" class="touch-btn w-full py-3.5 bg-gradient-to-r from-ddf-red to-red-700 hover:from-red-600 hover:to-red-800 text-white font-bold font-typewriter rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 active:scale-98">
-                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
-                        Bewertung Speichern
-                    </button>
-                </form>
-            </div>
-        </section>
-    </main>
-
-    <!-- MODAL: User Selection / New User -->
-    <div id="userModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-ddf-card border border-ddf-border rounded-2xl max-w-sm w-full p-5 space-y-4">
-            <div class="flex items-center justify-between">
-                <h3 class="font-bold font-typewriter text-white uppercase">Ermittler Wechseln</h3>
-                <button onclick="closeUserModal()" class="text-gray-400 hover:text-white p-1">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <!-- List of existing users -->
-            <div id="userModalList" class="space-y-1.5 max-h-48 overflow-y-auto">
-                <!-- Populated dynamically -->
-            </div>
-
-            <!-- Add new user input -->
-            <div class="pt-2 border-t border-ddf-border">
-                <label class="block text-xs text-gray-400 mb-1 font-mono">Neuen Ermittler anlegen:</label>
-                <div class="flex gap-2">
-                    <input type="text" id="newUserNameInput" placeholder="Name..." class="bg-ddf-bg border border-ddf-border text-white text-sm rounded-lg px-3 py-2 flex-grow focus:outline-none focus:border-ddf-yellow">
-                    <button onclick="addNewUserFromModal()" class="px-3 py-2 bg-ddf-yellow text-black font-bold text-xs rounded-lg hover:bg-yellow-400">
-                        Hinzufügen
-                    </button>
-                </div>
+    <!-- TAB 3: ALLE FOLGEN -->
+    <div id="tab-list" class="content-section">
+        <input type="text" id="search-input" placeholder="🔍 Suche nach Titel oder Nummer..." onkeyup="renderFolgenList()">
+        <div id="folgen-list">
+            <!-- Loader -->
+            <div class="loader-container">
+                <div class="spinner"></div>
+                Lade Daten aus Google Sheets...
             </div>
         </div>
     </div>
 
-    <!-- MODAL: Episode Detail Modal -->
-    <div id="detailModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-ddf-card border border-ddf-border rounded-2xl max-w-md w-full p-5 space-y-4 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-1">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <div id="detailModalContent">
-                <!-- Populated dynamically -->
+    <!-- TAB 4: REVIEWS -->
+    <div id="tab-reviews" class="content-section">
+        <div class="card" style="padding: 10px 15px;">
+            <select id="review-filter-user" onchange="renderReviews()">
+                <option value="all">Alle Nutzer</option>
+            </select>
+        </div>
+        <div id="reviews-list">
+            <!-- Loader -->
+            <div class="loader-container">
+                <div class="spinner"></div>
+                Lade Bewertungen...
             </div>
         </div>
     </div>
 
-    <!-- TOAST NOTIFICATION CONTAINER -->
-    <div id="toastContainer" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-auto max-w-xs pointer-events-none space-y-2"></div>
+    <!-- USER MODAL -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal-content">
+            <h2 style="color: var(--white); margin-bottom: 20px;">Dein Profil</h2>
+            <label>Wer bist du?</label>
+            <input type="text" id="usernameInput" placeholder="Dein Name (z.B. Justus)">
+            
+            <button class="btn btn-primary" onclick="saveUser()">Speichern</button>
+            <button class="btn" style="margin-top: 10px;" onclick="closeUserModal()">Abbrechen</button>
+        </div>
+    </div>
 
+    <!-- Lade-Modal Blockierung während Speichern -->
+    <div class="modal-overlay" id="loadingModal">
+        <div class="modal-content" style="text-align: center; background: transparent; border: none;">
+            <div class="spinner" style="width: 60px; height: 60px; border-width: 6px;"></div>
+            <h2 style="color: white; margin-top: 20px;">Speichere in Google Sheets...</h2>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOKIK -->
     <script>
-        // ==========================================
-        // 1. EPISODES DATABASE (1 - 230+)
-        // ==========================================
-        const CLASSIC_TITLES = {
-            1: "und der Super-Papagei",
-            2: "und der seltsame Wecker",
-            3: "und der Karpatenhund",
-            4: "und die schwarze Katze",
-            5: "und der Fluch des Rubins",
-            6: "und der sprechende Totenkopf",
-            7: "und der unheimliche Drache",
-            8: "und der grüne Geist",
-            9: "und die rätselhaften Bilder",
-            10: "und die flüsternde Mumie",
-            11: "und das Gespensterschloss",
-            20: "und das Riff der Haie",
-            30: "und der seltsame Pfarrer",
-            40: "und der Automarder",
-            50: "und der verschwundene Filmstar",
-            60: "Dopingmix",
-            70: "Schüsse aus dem Dunkeln",
-            80: "Geheimakte Ufo",
-            90: "Musterdenker",
-            100: "Toteninsel",
-            105: "und der Nebelberg",
-            120: "Der schwarze Skorpion",
-            125: "Feuermond",
-            150: "Geisterbucht",
-            175: "Schattenwelt",
-            200: "Feuriges Auge",
-            210: "und die schweigende Antilope",
-            220: "und der Wald der Gefahren",
-            225: "und der Schneemann",
-            228: "und der Ruf der Krähen",
-            230: "und das Phantom-Krokodil"
-        };
-
-        function generateEpisodesList() {
-            const list = [];
-            for (let i = 1; i <= 230; i++) {
-                const numStr = String(i).padStart(3, '0');
-                const title = CLASSIC_TITLES[i] || `Fall Nr. ${numStr}`;
-                list.push({
-                    id: i,
-                    numberStr: numStr,
-                    fullTitle: `${numStr} - ${title}`,
-                    title: title
-                });
-            }
-            return list;
-        }
-
-        const EPISODES = generateEpisodesList();
-
-        // ==========================================
-        // 2. APP STATE & LOCAL STORAGE
-        // ==========================================
-        let users = JSON.parse(localStorage.getItem('ddf_app_users')) || ['Justus', 'Peter', 'Bob', 'Tante Matilda'];
-        let activeUser = localStorage.getItem('ddf_app_activeUser') || users[0];
+        // HIER STEHT DEINE GOOGLE SCRIPT URL!
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbypZi3LpWhk_Dwd69LbDV2BccuMb9BDdJUEv0rjGDBUQCaHvy_idQfzSg1KmsxpAwfJ4w/exec";
         
-        // Structure: ratings[epId][username] = { score: 1-10, comment: string, date: "YYYY-MM-DD" }
-        let ratings = JSON.parse(localStorage.getItem('ddf_app_ratings')) || {
-            1: { "Justus": { score: 10, comment: "Absoluter Kultklassiker!", date: "2026-01-10" }, "Peter": { score: 9, comment: "Sehr spannend, aber laute Vögel!", date: "2026-01-12" } },
-            3: { "Bob": { score: 10, comment: "Recherchearbeiten exzellent.", date: "2026-02-01" } },
-            100: { "Justus": { score: 10, comment: "Meisterwerk in 3 Teilen.", date: "2026-02-15" } }
+        // Globale Daten
+        let stammdaten = [];
+        let bewertungen = [];
+        let nutzer = [];
+        let selectedPoints = 0;
+        let dailyFolge = null;
+
+        // User Setup (LocalStorage)
+        let currentUser = {
+            id: localStorage.getItem('d3_userId') || 'user_' + Math.random().toString(36).substr(2, 9),
+            name: localStorage.getItem('d3_userName') || ''
         };
 
-        let currentDailyEpisode = null;
-        let selectedFormScore = 10;
+        // INIT
+        window.onload = () => {
+            initUser();
+            initRatingScale();
+            fetchData();
+        };
 
-        function saveState() {
-            localStorage.setItem('ddf_app_users', JSON.stringify(users));
-            localStorage.setItem('ddf_app_activeUser', activeUser);
-            localStorage.setItem('ddf_app_ratings', JSON.stringify(ratings));
+        // USER MANAGEMENT
+        function initUser() {
+            if (!currentUser.name) {
+                openUserModal();
+            } else {
+                document.getElementById('currentUserNameDisplay').textContent = currentUser.name;
+            }
         }
 
-        // Helper to get unrated episodes for current user
-        function getUnratedEpisodesForUser(username = activeUser) {
-            return EPISODES.filter(ep => !(ratings[ep.id] && ratings[ep.id][username]));
+        function openUserModal() {
+            document.getElementById('usernameInput').value = currentUser.name;
+            document.getElementById('userModal').classList.add('active');
         }
 
-        function calculateStats(epId) {
-            const epRatings = ratings[epId] || {};
-            const userKeys = Object.keys(epRatings);
-            if (userKeys.length === 0) return { avg: 0, count: 0, ratings: epRatings };
-            const sum = userKeys.reduce((acc, u) => acc + Number(epRatings[u].score), 0);
+        function closeUserModal() {
+            if(!currentUser.name) {
+                alert("Bitte gib einen Namen ein, um teilzunehmen.");
+                return;
+            }
+            document.getElementById('userModal').classList.remove('active');
+        }
+
+        function saveUser() {
+            const name = document.getElementById('usernameInput').value.trim();
+            if (name) {
+                currentUser.name = name;
+                localStorage.setItem('d3_userId', currentUser.id);
+                localStorage.setItem('d3_userName', currentUser.name);
+                document.getElementById('currentUserNameDisplay').textContent = currentUser.name;
+                
+                // Falls Filter Dropdown existiert, User hinzufügen
+                updateUserFilterDropdown();
+                
+                closeUserModal();
+            }
+        }
+
+        // TABS SWITCHER
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            
+            // Re-Render falls nötig
+            if(tabId === 'tab-daily') generateDailyCase();
+        }
+
+        // DATEN AUS GOOGLE SHEETS LADEN (GET)
+        async function fetchData() {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                const data = await response.json();
+                
+                stammdaten = data.stammdaten;
+                bewertungen = data.bewertungen;
+                nutzer = data.nutzer;
+
+                populateDropdowns();
+                updateUserFilterDropdown();
+                renderFolgenList();
+                renderReviews();
+                generateDailyCase();
+
+            } catch (error) {
+                console.error("Fehler beim Laden:", error);
+                document.getElementById('folgen-list').innerHTML = `<div style="color: var(--red); padding: 20px;">Fehler beim Verbinden mit Google Sheets. Bitte lade die Seite neu.</div>`;
+            }
+        }
+
+        // DROPDOWNS BEFÜLLEN
+        function populateDropdowns() {
+            const select = document.getElementById('rate-select');
+            select.innerHTML = '<option value="">-- Folge auswählen --</option>';
+            
+            stammdaten.forEach(folge => {
+                const option = document.createElement('option');
+                option.value = folge.nr;
+                option.textContent = `Folge ${folge.nr}: ${folge.titel}`;
+                select.appendChild(option);
+            });
+        }
+
+        function updateUserFilterDropdown() {
+            const select = document.getElementById('review-filter-user');
+            select.innerHTML = '<option value="all">Alle Nutzer</option>';
+            
+            // Sammle alle einzigartigen Nutzernamen aus den Bewertungen
+            const uniqueUsers = [...new Set(bewertungen.map(b => b.nutzerName))].filter(n => n);
+            
+            uniqueUsers.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+        }
+
+        // PUNKTE-SKALA INITIALISIEREN
+        function initRatingScale() {
+            const container = document.getElementById('rating-scale-container');
+            container.innerHTML = '';
+            for(let i=1; i<=10; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'rating-btn';
+                btn.textContent = i;
+                btn.onclick = () => selectPoints(i, btn);
+                container.appendChild(btn);
+            }
+        }
+
+        function selectPoints(points, btnElement) {
+            selectedPoints = points;
+            document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+            btnElement.classList.add('selected');
+        }
+
+        // BEWERTUNG SENDEN (POST)
+        async function submitRating() {
+            const folgenNr = document.getElementById('rate-select').value;
+            const kommentar = document.getElementById('rate-comment').value;
+            const statusDiv = document.getElementById('rate-status');
+            
+            if(!currentUser.name) { openUserModal(); return; }
+            if(!folgenNr) { statusDiv.textContent = "⚠️ Bitte wähle eine Folge aus."; return; }
+            if(selectedPoints === 0) { statusDiv.textContent = "⚠️ Bitte wähle eine Punktzahl (1-10)."; return; }
+
+            // Ladebildschirm zeigen
+            document.getElementById('loadingModal').classList.add('active');
+            statusDiv.textContent = "";
+
+            const payload = {
+                action: 'addRating',
+                nutzerId: currentUser.id,
+                nutzerName: currentUser.name,
+                folgenNr: parseInt(folgenNr),
+                punkte: selectedPoints,
+                kommentar: kommentar
+            };
+
+            try {
+                // Post Request an Google Apps Script
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Wichtig für Web Apps ohne komplexes CORS setup
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                // Da 'no-cors' verwendet wird, bekommen wir keine detaillierte Antwort zurück,
+                // wir gehen bei keinem Catch-Error von Erfolg aus.
+                
+                // Wir fügen die Bewertung lokal hinzu, damit man sie sofort sieht
+                bewertungen.push({
+                    id: Date.now(),
+                    nutzerId: currentUser.id,
+                    nutzerName: currentUser.name,
+                    folgenNr: parseInt(folgenNr),
+                    punkte: selectedPoints,
+                    kommentar: kommentar,
+                    datum: new Date().toISOString()
+                });
+
+                // UI Reset
+                document.getElementById('rate-select').value = "";
+                document.getElementById('rate-comment').value = "";
+                document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+                selectedPoints = 0;
+                
+                // Ansichten aktualisieren
+                updateUserFilterDropdown();
+                renderReviews();
+                renderFolgenList();
+                generateDailyCase();
+
+                // Ladebildschirm aus
+                document.getElementById('loadingModal').classList.remove('active');
+                
+                // Zum Review Tab springen
+                switchTab('tab-reviews');
+
+            } catch (error) {
+                console.error("Fehler beim Speichern:", error);
+                document.getElementById('loadingModal').classList.remove('active');
+                statusDiv.textContent = "❌ Fehler beim Speichern. Bitte versuche es noch einmal.";
+            }
+        }
+
+        // HILFSFUNKTION: DURCHSCHNITT BERECHNEN
+        function getFolgenStats(nr) {
+            const folgeBewertungen = bewertungen.filter(b => b.folgenNr === nr);
+            if(folgeBewertungen.length === 0) return { avg: '-', count: 0 };
+            
+            const sum = folgeBewertungen.reduce((acc, curr) => acc + parseInt(curr.punkte), 0);
             return {
-                avg: (sum / userKeys.length).toFixed(1),
-                count: userKeys.length,
-                ratings: epRatings
+                avg: (sum / folgeBewertungen.length).toFixed(1),
+                count: folgeBewertungen.length
             };
         }
 
-        // ==========================================
-        // 3. FALL DES TAGES (Daily Shuffle)
-        // ==========================================
-        function initFallDesTages(forceShuffle = false) {
-            const unrated = getUnratedEpisodesForUser();
-            const cardContainer = document.getElementById('dailyEpisodeCard');
-
-            if (unrated.length === 0) {
-                cardContainer.innerHTML = `
-                    <div class="text-center py-6 space-y-2">
-                        <div class="w-12 h-12 bg-ddf-yellow/10 text-ddf-yellow rounded-full flex items-center justify-center mx-auto text-xl font-bold">✓</div>
-                        <h3 class="font-bold text-white font-typewriter">Hervorragend, Ermittler ${activeUser}!</h3>
-                        <p class="text-xs text-gray-400">Du hast bereits alle erfassten Folgen bewertet.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            if (!forceShuffle && currentDailyEpisode && unrated.some(e => e.id === currentDailyEpisode.id)) {
-                // Keep existing selected daily episode
-            } else {
-                // Deterministic daily pick based on date + active user, or random shuffle
-                const todayStr = new Date().toISOString().split('T')[0];
-                document.getElementById('dailyDateBadge').textContent = forceShuffle ? '🎲 ZUFALLS-Mischung' : `TAGESFALL: ${todayStr}`;
-                
-                if (forceShuffle) {
-                    const randomIndex = Math.floor(Math.random() * unrated.length);
-                    currentDailyEpisode = unrated[randomIndex];
-                } else {
-                    // Hash string to pick daily index
-                    let hash = 0;
-                    const seed = todayStr + activeUser;
-                    for (let i = 0; i < seed.length; i++) hash = seed.charCodeAt(i) + ((hash << 5) - hash);
-                    const index = Math.abs(hash) % unrated.length;
-                    currentDailyEpisode = unrated[index];
-                }
-            }
-
-            const stats = calculateStats(currentDailyEpisode.id);
-
-            cardContainer.innerHTML = `
-                <div class="flex flex-col md:flex-row items-stretch justify-between gap-4">
-                    <!-- Cassette Visual & Details -->
-                    <div class="flex items-start gap-3 flex-grow">
-                        <!-- Mini Cassette Spool graphic -->
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-ddf-bg border border-ddf-border rounded-xl flex-shrink-0 flex flex-col justify-between p-1.5 relative overflow-hidden group">
-                            <div class="tape-stripes h-1 w-full rounded-full"></div>
-                            <div class="flex justify-around items-center my-auto">
-                                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-gray-500 bg-ddf-tape flex items-center justify-center spool-spin">
-                                    <div class="w-1.5 h-1.5 bg-ddf-yellow rounded-full"></div>
-                                </div>
-                                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-gray-500 bg-ddf-tape flex items-center justify-center spool-spin">
-                                    <div class="w-1.5 h-1.5 bg-ddf-yellow rounded-full"></div>
-                                </div>
-                            </div>
-                            <div class="text-[8px] font-mono text-center text-gray-500 uppercase">A-SIDE</div>
-                        </div>
-
-                        <!-- Episode Title Info -->
-                        <div class="space-y-1 flex-grow">
-                            <span class="inline-block text-[10px] font-mono font-bold text-ddf-yellow bg-ddf-bg px-2 py-0.5 rounded border border-ddf-border">
-                                Folge #${currentDailyEpisode.numberStr}
-                            </span>
-                            <h3 class="text-base sm:text-lg font-bold font-typewriter text-white leading-tight">
-                                ${currentDailyEpisode.title}
-                            </h3>
-                            <p class="text-xs text-gray-400 font-mono">
-                                Community: <span class="text-ddf-yellow font-bold">${stats.count > 0 ? stats.avg + '/10' : 'Noch unbewertet'}</span> (${stats.count} Stimmen)
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="flex sm:flex-col gap-2 flex-shrink-0 justify-end">
-                        <button onclick="initFallDesTages(true)" class="touch-btn flex-1 sm:flex-none px-3 py-2 bg-ddf-bg hover:bg-ddf-border border border-ddf-border rounded-xl text-xs font-bold font-mono text-gray-300 flex items-center justify-center gap-1.5 active:scale-95 transition-all" title="Neu mischen">
-                            <i data-lucide="shuffle" class="w-4 h-4 text-ddf-yellow"></i>
-                            <span>🎲 Neu Mischen</span>
-                        </button>
-                        <button onclick="preselectEpisodeInForm(${currentDailyEpisode.id})" class="touch-btn flex-1 sm:flex-none px-4 py-2 bg-ddf-blue hover:bg-blue-600 text-white rounded-xl text-xs font-bold font-typewriter flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-md">
-                            <i data-lucide="edit-3" class="w-4 h-4"></i>
-                            <span>Jetzt Bewerten</span>
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            lucide.createIcons();
+        function getTagClass(avg) {
+            if(avg === '-') return '';
+            const num = parseFloat(avg);
+            if(num >= 8) return 'high';
+            if(num <= 4) return 'low';
+            return '';
         }
 
-        // ==========================================
-        // 4. TAB 1: ALLE FOLGEN CATALOG
-        // ==========================================
-        function renderCatalog() {
-            const search = document.getElementById('catalogSearch').value.toLowerCase();
-            const filter = document.getElementById('catalogFilter').value;
-            const sort = document.getElementById('catalogSort').value;
-            const container = document.getElementById('catalogGrid');
-
-            let items = EPISODES.map(ep => {
-                const stats = calculateStats(ep.id);
-                const myRating = ratings[ep.id] && ratings[ep.id][activeUser] ? ratings[ep.id][activeUser].score : null;
-                return { ...ep, stats, myRating };
-            });
-
-            // Filter
-            if (search) {
-                items = items.filter(e => e.fullTitle.toLowerCase().includes(search));
-            }
-            if (filter === 'rated') {
-                items = items.filter(e => e.myRating !== null);
-            } else if (filter === 'unrated') {
-                items = items.filter(e => e.myRating === null);
-            }
-
-            // Sort
-            items.sort((a, b) => {
-                if (sort === 'number-asc') return a.id - b.id;
-                if (sort === 'number-desc') return b.id - a.id;
-                if (sort === 'score-desc') return b.stats.avg - a.stats.avg || b.stats.count - a.stats.count;
-                if (sort === 'score-asc') return a.stats.avg - b.stats.avg;
-                return 0;
-            });
-
+        // RENDER: ALLE FOLGEN LISTE
+        function renderFolgenList() {
+            const container = document.getElementById('folgen-list');
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
             container.innerHTML = '';
 
-            if (items.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500 font-mono text-xs">Keine Folgen mit diesen Kriterien gefunden.</div>`;
+            const filtered = stammdaten.filter(f => 
+                f.titel.toLowerCase().includes(searchTerm) || 
+                f.nr.toString().includes(searchTerm)
+            );
+
+            if(filtered.length === 0) {
+                container.innerHTML = '<p style="text-align:center; margin-top:20px;">Keine Folgen gefunden.</p>';
                 return;
             }
 
-            items.forEach(ep => {
+            filtered.forEach(folge => {
+                const stats = getFolgenStats(folge.nr);
+                
                 const card = document.createElement('div');
-                card.className = "bg-ddf-card hover:bg-ddf-cardHover border border-ddf-border rounded-xl p-4 transition-all flex flex-col justify-between gap-3 cursor-pointer group active:scale-98";
-                card.onclick = () => openDetailModal(ep.id);
-
-                const hasScore = ep.stats.count > 0;
-
+                card.className = 'card';
                 card.innerHTML = `
-                    <div class="flex items-start justify-between gap-2">
-                        <span class="font-mono text-xs text-gray-400 bg-ddf-bg px-2 py-0.5 rounded border border-ddf-border">
-                            #${ep.numberStr}
-                        </span>
-                        
-                        <div class="flex items-center gap-2">
-                            ${ep.myRating !== null 
-                                ? `<span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-ddf-blue/10 text-ddf-blue border border-ddf-blue/30">Deine Note: ${ep.myRating}</span>`
-                                : '<span class="text-[10px] text-gray-500 font-mono">Unbewertet</span>'}
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div class="meta">Folge ${folge.nr} • ${folge.jahr}</div>
+                            <h3>${folge.titel}</h3>
+                        </div>
+                        <div class="rating-tag ${getTagClass(stats.avg)}">
+                            ⭐ ${stats.avg}
                         </div>
                     </div>
+                    <div style="font-size: 13px; color: #8892B0; margin-top: 10px;">
+                        ${stats.count} Bewertung(en)
+                    </div>
+                    <button class="btn btn-action" style="padding: 8px; font-size: 13px;" onclick="prefillRate(${folge.nr})">
+                        Jetzt Bewerten
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
 
-                    <h4 class="font-bold text-sm text-white font-typewriter group-hover:text-ddf-yellow transition-colors line-clamp-2">
-                        ${ep.title}
-                    </h4>
+        // PREFILL FÜR "JETZT BEWERTEN" BUTTONS
+        function prefillRate(nr) {
+            document.getElementById('rate-select').value = nr;
+            switchTab('tab-rate');
+        }
 
-                    <div class="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-ddf-border/60">
-                        <span class="font-mono text-[11px] flex items-center gap-1 text-ddf-yellow">
-                            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
-                            ${hasScore ? ep.stats.avg + ' / 10' : '-.-'}
-                            <span class="text-gray-500">(${ep.stats.count})</span>
-                        </span>
-                        <span class="text-xs text-gray-400 group-hover:text-white flex items-center gap-0.5">
-                            Details <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                        </span>
+        // RENDER: REVIEWS LISTE
+        function renderReviews() {
+            const container = document.getElementById('reviews-list');
+            const filterUser = document.getElementById('review-filter-user').value;
+            
+            container.innerHTML = '';
+
+            // Neueste zuerst
+            const sortedBewertungen = [...bewertungen].reverse();
+
+            const filtered = filterUser === 'all' 
+                ? sortedBewertungen 
+                : sortedBewertungen.filter(b => b.nutzerName === filterUser);
+
+            if(filtered.length === 0) {
+                container.innerHTML = '<p style="text-align:center; margin-top:20px;">Noch keine Bewertungen vorhanden.</p>';
+                return;
+            }
+
+            filtered.forEach(b => {
+                const folge = stammdaten.find(f => f.nr === b.folgenNr);
+                const titel = folge ? folge.titel : 'Unbekannte Folge';
+                
+                // Datumsformatierung
+                const dateObj = b.datum ? new Date(b.datum) : new Date();
+                const dateStr = dateObj.toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'});
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 10px;">
+                        <span style="font-weight: 600; color: var(--yellow);">👤 ${b.nutzerName || 'Anonym'}</span>
+                        <span style="font-size: 12px; color: #8892B0;">${dateStr}</span>
+                    </div>
+                    <div class="meta" style="margin-bottom: 5px;">Folge ${b.folgenNr}: ${titel}</div>
+                    
+                    <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
+                        <div class="rating-tag ${getTagClass(b.punkte)}" style="font-size: 16px;">
+                            ⭐ ${b.punkte}/10
+                        </div>
+                        <div style="font-style: italic; font-size: 14px; color: #E2E8F0; flex: 1;">
+                            ${b.kommentar ? `"${b.kommentar}"` : ''}
+                        </div>
                     </div>
                 `;
                 container.appendChild(card);
             });
-
-            lucide.createIcons();
         }
 
-        // ==========================================
-        // 5. TAB 2: ABGEGEBENE BEWERTUNGEN FEED
-        // ==========================================
-        function initReviewsUserFilterDropdown() {
-            const select = document.getElementById('reviewUserFilter');
-            select.innerHTML = '<option value="all">Alle Ermittler</option>';
-            users.forEach(u => {
-                const opt = document.createElement('option');
-                opt.value = u;
-                opt.textContent = u;
-                select.appendChild(opt);
-            });
-        }
-
-        function renderReviewsFeed() {
-            const selectedUser = document.getElementById('reviewUserFilter').value;
-            const container = document.getElementById('reviewsFeed');
-            container.innerHTML = '';
-
-            const feedList = [];
-
-            // Flatten all ratings
-            Object.keys(ratings).forEach(epId => {
-                const ep = EPISODES.find(e => e.id === parseInt(epId));
-                if (!ep) return;
-
-                Object.keys(ratings[epId]).forEach(u => {
-                    if (selectedUser !== 'all' && u !== selectedUser) return;
-
-                    const r = ratings[epId][u];
-                    feedList.push({
-                        episode: ep,
-                        user: u,
-                        score: r.score,
-                        comment: r.comment,
-                        date: r.date || 'Kürzlich'
-                    });
-                });
-            });
-
-            if (feedList.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 text-gray-500 font-mono text-xs">Noch keine Bewertungen abgegeben.</div>`;
+        // FALL DES TAGES LOGIK
+        function generateDailyCase() {
+            const container = document.getElementById('daily-content');
+            
+            if(stammdaten.length === 0) {
+                container.innerHTML = "Lade Daten...";
                 return;
             }
 
-            feedList.reverse().forEach(item => {
-                const reviewCard = document.createElement('div');
-                reviewCard.className = "bg-ddf-card border border-ddf-border rounded-xl p-4 space-y-2";
+            // Filtere Folgen, die der aktuelle Nutzer bereits bewertet hat
+            const bewerteteFolgenNrs = bewertungen
+                .filter(b => b.nutzerName === currentUser.name)
+                .map(b => b.folgenNr);
 
-                reviewCard.innerHTML = `
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-ddf-blue/10 text-ddf-blue border border-ddf-blue/30 flex items-center justify-center font-bold font-typewriter text-xs">
-                                ${item.user.charAt(0)}
-                            </span>
-                            <span class="font-bold text-xs text-white">${item.user}</span>
-                        </div>
-                        <span class="font-mono font-bold text-xs px-2 py-0.5 rounded bg-ddf-yellow/10 text-ddf-yellow border border-ddf-yellow/30">
-                            ${item.score} / 10 Points
-                        </span>
-                    </div>
+            const unbewerteteFolgen = stammdaten.filter(f => !bewerteteFolgenNrs.includes(f.nr));
 
-                    <div class="text-sm font-typewriter font-bold text-white">
-                        <span class="text-xs text-ddf-yellow font-mono">#${item.episode.numberStr}</span> ${item.episode.title}
-                    </div>
-
-                    ${item.comment ? `<p class="text-xs text-gray-300 italic bg-ddf-bg p-2.5 rounded-lg border border-ddf-border">"${item.comment}"</p>` : ''}
-
-                    <div class="text-[10px] text-gray-500 font-mono text-right">
-                        Bewertet am: ${item.date}
+            if(unbewerteteFolgen.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 30px 0;">
+                        <div style="font-size: 40px; margin-bottom: 15px;">🏆</div>
+                        <h3>Wahnsinn!</h3>
+                        <p>Du hast bereits alle Folgen bewertet!</p>
                     </div>
                 `;
-                container.appendChild(reviewCard);
-            });
-        }
-
-        // ==========================================
-        // 6. TAB 3: RATING FORM & SCORE CONTROLS
-        // ==========================================
-        function populateFormDropdown() {
-            const select = document.getElementById('formEpisodeSelect');
-            select.innerHTML = '';
-            EPISODES.forEach(ep => {
-                const opt = document.createElement('option');
-                opt.value = ep.id;
-                const isRated = ratings[ep.id] && ratings[ep.id][activeUser];
-                opt.textContent = `${ep.fullTitle} ${isRated ? ' (✓ bewertet)' : ''}`;
-                select.appendChild(opt);
-            });
-        }
-
-        function setFormScore(score) {
-            selectedFormScore = score;
-            document.getElementById('formScoreValueDisplay').textContent = `${score} / 10`;
-
-            const feedbackTexts = {
-                1: "1 - Sehr schwach / Unbehaglich",
-                2: "2 - Kaum zu empfehlen",
-                3: "3 - Unterdurchschnittlich",
-                4: "4 - Mäßiger Fall",
-                5: "5 - Solider Durchschnitt",
-                6: "6 - Gut hörbar",
-                7: "7 - Spannendes Abenteuer",
-                8: "8 - Sehr starker Fall",
-                9: "9 - Hervorragend!",
-                10: "10 - Absoluter Klassiker & Meisterwerk"
-            };
-
-            document.getElementById('formScoreFeedback').textContent = feedbackTexts[score] || "";
-
-            // Highlight buttons
-            const btns = document.querySelectorAll('.score-btn');
-            btns.forEach((btn, idx) => {
-                if (idx + 1 === score) {
-                    btn.className = "score-btn touch-btn py-2 bg-ddf-yellow/10 border border-ddf-yellow text-ddf-yellow rounded-lg text-xs font-bold font-mono";
-                } else {
-                    btn.className = "score-btn touch-btn py-2 bg-ddf-bg border border-ddf-border rounded-lg text-xs font-bold font-mono hover:border-ddf-yellow";
-                }
-            });
-        }
-
-        function preselectEpisodeInForm(epId) {
-            switchMainTab('bewerten');
-            populateFormDropdown();
-            document.getElementById('formEpisodeSelect').value = epId;
-
-            if (ratings[epId] && ratings[epId][activeUser]) {
-                const userRating = ratings[epId][activeUser];
-                setFormScore(userRating.score);
-                document.getElementById('formCommentInput').value = userRating.comment || '';
-            } else {
-                setFormScore(10);
-                document.getElementById('formCommentInput').value = '';
+                return;
             }
-        }
 
-        function handleRatingSubmit(e) {
-            e.preventDefault();
-            const epId = parseInt(document.getElementById('formEpisodeSelect').value);
-            const comment = document.getElementById('formCommentInput').value.trim();
-            const todayStr = new Date().toISOString().split('T')[0];
-
-            if (!ratings[epId]) ratings[epId] = {};
-            ratings[epId][activeUser] = {
-                score: selectedFormScore,
-                comment: comment,
-                date: todayStr
-            };
-
-            saveState();
-            showToast(`Bewertung für Folge #${String(epId).padStart(3, '0')} gespeichert!`);
+            // Zufällige Folge auswählen
+            const randomIndex = Math.floor(Math.random() * unbewerteteFolgen.length);
+            dailyFolge = unbewerteteFolgen[randomIndex];
             
-            // Refresh views
-            initFallDesTages();
-            renderCatalog();
-            renderReviewsFeed();
-            switchMainTab('alle');
-        }
+            const stats = getFolgenStats(dailyFolge.nr);
 
-        // ==========================================
-        // 7. USER MANAGEMENT & MODALS
-        // ==========================================
-        function openUserModal() {
-            const modalList = document.getElementById('userModalList');
-            modalList.innerHTML = '';
-
-            users.forEach(u => {
-                const btn = document.createElement('button');
-                btn.className = `w-full text-left p-3 rounded-xl border text-xs font-bold flex items-center justify-between transition-all ${u === activeUser ? 'bg-ddf-yellow/10 border-ddf-yellow text-ddf-yellow' : 'bg-ddf-bg border-ddf-border text-white hover:bg-ddf-border'}`;
-                btn.onclick = () => selectUser(u);
-                btn.innerHTML = `
-                    <span>${u}</span>
-                    ${u === activeUser ? '<i data-lucide="check" class="w-4 h-4"></i>' : ''}
-                `;
-                modalList.appendChild(btn);
-            });
-
-            lucide.createIcons();
-            document.getElementById('userModal').classList.remove('hidden');
-        }
-
-        function closeUserModal() {
-            document.getElementById('userModal').classList.add('hidden');
-        }
-
-        function selectUser(username) {
-            activeUser = username;
-            saveState();
-            updateHeaderUserDisplay();
-            closeUserModal();
-            initFallDesTages(true);
-            renderCatalog();
-            renderReviewsFeed();
-            populateFormDropdown();
-            showToast(`Angemeldet als: ${activeUser}`);
-        }
-
-        function addNewUserFromModal() {
-            const input = document.getElementById('newUserNameInput');
-            const name = input.value.trim();
-            if (name && !users.includes(name)) {
-                users.push(name);
-                input.value = '';
-                selectUser(name);
-                initReviewsUserFilterDropdown();
-            }
-        }
-
-        function updateHeaderUserDisplay() {
-            document.getElementById('headerUserName').textContent = activeUser;
-            document.getElementById('formCurrentUserName').textContent = activeUser;
-        }
-
-        function openDetailModal(epId) {
-            const ep = EPISODES.find(e => e.id === epId);
-            const stats = calculateStats(epId);
-            const modalContent = document.getElementById('detailModalContent');
-
-            let reviewsHTML = '';
-            const userKeys = Object.keys(stats.ratings);
-
-            if (userKeys.length === 0) {
-                reviewsHTML = `<p class="text-xs text-gray-500 font-mono italic">Noch keine Stimmen abgegeben.</p>`;
-            } else {
-                userKeys.forEach(u => {
-                    const r = stats.ratings[u];
-                    reviewsHTML += `
-                        <div class="bg-ddf-bg p-3 rounded-xl border border-ddf-border space-y-1">
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="font-bold text-white">${u}</span>
-                                <span class="font-mono font-bold text-ddf-yellow">${r.score} / 10</span>
-                            </div>
-                            ${r.comment ? `<p class="text-xs text-gray-300 italic font-sans">"${r.comment}"</p>` : ''}
-                        </div>
-                    `;
-                });
-            }
-
-            modalContent.innerHTML = `
-                <div class="space-y-4">
-                    <span class="inline-block text-xs font-mono bg-ddf-bg px-2.5 py-1 rounded text-ddf-yellow border border-ddf-border">
-                        Folge #${ep.numberStr}
-                    </span>
-                    <h3 class="text-xl font-bold font-typewriter text-white">${ep.title}</h3>
-
-                    <div class="flex items-center gap-4 bg-ddf-bg p-3.5 rounded-xl border border-ddf-border">
-                        <div>
-                            <div class="text-[10px] text-gray-400 font-mono">DURCHSCHNITT</div>
-                            <div class="text-lg font-bold font-mono text-ddf-yellow">${stats.avg > 0 ? stats.avg + ' / 10' : '-.-'}</div>
-                        </div>
-                        <div class="border-l border-ddf-border pl-4">
-                            <div class="text-[10px] text-gray-400 font-mono">BEWERTUNGEN</div>
-                            <div class="text-lg font-bold font-mono text-white">${stats.count}</div>
-                        </div>
+            container.innerHTML = `
+                <div class="cassette-card">
+                    <div class="cassette-label">
+                        <div style="font-size: 12px; color: #555; font-weight: bold; margin-bottom: 5px;">FOLGE ${dailyFolge.nr}</div>
+                        <h3>${dailyFolge.titel}</h3>
+                        <div style="font-size: 12px; color: #555; margin-top: 5px;">${dailyFolge.jahr}</div>
                     </div>
-
-                    <div class="space-y-2">
-                        <h4 class="text-xs font-bold font-typewriter text-gray-400 uppercase">Ermittler Notizen:</h4>
-                        <div class="space-y-2 max-h-48 overflow-y-auto">
-                            ${reviewsHTML}
-                        </div>
-                    </div>
-
-                    <div class="pt-2 flex gap-2">
-                        <button onclick="closeDetailModal()" class="touch-btn flex-1 py-2.5 bg-ddf-bg border border-ddf-border rounded-xl text-xs font-bold hover:bg-ddf-border">
-                            Schließen
-                        </button>
-                        <button onclick="closeDetailModal(); preselectEpisodeInForm(${ep.id})" class="touch-btn flex-1 py-2.5 bg-ddf-blue text-white rounded-xl text-xs font-bold font-typewriter hover:bg-blue-600">
-                            Bewerten
-                        </button>
+                    <div class="cassette-holes">
+                        <div class="hole"></div>
+                        <div class="hole"></div>
                     </div>
                 </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <div style="font-size: 14px; color: #8892B0; margin-bottom: 5px;">Community-Schnitt:</div>
+                    <div class="rating-tag ${getTagClass(stats.avg)}">⭐ ${stats.avg} (${stats.count} Votes)</div>
+                </div>
+
+                <button class="btn btn-action" onclick="prefillRate(${dailyFolge.nr})">Diese Folge bewerten</button>
             `;
-
-            lucide.createIcons();
-            document.getElementById('detailModal').classList.remove('hidden');
         }
 
-        function closeDetailModal() {
-            document.getElementById('detailModal').classList.add('hidden');
-        }
-
-        // ==========================================
-        // 8. TAB SWITCHER & UTILS
-        // ==========================================
-        function switchMainTab(tabKey) {
-            ['alle', 'bewertungen', 'bewerten'].forEach(key => {
-                const btn = document.getElementById(`tabBtn-${key}`);
-                const content = document.getElementById(`tabContent-${key}`);
-
-                if (key === tabKey) {
-                    content.classList.remove('hidden');
-                    btn.className = "touch-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1.5 transition-all text-white bg-ddf-border shadow-md";
-                } else {
-                    content.classList.add('hidden');
-                    btn.className = "touch-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-1.5 transition-all text-gray-400 hover:text-white";
-                }
-            });
-        }
-
-        function showToast(message) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = "bg-ddf-card border border-ddf-yellow text-white text-xs font-mono font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 animate-fadeIn";
-            toast.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-ddf-yellow"></i> ${message}`;
-            container.appendChild(toast);
-            lucide.createIcons();
-
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
-        }
-
-        // Initialize App on Window Load
-        window.onload = function() {
-            updateHeaderUserDisplay();
-            initReviewsUserFilterDropdown();
-            populateFormDropdown();
-            initFallDesTages();
-            renderCatalog();
-            renderReviewsFeed();
-            lucide.createIcons();
-        };
     </script>
 </body>
 </html>
