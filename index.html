@@ -171,10 +171,10 @@
         }
 
         // --- HIER DEINE GOOGLE SCRIPT URL EINTRAGEN ---
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGNV5NolwtW2xQqapiMfcku8V_2KmEKU9ThOzO_TgOvi8BZIIjvm0hg6AHV7fENmmLKg/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby29VmixLkuJCz5MJeEpTT_KvldBhCHa7woDsY8tqatt_AgmkBLJFW4LeaUj-M2Ws118Q/exec";
         
         let stammdaten = [], bewertungen = [], nutzer = [];
-        let selectedPoints = 0, dailyFolge = null, editingRatingId = null, editingRatingOriginalNr = null;
+        let selectedPoints = 0, dailyFolge = null, editingRatingId = null, editingRatingOriginalNr = null, editingRatingOwnerId = null;
         let shuffleResetTimer = null;
         let currentUser = { id: localStorage.getItem('d3_userId') || 'user_' + Math.random().toString(36).substr(2, 9), name: localStorage.getItem('d3_userName') || '' };
 
@@ -245,7 +245,7 @@
             if(!currentUser.name || !nr || selectedPoints === 0) return alert("Bitte alles ausfüllen!");
 
             const isEditing = editingRatingOriginalNr !== null;
-            const payload = { action: isEditing ? 'updateRating' : 'addRating', nutzerId: currentUser.id, nutzerName: currentUser.name, folgenNr: parseInt(nr), punkte: selectedPoints, kommentar: kommentar };
+            const payload = { action: isEditing ? 'updateRating' : 'addRating', nutzerId: isEditing ? editingRatingOwnerId : currentUser.id, nutzerName: currentUser.name, folgenNr: parseInt(nr), punkte: selectedPoints, kommentar: kommentar };
             if (isEditing) payload.originalFolgenNr = editingRatingOriginalNr;
             if (editingRatingId !== null) payload.id = editingRatingId;
             
@@ -271,7 +271,7 @@
             if (isEditing) {
                 const savedReview = editingRatingId !== null
                     ? bewertungen.find(b => String(b.id) === String(editingRatingId))
-                    : bewertungen.find(b => b.nutzerId === currentUser.id && Number(b.folgenNr) === Number(nr));
+                    : bewertungen.find(b => String(b.nutzerId) === String(editingRatingOwnerId) && Number(b.folgenNr) === Number(nr));
                 if (!savedReview || String(savedReview.punkte) !== String(selectedPoints) || String(savedReview.kommentar || '') !== String(kommentar || '')) {
                     alert('Das Google Sheet hat die Änderung nicht übernommen. Prüfe, ob die aktualisierte doPost-Funktion mit updateRating veröffentlicht wurde.');
                     return;
@@ -282,6 +282,7 @@
             selectedPoints = 0; document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
             editingRatingId = null;
             editingRatingOriginalNr = null;
+            editingRatingOwnerId = null;
             document.getElementById('rating-submit-btn').textContent = 'Bewertung abgeben';
             document.getElementById('rating-cancel-edit-btn').style.display = 'none';
             
@@ -296,6 +297,7 @@
 
             editingRatingId = review.id ?? null;
             editingRatingOriginalNr = review.folgenNr;
+            editingRatingOwnerId = review.nutzerId || currentUser.id;
             document.getElementById('rate-select').value = review.folgenNr;
             document.getElementById('rate-comment').value = review.kommentar || '';
             selectedPoints = parseInt(review.punkte, 10);
@@ -308,6 +310,7 @@
         function cancelEditRating() {
             editingRatingId = null;
             editingRatingOriginalNr = null;
+            editingRatingOwnerId = null;
             selectedPoints = 0;
             document.getElementById('rate-select').value = '';
             document.getElementById('rate-comment').value = '';
