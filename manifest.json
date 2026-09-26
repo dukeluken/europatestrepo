@@ -1,16 +1,24 @@
 {
   "name": "Die drei ??? Ranking",
-  "short_name": "??? Ranking",
+  "short_name": "Drei ???",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#0B0E14",
-  "theme_color": "#0B0E14",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "dff_app_icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "dff_app_icon_512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

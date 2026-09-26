@@ -8,7 +8,7 @@
     <!-- PWA / App Installation -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
-    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-icon" href="dff_app_icon_192.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -205,7 +205,8 @@
                 const data = await res.json();
                 stammdaten = data.stammdaten; bewertungen = data.bewertungen; nutzer = data.nutzer;
                 populateDropdown(); updateUserFilter(); renderFolgenList(); renderReviews(); generateDailyCase();
-            } catch (err) { console.error(err); }
+                return true;
+            } catch (err) { console.error(err); return false; }
         }
 
         function populateDropdown() {
@@ -248,20 +249,33 @@
             if (isEditing) payload.originalFolgenNr = editingRatingOriginalNr;
             if (editingRatingId !== null) payload.id = editingRatingId;
             
-            fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.error('Bewertung konnte nicht gesendet werden:', err);
+                alert('Die Bewertung konnte nicht an das Google Sheet gesendet werden. Bitte Verbindung prüfen und erneut versuchen.');
+                return;
+            }
+
+            const refreshed = await fetchData();
+            if (!refreshed) {
+                alert('Die gespeicherte Bewertung konnte nicht erneut aus dem Google Sheet geladen werden. Bitte Seite neu laden.');
+                return;
+            }
+
             if (isEditing) {
-                const review = editingRatingId !== null
+                const savedReview = editingRatingId !== null
                     ? bewertungen.find(b => String(b.id) === String(editingRatingId))
-                    : bewertungen.find(b => b.nutzerName === currentUser.name && Number(b.folgenNr) === Number(editingRatingOriginalNr));
-                if (review) {
-                    review.folgenNr = parseInt(nr);
-                    review.punkte = selectedPoints;
-                    review.kommentar = kommentar;
-                    review.datum = new Date().toISOString();
+                    : bewertungen.find(b => b.nutzerId === currentUser.id && Number(b.folgenNr) === Number(nr));
+                if (!savedReview || String(savedReview.punkte) !== String(selectedPoints) || String(savedReview.kommentar || '') !== String(kommentar || '')) {
+                    alert('Das Google Sheet hat die Änderung nicht übernommen. Prüfe, ob die aktualisierte doPost-Funktion mit updateRating veröffentlicht wurde.');
+                    return;
                 }
-            } else {
-                bewertungen.push({ id: Date.now(), nutzerId: currentUser.id, nutzerName: currentUser.name, folgenNr: parseInt(nr), punkte: selectedPoints, kommentar: kommentar, datum: new Date().toISOString() });
             }
             
             document.getElementById('rate-select').value = ""; document.getElementById('rate-comment').value = "";

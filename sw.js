@@ -1,8 +1,9 @@
-const CACHE_NAME = 'drei-fragezeichen-v1';
+const CACHE_NAME = 'drei-fragezeichen-v2';
 const ASSETS = [
-  './index.html',
-  './manifest.json',
-  './icon.png'
+    './index.html',
+    './manifest.json',
+    './dff_app_icon_192.png',
+    './dff_app_icon_512.png'
 ];
 
 self.addEventListener('install', event => {
