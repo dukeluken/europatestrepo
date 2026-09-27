@@ -107,6 +107,12 @@
         .profile-grade-legend { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(105px, 1fr)); gap: 8px 16px; }
         .profile-grade-legend li { display: flex; align-items: center; gap: 7px; font-size: 13px; }
         .profile-grade-swatch { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
+        .app-footer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 900; display: flex; justify-content: center; padding: 7px 12px; background: rgba(0,0,0,0.94); border-top: 1px solid var(--card-gray); }
+        .app-footer button { border: 0; background: transparent; color: var(--muted); font-size: 11px; text-decoration: underline; cursor: pointer; padding: 3px 8px; }
+        .legal-modal { max-width: 680px; max-height: 85vh; overflow-y: auto; }
+        .legal-modal p { margin: 0 0 14px; }
+        .legal-modal a { color: var(--cyan); }
+        .legal-note { color: var(--muted); font-size: 12px; }
         @media (max-width: 480px) { .profile-view { padding: 14px; } .profile-chart-layout { gap: 18px; } .profile-donut { width: 170px; height: 170px; } }
     </style>
 </head>
@@ -212,6 +218,22 @@
             </section>
         </div>
     </div>
+
+    <footer class="app-footer">
+        <button type="button" onclick="openImprint()">Impressum</button>
+    </footer>
+
+    <div class="modal-overlay" id="imprintModal" onclick="closeImprint()" aria-hidden="true">
+        <section class="modal-content legal-modal" role="dialog" aria-modal="true" aria-labelledby="imprint-title" onclick="event.stopPropagation()">
+            <div class="episode-reviews-heading">
+                <h2 id="imprint-title">Impressum &amp; Rechtehinweis</h2>
+                <button class="modal-close" type="button" aria-label="Schließen" onclick="closeImprint()">&times;</button>
+            </div>
+            <p>Diese App ist ein unabhängiges Fanprojekt und kein offizielles Angebot von Franckh-Kosmos, EUROPA oder Sony Music. Sie beansprucht keine Rechte an „Die drei ???“, den Figuren, Hörspielaufnahmen oder Coverabbildungen.</p>
+            <p>Die offiziellen Produktangaben nennen Franckh-Kosmos Verlags-GmbH &amp; Co. KG als Rechteinhaber der Marke „Die drei ???“. Die Hörspielaufnahmen werden mit „(P) &amp; © EUROPA a division of Sony Music Entertainment Germany GmbH“ gekennzeichnet. Coverillustrationen und Gestaltung werden den jeweiligen Künstlerinnen, Künstlern und Rechteinhabern zugeordnet. Die Rechte an den Inhalten liegen bei den jeweils genannten Rechteinhabern.</p>
+            <p class="legal-note">Quellen: <a href="https://www.play-europa.de/produktwelt/hoerspiele/die-drei-fragezeichen/" target="_blank" rel="noopener noreferrer">Offizielle EUROPA-Produktseite</a> · <a href="https://www.dreifragezeichen.de/impressum" target="_blank" rel="noopener noreferrer">Impressum der offiziellen Die drei ???-Website</a></p>
+        </section>
+    </div>
     <script>
         // --- PWA SERVICE WORKER REGISTRIERUNG ---
         if ('serviceWorker' in navigator) {
@@ -232,6 +254,20 @@
         let currentUser = { id: localStorage.getItem('d3_userId') || 'user_' + Math.random().toString(36).substr(2, 9), name: localStorage.getItem('d3_userName') || '' };
 
         window.onload = () => { initUser(); initRatingScale(); fetchData(); };
+
+        document.addEventListener('click', event => {
+            const profileLink = event.target.closest('.user-profile-link');
+            if (!profileLink) return;
+            event.preventDefault();
+            openUserProfile(profileLink.dataset.userId, profileLink.dataset.userName);
+        });
+        document.getElementById('episode-reviews-list').addEventListener('click', event => {
+            const profileLink = event.target.closest('.user-profile-link');
+            if (!profileLink) return;
+            event.preventDefault();
+            event.stopPropagation();
+            openUserProfile(profileLink.dataset.userId, profileLink.dataset.userName);
+        });
 
         function initUser() {
             if (!currentUser.name) openUserModal();
@@ -271,8 +307,37 @@
             });
         }
 
+        const SPECIAL_FALLBACK_IDS = new Map([
+            ['master of chess live unplugged', 'S-001'],
+            ['und der dreitag', 'S-002'],
+            ['brainwash gefangene gedanken', 'S-003'],
+            ['house of horrors haus der angst', 'S-004'],
+            ['high strung unter hochspannung', 'S-005'],
+            ['und die geisterlampe', 'S-006'],
+            ['der 5 advent', 'S-007'],
+            ['das ratsel der sieben', 'S-008'],
+            ['und der zeitgeist', 'S-009'],
+            ['stille nacht dustere nacht', 'S-010'],
+            ['das grab der inka mumie', 'S-011'],
+            ['und der tornadojager', 'S-012'],
+            ['und das kalte auge', 'S-013'],
+            ['und das versunkene schiff', 'S-014'],
+            ['und der dreiaugige totenkopf', 'S-015'],
+            ['o du finstere', 'S-016'],
+            ['eine schreckliche bescherung', 'S-017'],
+            ['erbe des drachen', 'S-018'],
+            ['boser die glocken nie klingen', 'S-019']
+        ]);
+
+        function episodeTitleKey(title) {
+            return String(title || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+        }
+
         function episodeId(episode) {
             if (episode && episode.folgeId) return String(episode.folgeId);
+            if (episode && String(episode.nr).toLowerCase() === 'special') {
+                return SPECIAL_FALLBACK_IDS.get(episodeTitleKey(episode.titel)) || '';
+            }
             const number = Number(episode && episode.nr);
             return Number.isInteger(number) && number > 0 ? `F-${String(number).padStart(3, '0')}` : '';
         }
@@ -285,6 +350,13 @@
 
         function ratingEpisodeId(review) {
             return episodeId(episodeForRating(review)) || String(review.folgenNr);
+        }
+
+        function isReviewForEpisode(review, episode) {
+            const id = episodeId(episode);
+            if (review.folgeId && id && String(review.folgeId) === id) return true;
+            if (String(episode.nr).toLowerCase() === 'special') return false;
+            return Number(review.folgenNr) === Number(episode.nr);
         }
 
         function episodeLabel(episode) {
@@ -438,7 +510,9 @@
         }
 
         function getStats(folgeId, nutzerName = null) {
-            const f = bewertungen.filter(b => ratingEpisodeId(b) === String(folgeId) && (!nutzerName || b.nutzerName === nutzerName));
+            const episode = stammdaten.find(item => episodeId(item) === String(folgeId))
+                || stammdaten.find(item => String(item.nr) === String(folgeId));
+            const f = bewertungen.filter(b => (episode ? isReviewForEpisode(b, episode) : ratingEpisodeId(b) === String(folgeId)) && (!nutzerName || b.nutzerName === nutzerName));
             if(f.length === 0) return { avg: '-', count: 0 };
             return { avg: (f.reduce((a, c) => a + parseInt(c.punkte), 0) / f.length).toFixed(1), count: f.length };
         }
@@ -478,8 +552,8 @@
             const c = document.getElementById('folgen-list'); c.innerHTML = '';
             
             const folgen = stammdaten.filter(f => f.titel.toLowerCase().includes(term) || String(f.nr).toLowerCase().includes(term) || episodeId(f).toLowerCase().includes(term))
-                .filter(f => !ratedOnly || bewertungen.some(b => ratingEpisodeId(b) === episodeId(f)))
-                .filter(f => selectedUser === 'all' || bewertungen.some(b => ratingEpisodeId(b) === episodeId(f) && b.nutzerName === selectedUser));
+                .filter(f => !ratedOnly || bewertungen.some(b => isReviewForEpisode(b, f)))
+                .filter(f => selectedUser === 'all' || bewertungen.some(b => isReviewForEpisode(b, f) && b.nutzerName === selectedUser));
             folgen.sort((a, b) => {
                 if (sortMode.startsWith('number')) {
                     const numberA = Number(a.nr), numberB = Number(b.nr);
@@ -503,7 +577,7 @@
                 const key = JSON.stringify(episodeId(f));
                 
                 c.innerHTML += `
-                    <div class="card list-item episode-card" role="button" tabindex="0" onclick="showEpisodeReviews(${key})" onkeydown="if(event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); showEpisodeReviews(${key}); }">
+                    <div class="card list-item episode-card" role="button" tabindex="0" data-episode-id="${escapeHtml(episodeId(f))}">
                         ${coverHTML}
                         <div style="flex: 1;">
                             <div style="font-size:12px; color:var(--muted);">${String(f.nr).toLowerCase() === 'special' ? 'Special' : `Folge ${f.nr}`} • ${f.jahr || ''}</div>
@@ -512,6 +586,18 @@
                         </div>
                         <button class="btn btn-action" style="padding: 10px; width: auto;" onclick="event.stopPropagation(); prefill(${key})">Bewerten</button>
                     </div>`;
+            });
+            c.querySelectorAll('.episode-card').forEach(card => {
+                const openReviews = () => showEpisodeReviews(card.dataset.episodeId);
+                card.addEventListener('click', event => {
+                    if (event.target.closest('button, a')) return;
+                    openReviews();
+                });
+                card.addEventListener('keydown', event => {
+                    if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) return;
+                    event.preventDefault();
+                    openReviews();
+                });
             });
         }
 
@@ -532,9 +618,6 @@
                         <div><span class="rating-tag">⭐ ${b.punkte}/10</span> <i style="margin-left:10px;">${b.kommentar || ''}</i></div>
                         ${isOwnReview ? `<button class="btn btn-primary" style="margin-top:15px;" onclick="editRating(${JSON.stringify(b.id ?? null)}, ${JSON.stringify(b.folgenNr)})">Review bearbeiten</button>` : ''}
                     </div>`;
-            });
-            c.querySelectorAll('.user-profile-link').forEach(button => {
-                button.addEventListener('click', () => openUserProfile(button.dataset.userId, button.dataset.userName));
             });
         }
 
@@ -717,7 +800,9 @@
             const title = document.getElementById('episode-reviews-title');
             const list = document.getElementById('episode-reviews-list');
             const modal = document.getElementById('episodeReviewsModal');
-            const reviews = bewertungen.filter(b => ratingEpisodeId(b) === (folge ? episodeId(folge) : String(folgeId)));
+            const reviews = folge
+                ? bewertungen.filter(review => isReviewForEpisode(review, folge))
+                : bewertungen.filter(review => String(review.folgeId || '') === String(folgeId));
 
             title.textContent = episodeLabel(folge);
             list.replaceChildren();
@@ -737,7 +822,8 @@
                     user.type = 'button';
                     user.className = 'user-profile-link';
                     user.textContent = review.nutzerName || 'Anonym';
-                    user.addEventListener('click', () => openUserProfile(review.nutzerId, review.nutzerName || 'Anonym'));
+                    user.dataset.userId = review.nutzerId || '';
+                    user.dataset.userName = review.nutzerName || 'Anonym';
                     const date = document.createElement('span');
                     date.className = 'episode-review-date';
                     date.textContent = review.datum ? new Date(review.datum).toLocaleDateString() : '';
@@ -762,6 +848,18 @@
 
         function closeEpisodeReviews() {
             const modal = document.getElementById('episodeReviewsModal');
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        function openImprint() {
+            const modal = document.getElementById('imprintModal');
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeImprint() {
+            const modal = document.getElementById('imprintModal');
             modal.classList.remove('active');
             modal.setAttribute('aria-hidden', 'true');
         }
