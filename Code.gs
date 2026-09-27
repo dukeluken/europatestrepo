@@ -2,8 +2,8 @@
  * Google Apps Script für Die drei ??? Ranking.
  *
  * Erwartete Tabellenblätter und Spalten:
- * Stammdaten: Folgenummer | Titel | Jahr | Cover
- * Bewertungen: ID | Nutzer-ID | Nutzername | Folgenummer | Punkte | Kommentar | Datum
+ * Stammdaten: Folgenummer | Titel | Jahr | Cover | Folge-ID
+ * Bewertungen: ID | Nutzer-ID | Nutzername | Folgenummer | Punkte | Kommentar | Datum | Folge-ID
  * Nutzer: ID | Name | Registriert am
  */
 
@@ -23,10 +23,18 @@ function doGet() {
         nr: row[0],
         titel: row[1],
         jahr: row[2],
-        cover: row[3] || ''
+        cover: row[3] || '',
+        folgeId: String(row[4] || '')
       };
     }),
     bewertungen: bewertungenRows.map(function (row) {
+      var folgeId = String(row[7] || '');
+      if (!folgeId) {
+        var matchingEpisode = stammdatenRows.find(function (episode) {
+          return String(episode[0]) === String(row[3]);
+        });
+        folgeId = matchingEpisode ? String(matchingEpisode[4] || '') : '';
+      }
       return {
         id: row[0],
         nutzerId: row[1],
@@ -34,7 +42,8 @@ function doGet() {
         folgenNr: row[3],
         punkte: row[4],
         kommentar: row[5],
-        datum: row[6]
+        datum: row[6],
+        folgeId: folgeId
       };
     }),
     nutzer: nutzerRows.map(function (row) {
@@ -76,7 +85,8 @@ function doPost(e) {
         rating.folgenNr,
         rating.punkte,
         rating.kommentar,
-        new Date().toISOString()
+        new Date().toISOString(),
+        rating.folgeId
       ]);
 
       return jsonOutput_({ status: 'success', action: 'addRating' });
@@ -99,7 +109,7 @@ function doPost(e) {
       }
 
       // Die Datenzeilen beginnen unter der Kopfzeile und umfassen die Spalten A bis G.
-      var rows = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
+      var rows = sheet.getRange(2, 1, lastRow - 1, 8).getValues();
       var targetRow = -1;
       var hasId = data.id !== undefined && data.id !== null && String(data.id) !== '';
 
@@ -146,6 +156,7 @@ function doPost(e) {
         update.kommentar,
         new Date().toISOString()
       ]]);
+      sheet.getRange(targetRow, 8).setValue(update.folgeId);
 
       return jsonOutput_({ status: 'success', action: 'updateRating', id: data.id || null });
     }
@@ -195,7 +206,7 @@ function autoFillCovers() {
     }
 
     var query = encodeURIComponent('Die drei ??? ' + folgeNr + ' ' + (titel || ''));
-    var url = 'https://itunes.apple.com/search?term=' + query + '&entity=album&limit=1';
+    var url = 'https://itunes.apple.com/search?term=' + query + '&entity=album&limit=20';
     var foundCover = false;
 
     // Begrenzte Wiederholungsversuche verhindern, dass ein dauerhaftes 429 endlos läuft.
@@ -206,8 +217,12 @@ function autoFillCovers() {
 
         if (statusCode === 200) {
           var json = JSON.parse(response.getContentText());
-          if (json.results && json.results.length > 0 && json.results[0].artworkUrl100) {
-            var coverUrl = json.results[0].artworkUrl100.replace('100x100bb', '600x600bb');
+          var match = (json.results || []).find(function (item) {
+            var albumTitle = String(item.collectionName || '');
+            return item.artworkUrl100 && albumTitle.toLowerCase().indexOf(String(titel || '').toLowerCase()) !== -1 && !/\b(?:liest|gelesen)\b/i.test(albumTitle);
+          });
+          if (match) {
+            var coverUrl = match.artworkUrl100.replace('100x100bb', '600x600bb');
             sheet.getRange(i + 1, 4).setValue(coverUrl);
             completed++;
             foundCover = true;
@@ -229,7 +244,7 @@ function autoFillCovers() {
     }
 
     if (!foundCover) {
-      failed.push(String(folgeNr));
+      failed.push(String(data[i][4] || folgeNr));
     }
     Utilities.sleep(1200);
   }
@@ -248,10 +263,19 @@ function getDataRows_(sheet) {
 }
 
 function validateRating_(data) {
-  var folgenNr = parseInt(data.folgenNr, 10);
+  var folgeId = String(data.folgeId || '');
+  var folgenNr = data.folgenNr;
+  var episode = null;
+  if (folgeId) {
+    var stammdaten = getDataRows_(SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Stammdaten'));
+    episode = stammdaten.find(function (row) { return String(row[4] || '') === folgeId; });
+    if (!episode) throw new Error('Unbekannte Folge-ID: ' + folgeId);
+    folgenNr = episode[0];
+  }
+  var parsedNr = parseInt(folgenNr, 10);
   var punkte = parseInt(data.punkte, 10);
 
-  if (!Number.isInteger(folgenNr) || folgenNr < 1) {
+  if (!folgeId && (!Number.isInteger(parsedNr) || parsedNr < 1)) {
     throw new Error('Ungültige Folgenummer.');
   }
   if (!Number.isInteger(punkte) || punkte < 1 || punkte > 10) {
@@ -259,7 +283,8 @@ function validateRating_(data) {
   }
 
   return {
-    folgenNr: folgenNr,
+    folgenNr: episode ? episode[0] : parsedNr,
+    folgeId: folgeId,
     punkte: punkte,
     kommentar: String(data.kommentar || '')
   };

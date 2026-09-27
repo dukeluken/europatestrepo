@@ -1,6 +1,7 @@
 import os
 import re
 import time
+import unicodedata
 import requests
 
 # Vollständige Folgenliste mit korrigierten Titeln (001 bis 241)
@@ -10,6 +11,8 @@ RAW_DATA = """
 
 OUTPUT_DIR = "ddf_covers"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby29VmixLkuJCz5MJeEpTT_KvldBhCHa7woDsY8tqatt_AgmkBLJFW4LeaUj-M2Ws118Q/exec"
+SPECIAL_COVER_PREFIX = "ddf_special_"
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
@@ -17,6 +20,13 @@ headers = {
 
 # Begriffe, die bei der Identifikation von Hauptserien-Folgen ausgeschlossen werden
 EXCLUDE_KEYWORDS = ["kids", "die drei ??? kids", "zum film", "original-hörspiel zum film", "adventskalender"]
+NARRATION_CREDIT = re.compile(r"\b(?:liest|gelesen)\b", re.IGNORECASE)
+
+def is_excluded_album(title: str, allow_special_variants: bool = False) -> bool:
+    if NARRATION_CREDIT.search(title or ""):
+        return True
+    keywords = ["kids", "die drei ??? kids"] if allow_special_variants else EXCLUDE_KEYWORDS
+    return any(keyword in (title or "").lower() for keyword in keywords)
 
 def clean_title_for_fallback(title: str) -> str:
     """Bereinigt Präfixe, Artikel und Bindestriche für eine flexible Zweitsuche."""
@@ -24,7 +34,16 @@ def clean_title_for_fallback(title: str) -> str:
     clean = re.sub(r'^(die|der|das)\s+', '', clean, flags=re.IGNORECASE)
     return clean.replace('-', ' ').strip()
 
-def search_deezer(search_term: str, target_title: str):
+def title_matches(candidate_title: str, target_title: str) -> bool:
+    """Matcht Titelwörter unabhängig von Artikeln, Satzzeichen und Wortreihenfolge."""
+    def tokens(value: str):
+        normalized = unicodedata.normalize("NFKD", value.replace("ß", "ss")).encode("ascii", "ignore").decode("ascii").lower()
+        return {token for token in re.findall(r"[a-z0-9]+", normalized) if token not in {"und", "der", "die", "das", "of", "and", "the"}}
+
+    target_tokens = tokens(target_title)
+    return bool(target_tokens) and target_tokens.issubset(tokens(candidate_title))
+
+def search_deezer(search_term: str, target_title: str, allow_special_variants: bool = False):
     """Sucht auf Deezer nach dem Cover."""
     url = f"https://api.deezer.com/search/album?q={requests.utils.quote(search_term)}"
     res = requests.get(url, headers=headers, timeout=10)
@@ -34,17 +53,17 @@ def search_deezer(search_term: str, target_title: str):
         album_title = album.get("title", "")
         album_lower = album_title.lower()
         
-        if any(bad in album_lower for bad in EXCLUDE_KEYWORDS):
+        if is_excluded_album(album_title, allow_special_variants):
             continue
             
         cleaned_target = clean_title_for_fallback(target_title).lower()
-        if target_title.lower() in album_lower or cleaned_target in album_lower:
+        if title_matches(album_title, target_title) or target_title.lower() in album_lower or cleaned_target in album_lower:
             cover_url = album.get("cover_xl") or album.get("cover_big")
             if cover_url:
                 return cover_url
     return None
 
-def search_itunes(search_term: str, target_title: str):
+def search_itunes(search_term: str, target_title: str, allow_special_variants: bool = False):
     """Fallback-Suche auf iTunes."""
     url = f"https://itunes.apple.com/search?term={requests.utils.quote(search_term)}&country=de&media=music&entity=album&limit=10"
     res = requests.get(url, headers=headers, timeout=10)
@@ -54,11 +73,11 @@ def search_itunes(search_term: str, target_title: str):
         name = item.get("collectionName", "")
         name_lower = name.lower()
         
-        if any(bad in name_lower for bad in EXCLUDE_KEYWORDS):
+        if is_excluded_album(name, allow_special_variants):
             continue
             
         cleaned_target = clean_title_for_fallback(target_title).lower()
-        if target_title.lower() in name_lower or cleaned_target in name_lower:
+        if title_matches(name, target_title) or target_title.lower() in name_lower or cleaned_target in name_lower:
             artwork = item.get("artworkUrl100", "")
             if artwork:
                 return artwork.replace("100x100bb.jpg", "1400x1400bb.jpg")
@@ -98,3 +117,42 @@ for nummer, titel in folgen:
     time.sleep(0.15)
 
 print(f"\n🎉 Fertig! Alle verfügbaren Cover liegen im Ordner '{OUTPUT_DIR}'.")
+
+def fetch_specials():
+    """Lädt Special-Folgen inklusive IDs aus dem veröffentlichten Apps-Script-Endpoint."""
+    response = requests.get(GOOGLE_SCRIPT_URL, headers=headers, timeout=20)
+    response.raise_for_status()
+    payload = response.json()
+    return [
+        episode for episode in payload.get("stammdaten", [])
+        if str(episode.get("nr", "")).strip().lower() == "special"
+        and str(episode.get("titel", "")).strip()
+    ]
+
+try:
+    specials = fetch_specials()
+    print(f"\nSonderfolgen: {len(specials)} gefunden.")
+    for episode in specials:
+        episode_id = str(episode["folgeId"]).strip()
+        safe_id = re.sub(r"[^A-Za-z0-9_-]", "_", episode_id)
+        title = str(episode["titel"]).strip()
+        filepath = os.path.join(OUTPUT_DIR, f"{SPECIAL_COVER_PREFIX}{safe_id}.jpg")
+
+        cover_url = search_deezer(f"Die drei ??? {title}", title, allow_special_variants=True)
+        if not cover_url:
+            cover_url = search_itunes(f"Die drei Fragezeichen {title}", title, allow_special_variants=True)
+
+        if cover_url:
+            try:
+                image_response = requests.get(cover_url, headers=headers, timeout=15)
+                image_response.raise_for_status()
+                with open(filepath, "wb") as image_file:
+                    image_file.write(image_response.content)
+                print(f"Sonderfolge {episode_id} - {title}: Cover gespeichert.")
+            except Exception as error:
+                print(f"Fehler beim Speichern von {episode_id} ({title}): {error}")
+        else:
+            print(f"Kein Cover gefunden: {episode_id} ({title})")
+        time.sleep(0.2)
+except Exception as error:
+    print(f"Sonderfolgen konnten nicht geladen werden: {error}")

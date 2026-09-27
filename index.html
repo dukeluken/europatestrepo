@@ -48,6 +48,10 @@
         
         .btn { background: var(--card-gray); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 12px 20px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        button, .music-link { transition: transform 90ms ease, filter 120ms ease, border-color 120ms ease; }
+        button:not(:disabled):hover, .music-link:hover { filter: brightness(1.08); }
+        button:not(:disabled):active, .music-link:active { transform: scale(0.97); filter: brightness(0.82); }
+        button:focus-visible, .music-link:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
         .btn-primary { background: var(--cyan); color: var(--black); border: none; }
         .btn-action { background: var(--red); color: white; border: none; }
         
@@ -80,6 +84,30 @@
         .episode-review-header { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
         .episode-review-date { color: var(--muted); font-size: 12px; }
         .episode-review-comment { margin-top: 8px; overflow-wrap: anywhere; }
+        .user-profile-link { color: var(--cyan); background: transparent; border: 0; padding: 0; margin: 0; width: auto; text-align: left; font: inherit; font-weight: 700; cursor: pointer; overflow-wrap: anywhere; }
+        .profile-view { display: none; position: fixed; inset: 0; z-index: 1200; overflow-y: auto; padding: 20px; background: var(--black); }
+        .profile-view.active { display: block; }
+        .profile-view-inner { max-width: 850px; margin: 0 auto; padding-bottom: 30px; }
+        .profile-back-btn { max-width: 180px; }
+        .profile-heading { margin: 15px 0 20px; }
+        .profile-heading h1 { font-family: 'Anton', sans-serif; font-size: 30px; }
+        .profile-stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 15px; }
+        .profile-stat { background: var(--dark-gray); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 18px; }
+        .profile-stat-label { color: var(--muted); font-size: 13px; }
+        .profile-stat-value { display: block; color: var(--cyan); font-size: 28px; font-weight: 800; }
+        .profile-top-list { padding-left: 24px; }
+        .profile-top-list li { padding: 7px 0; }
+        .profile-top-score { color: var(--cyan); font-weight: 700; margin-left: 8px; }
+        .profile-top-date { color: var(--muted); font-size: 11px; margin-left: 8px; }
+        .profile-chart-layout { display: flex; align-items: center; justify-content: center; gap: 28px; flex-wrap: wrap; }
+        .profile-donut { width: 190px; height: 190px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto; }
+        .profile-donut-center { width: 112px; height: 112px; border-radius: 50%; background: var(--dark-gray); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .profile-donut-average { font-size: 25px; font-weight: 800; }
+        .profile-donut-caption { color: var(--muted); font-size: 11px; }
+        .profile-grade-legend { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(105px, 1fr)); gap: 8px 16px; }
+        .profile-grade-legend li { display: flex; align-items: center; gap: 7px; font-size: 13px; }
+        .profile-grade-swatch { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
+        @media (max-width: 480px) { .profile-view { padding: 14px; } .profile-chart-layout { gap: 18px; } .profile-donut { width: 170px; height: 170px; } }
     </style>
 </head>
 <body>
@@ -160,6 +188,30 @@
         </div>
     </div>
 
+
+    <div class="profile-view" id="user-profile-view" aria-hidden="true">
+        <div class="profile-view-inner">
+            <button class="btn profile-back-btn" type="button" onclick="closeUserProfile()">← Zurück</button>
+            <div class="profile-heading"><h1 id="profile-user-name">Profil</h1></div>
+            <div class="profile-stats-grid">
+                <div class="profile-stat"><span class="profile-stat-label">Bewertete Folgen</span><strong class="profile-stat-value" id="profile-rated-count">0</strong><span class="profile-stat-label" id="profile-rated-percent">0 % aller Folgen</span></div>
+                <div class="profile-stat"><span class="profile-stat-label">Durchschnitt</span><strong class="profile-stat-value" id="profile-average">–</strong></div>
+            </div>
+            <section class="card">
+                <h2>Top 3 Bewertungen</h2>
+                <ol class="profile-top-list" id="profile-top-list"></ol>
+            </section>
+            <section class="card">
+                <h2>Notenverteilung</h2>
+                <div class="profile-chart-layout">
+                    <div class="profile-donut" id="profile-donut" role="img" aria-label="Verteilung der vergebenen Noten">
+                        <div class="profile-donut-center"><strong class="profile-donut-average" id="profile-donut-average">–</strong><span class="profile-donut-caption">Durchschnitt</span></div>
+                    </div>
+                    <ul class="profile-grade-legend" id="profile-grade-legend"></ul>
+                </div>
+            </section>
+        </div>
+    </div>
     <script>
         // --- PWA SERVICE WORKER REGISTRIERUNG ---
         if ('serviceWorker' in navigator) {
@@ -176,6 +228,7 @@
         let stammdaten = [], bewertungen = [], nutzer = [];
         let selectedPoints = 0, dailyFolge = null, editingRatingId = null, editingRatingOriginalNr = null, editingRatingOwnerId = null;
         let shuffleResetTimer = null;
+        let ratingSaveInProgress = false;
         let currentUser = { id: localStorage.getItem('d3_userId') || 'user_' + Math.random().toString(36).substr(2, 9), name: localStorage.getItem('d3_userName') || '' };
 
         window.onload = () => { initUser(); initRatingScale(); fetchData(); };
@@ -194,7 +247,8 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            const activeButton = [...document.querySelectorAll('.tab-btn')].find(button => button.getAttribute('onclick') === `switchTab('${tabId}')`);
+            if (activeButton) activeButton.classList.add('active');
             document.getElementById(tabId).classList.add('active');
             if(tabId === 'tab-daily') generateDailyCase();
         }
@@ -213,8 +267,31 @@
             const sel = document.getElementById('rate-select');
             sel.innerHTML = '<option value="">-- Folge auswählen --</option>';
             stammdaten.forEach(f => {
-                let opt = document.createElement('option'); opt.value = f.nr; opt.textContent = `Folge ${f.nr}: ${f.titel}`; sel.appendChild(opt);
+                let opt = document.createElement('option'); opt.value = episodeId(f); opt.textContent = episodeLabel(f); sel.appendChild(opt);
             });
+        }
+
+        function episodeId(episode) {
+            if (episode && episode.folgeId) return String(episode.folgeId);
+            const number = Number(episode && episode.nr);
+            return Number.isInteger(number) && number > 0 ? `F-${String(number).padStart(3, '0')}` : '';
+        }
+
+        function episodeForRating(review) {
+            const id = String(review.folgeId || '');
+            return stammdaten.find(episode => id && episodeId(episode) === id)
+                || stammdaten.find(episode => String(episode.nr) === String(review.folgenNr));
+        }
+
+        function ratingEpisodeId(review) {
+            return episodeId(episodeForRating(review)) || String(review.folgenNr);
+        }
+
+        function episodeLabel(episode) {
+            if (!episode) return 'Unbekannt';
+            return String(episode.nr).toLowerCase() === 'special'
+                ? `Special: ${episode.titel}`
+                : `Folge ${episode.nr}: ${episode.titel}`;
         }
 
         function updateUserFilter() {
@@ -239,16 +316,42 @@
             }
         }
 
+        function setRatingFormSaving(isSaving) {
+            const submitButton = document.getElementById('rating-submit-btn');
+            submitButton.disabled = isSaving;
+            submitButton.textContent = isSaving
+                ? 'Speichere…'
+                : (editingRatingOriginalNr !== null ? 'Änderungen speichern' : '📝 Bewertung abgeben');
+            document.getElementById('rating-cancel-edit-btn').disabled = isSaving;
+            document.getElementById('rate-select').disabled = isSaving;
+            document.getElementById('rate-comment').disabled = isSaving;
+            document.querySelectorAll('.rating-btn').forEach(button => { button.disabled = isSaving; });
+        }
+
         async function submitRating() {
-            const nr = document.getElementById('rate-select').value;
+            if (ratingSaveInProgress) return;
+
+            const folgeId = document.getElementById('rate-select').value;
+            const episode = stammdaten.find(item => episodeId(item) === folgeId);
             const kommentar = document.getElementById('rate-comment').value;
-            if(!currentUser.name || !nr || selectedPoints === 0) return alert("Bitte alles ausfüllen!");
+            if (!currentUser.name || !episode || selectedPoints === 0) return alert('Bitte alle Felder ausfüllen!');
 
             const isEditing = editingRatingOriginalNr !== null;
-            const payload = { action: isEditing ? 'updateRating' : 'addRating', nutzerId: isEditing ? editingRatingOwnerId : currentUser.id, nutzerName: currentUser.name, folgenNr: parseInt(nr), punkte: selectedPoints, kommentar: kommentar };
+            const payload = {
+                action: isEditing ? 'updateRating' : 'addRating',
+                nutzerId: isEditing ? editingRatingOwnerId : currentUser.id,
+                nutzerName: currentUser.name,
+                folgenNr: episode.nr,
+                folgeId: folgeId,
+                punkte: selectedPoints,
+                kommentar: kommentar
+            };
             if (isEditing) payload.originalFolgenNr = editingRatingOriginalNr;
             if (editingRatingId !== null) payload.id = editingRatingId;
-            
+
+            ratingSaveInProgress = true;
+            setRatingFormSaving(true);
+
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
@@ -258,47 +361,62 @@
                 });
             } catch (err) {
                 console.error('Bewertung konnte nicht gesendet werden:', err);
+                ratingSaveInProgress = false;
+                setRatingFormSaving(false);
                 alert('Die Bewertung konnte nicht an das Google Sheet gesendet werden. Bitte Verbindung prüfen und erneut versuchen.');
                 return;
             }
 
-            const refreshed = await fetchData();
-            if (!refreshed) {
-                alert('Die gespeicherte Bewertung konnte nicht erneut aus dem Google Sheet geladen werden. Bitte Seite neu laden.');
-                return;
+            if (isEditing) {
+                const review = editingRatingId !== null
+                    ? bewertungen.find(b => String(b.id) === String(editingRatingId))
+                    : bewertungen.find(b => String(b.nutzerId) === String(editingRatingOwnerId) && String(b.folgenNr) === String(editingRatingOriginalNr));
+                if (review) {
+                    review.folgenNr = episode.nr;
+                    review.folgeId = folgeId;
+                    review.punkte = selectedPoints;
+                    review.kommentar = kommentar;
+                    review.datum = new Date().toISOString();
+                    review.nutzerName = currentUser.name;
+                }
+            } else {
+                bewertungen.push({
+                    id: Date.now(),
+                    nutzerId: currentUser.id,
+                    nutzerName: currentUser.name,
+                    folgenNr: episode.nr,
+                    folgeId: folgeId,
+                    punkte: selectedPoints,
+                    kommentar: kommentar,
+                    datum: new Date().toISOString()
+                });
             }
 
-            if (isEditing) {
-                const savedReview = editingRatingId !== null
-                    ? bewertungen.find(b => String(b.id) === String(editingRatingId))
-                    : bewertungen.find(b => String(b.nutzerId) === String(editingRatingOwnerId) && Number(b.folgenNr) === Number(nr));
-                if (!savedReview || String(savedReview.punkte) !== String(selectedPoints) || String(savedReview.kommentar || '') !== String(kommentar || '')) {
-                    alert('Das Google Sheet hat die Änderung nicht übernommen. Prüfe, ob die aktualisierte doPost-Funktion mit updateRating veröffentlicht wurde.');
-                    return;
-                }
-            }
-            
-            document.getElementById('rate-select').value = ""; document.getElementById('rate-comment').value = "";
-            selectedPoints = 0; document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+            document.getElementById('rate-select').value = '';
+            document.getElementById('rate-comment').value = '';
+            selectedPoints = 0;
+            document.querySelectorAll('.rating-btn').forEach(button => button.classList.remove('selected'));
             editingRatingId = null;
             editingRatingOriginalNr = null;
             editingRatingOwnerId = null;
-            document.getElementById('rating-submit-btn').textContent = 'Bewertung abgeben';
-            document.getElementById('rating-cancel-edit-btn').style.display = 'none';
-            
-            updateUserFilter(); renderReviews(); renderFolgenList(); switchTab('tab-reviews');
-        }
+            ratingSaveInProgress = false;
+            setRatingFormSaving(false);
 
+            updateUserFilter();
+            renderReviews();
+            renderFolgenList();
+            switchTab('tab-reviews');
+        }
         function editRating(id, folgenNr) {
             const review = id !== null
                 ? bewertungen.find(b => String(b.id) === String(id))
-                : bewertungen.find(b => Number(b.folgenNr) === Number(folgenNr) && (b.nutzerId === currentUser.id || b.nutzerName === currentUser.name));
+                : bewertungen.find(b => String(b.folgenNr) === String(folgenNr) && (b.nutzerId === currentUser.id || b.nutzerName === currentUser.name));
             if (!review || (review.nutzerId !== currentUser.id && review.nutzerName !== currentUser.name)) return;
 
             editingRatingId = review.id ?? null;
             editingRatingOriginalNr = review.folgenNr;
             editingRatingOwnerId = review.nutzerId || currentUser.id;
-            document.getElementById('rate-select').value = review.folgenNr;
+            document.getElementById('rate-select').value = ratingEpisodeId(review);
             document.getElementById('rate-comment').value = review.kommentar || '';
             selectedPoints = parseInt(review.punkte, 10);
             document.querySelectorAll('.rating-btn').forEach((button, index) => button.classList.toggle('selected', index + 1 === selectedPoints));
@@ -319,26 +437,29 @@
             document.getElementById('rating-cancel-edit-btn').style.display = 'none';
         }
 
-        function getStats(nr, nutzerName = null) {
-            const f = bewertungen.filter(b => b.folgenNr === nr && (!nutzerName || b.nutzerName === nutzerName));
+        function getStats(folgeId, nutzerName = null) {
+            const f = bewertungen.filter(b => ratingEpisodeId(b) === String(folgeId) && (!nutzerName || b.nutzerName === nutzerName));
             if(f.length === 0) return { avg: '-', count: 0 };
             return { avg: (f.reduce((a, c) => a + parseInt(c.punkte), 0) / f.length).toFixed(1), count: f.length };
         }
 
-        function prefill(nr) { document.getElementById('rate-select').value = nr; switchTab('tab-rate'); }
+        function prefill(folgeId) { document.getElementById('rate-select').value = folgeId; switchTab('tab-rate'); }
 
-        function getCoverUrl(nr) {
-            return `./ddf_covers/ddf_folge_${String(nr).padStart(3, '0')}.jpg`;
+        function getCoverUrl(episode) {
+            if (String(episode.nr).toLowerCase() === 'special') {
+                const safeId = episodeId(episode).replace(/[^A-Za-z0-9_-]/g, '_');
+                return `./ddf_covers/ddf_special_${safeId}.jpg`;
+            }
+            return `./ddf_covers/ddf_folge_${String(episode.nr).padStart(3, '0')}.jpg`;
         }
 
         function getMusicLinks(folge) {
-            const query = encodeURIComponent(`Die drei ??? Folge ${folge.nr} ${folge.titel}`);
+            const query = encodeURIComponent(`${String(folge.nr).toLowerCase() === 'special' ? 'Die drei ???' : `Die drei ??? Folge ${folge.nr}`} ${folge.titel}`);
             return `<div class="music-links">
                 <a class="music-link" href="https://open.spotify.com/search/${query}" target="_blank" rel="noopener noreferrer">Spotify</a>
                 <a class="music-link" href="https://music.apple.com/de/search?term=${query}" target="_blank" rel="noopener noreferrer">Apple Music</a>
             </div>`;
         }
-
         function showCoverFallback(image) {
             const fallback = document.createElement('div');
             fallback.className = image.className;
@@ -356,32 +477,40 @@
             const sortMode = document.getElementById('list-sort').value;
             const c = document.getElementById('folgen-list'); c.innerHTML = '';
             
-            const folgen = stammdaten.filter(f => f.titel.toLowerCase().includes(term) || f.nr.toString().includes(term))
-                .filter(f => !ratedOnly || bewertungen.some(b => b.folgenNr === f.nr))
-                .filter(f => selectedUser === 'all' || bewertungen.some(b => b.folgenNr === f.nr && b.nutzerName === selectedUser));
+            const folgen = stammdaten.filter(f => f.titel.toLowerCase().includes(term) || String(f.nr).toLowerCase().includes(term) || episodeId(f).toLowerCase().includes(term))
+                .filter(f => !ratedOnly || bewertungen.some(b => ratingEpisodeId(b) === episodeId(f)))
+                .filter(f => selectedUser === 'all' || bewertungen.some(b => ratingEpisodeId(b) === episodeId(f) && b.nutzerName === selectedUser));
             folgen.sort((a, b) => {
-                if (sortMode.startsWith('number')) return (a.nr - b.nr) * (sortMode.endsWith('desc') ? -1 : 1);
-                const ratingA = parseFloat(getStats(a.nr, selectedUser === 'all' ? null : selectedUser).avg);
-                const ratingB = parseFloat(getStats(b.nr, selectedUser === 'all' ? null : selectedUser).avg);
+                if (sortMode.startsWith('number')) {
+                    const numberA = Number(a.nr), numberB = Number(b.nr);
+                    const hasNumberA = Number.isFinite(numberA), hasNumberB = Number.isFinite(numberB);
+                    if (!hasNumberA && !hasNumberB) return a.titel.localeCompare(b.titel);
+                    if (!hasNumberA) return 1;
+                    if (!hasNumberB) return -1;
+                    return (numberA - numberB) * (sortMode.endsWith('desc') ? -1 : 1);
+                }
+                const ratingA = parseFloat(getStats(episodeId(a), selectedUser === 'all' ? null : selectedUser).avg);
+                const ratingB = parseFloat(getStats(episodeId(b), selectedUser === 'all' ? null : selectedUser).avg);
                 const valueA = Number.isNaN(ratingA) ? (sortMode.endsWith('asc') ? Infinity : -Infinity) : ratingA;
                 const valueB = Number.isNaN(ratingB) ? (sortMode.endsWith('asc') ? Infinity : -Infinity) : ratingB;
                 return (valueA - valueB) * (sortMode.endsWith('desc') ? -1 : 1);
             });
 
             folgen.forEach(f => {
-                const s = getStats(f.nr, selectedUser === 'all' ? null : selectedUser);
+                const s = getStats(episodeId(f), selectedUser === 'all' ? null : selectedUser);
                 // Cover-Fallback falls keine URL eingetragen wurde
-                const coverHTML = `<img src="${getCoverUrl(f.nr)}" class="cover-img-list" alt="Cover Folge ${f.nr}" onerror="showCoverFallback(this)">`;
+                const coverHTML = `<img src="${getCoverUrl(f)}" class="cover-img-list" alt="Cover ${episodeLabel(f)}" onerror="showCoverFallback(this)">`;
+                const key = JSON.stringify(episodeId(f));
                 
                 c.innerHTML += `
-                    <div class="card list-item episode-card" role="button" tabindex="0" onclick="showEpisodeReviews(${JSON.stringify(f.nr)})" onkeydown="if(event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); showEpisodeReviews(${JSON.stringify(f.nr)}); }">
+                    <div class="card list-item episode-card" role="button" tabindex="0" onclick="showEpisodeReviews(${key})" onkeydown="if(event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); showEpisodeReviews(${key}); }">
                         ${coverHTML}
                         <div style="flex: 1;">
-                            <div style="font-size:12px; color:var(--muted);">Folge ${f.nr} • ${f.jahr}</div>
+                            <div style="font-size:12px; color:var(--muted);">${String(f.nr).toLowerCase() === 'special' ? 'Special' : `Folge ${f.nr}`} • ${f.jahr || ''}</div>
                             <h3 style="font-size:16px; margin:5px 0;">${f.titel}</h3>
                             <div class="rating-tag">⭐ ${s.avg} (${s.count})</div>
                         </div>
-                        <button class="btn btn-action" style="padding: 10px; width: auto;" onclick="event.stopPropagation(); prefill(${f.nr})">Bewerten</button>
+                        <button class="btn btn-action" style="padding: 10px; width: auto;" onclick="event.stopPropagation(); prefill(${key})">Bewerten</button>
                     </div>`;
             });
         }
@@ -391,18 +520,21 @@
             const c = document.getElementById('reviews-list'); c.innerHTML = '';
             
             [...bewertungen].reverse().filter(b => u === 'all' || b.nutzerName === u).forEach(b => {
-                const f = stammdaten.find(x => x.nr === b.folgenNr);
+                const f = episodeForRating(b);
                 const t = f ? f.titel : 'Unbekannt';
                 const isOwnReview = b.nutzerId === currentUser.id || b.nutzerName === currentUser.name;
                 c.innerHTML += `
                     <div class="card">
                         <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <b style="color:var(--cyan)">👤 ${b.nutzerName}</b> <span style="color:var(--muted); font-size:12px;">${new Date(b.datum).toLocaleDateString()}</span>
+                            <button type="button" class="user-profile-link" data-user-id="${escapeHtml(b.nutzerId || '')}" data-user-name="${escapeHtml(b.nutzerName || 'Anonym')}">👤 ${escapeHtml(b.nutzerName || 'Anonym')}</button> <span style="color:var(--muted); font-size:12px;">${new Date(b.datum).toLocaleDateString()}</span>
                         </div>
-                        <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">Folge ${b.folgenNr}: ${t}</div>
+                        <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">${episodeLabel(f) || `Folge ${b.folgenNr}`}</div>
                         <div><span class="rating-tag">⭐ ${b.punkte}/10</span> <i style="margin-left:10px;">${b.kommentar || ''}</i></div>
                         ${isOwnReview ? `<button class="btn btn-primary" style="margin-top:15px;" onclick="editRating(${JSON.stringify(b.id ?? null)}, ${JSON.stringify(b.folgenNr)})">Review bearbeiten</button>` : ''}
                     </div>`;
+            });
+            c.querySelectorAll('.user-profile-link').forEach(button => {
+                button.addEventListener('click', () => openUserProfile(button.dataset.userId, button.dataset.userName));
             });
         }
 
@@ -473,14 +605,121 @@
             button.textContent = `🔄 Neu Mischen (${hours}:${minutes}:${seconds})`;
             shuffleResetTimer = setTimeout(() => updateShuffleControls(getDailyState()), Math.min(1000, Math.max(1, millisecondsLeft)));
         }
-        function showEpisodeReviews(nr) {
-            const folge = stammdaten.find(f => String(f.nr) === String(nr));
+        function escapeHtml(value) {
+            return String(value == null ? '' : value).replace(/[&<>"']/g, character => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[character]);
+        }
+
+        function openUserProfile(userId, userName) {
+            const hasUserId = userId !== null && userId !== undefined && String(userId) !== '';
+            const name = String(userName || 'Anonym');
+            const userRatings = bewertungen.filter(review => {
+                if (hasUserId && review.nutzerId !== undefined && review.nutzerId !== null && String(review.nutzerId) !== '') {
+                    return String(review.nutzerId) === String(userId);
+                }
+                return String(review.nutzerName || 'Anonym') === name;
+            });
+
+            const latestByEpisode = new Map();
+            userRatings
+                .slice()
+                .sort((a, b) => new Date(b.datum || 0) - new Date(a.datum || 0))
+                .forEach(review => {
+                    const episodeKey = ratingEpisodeId(review);
+                    if (!latestByEpisode.has(episodeKey)) latestByEpisode.set(episodeKey, review);
+                });
+
+            const episodeRatings = [...latestByEpisode.values()];
+            const validRatings = episodeRatings.filter(review => {
+                const points = Number(review.punkte);
+                return Number.isInteger(points) && points >= 1 && points <= 10;
+            });
+            const average = validRatings.length
+                ? (validRatings.reduce((sum, review) => sum + Number(review.punkte), 0) / validRatings.length).toFixed(1)
+                : '–';
+            const gradeCounts = Array(10).fill(0);
+            validRatings.forEach(review => { gradeCounts[Number(review.punkte) - 1]++; });
+
+            document.getElementById('profile-user-name').textContent = name;
+            document.getElementById('profile-rated-count').textContent = String(episodeRatings.length);
+            const ratedPercent = stammdaten.length ? (episodeRatings.length / stammdaten.length * 100).toFixed(1) : '0.0';
+            document.getElementById('profile-rated-percent').textContent = `${ratedPercent} % aller Folgen`;
+            document.getElementById('profile-average').textContent = average;
+            document.getElementById('profile-donut-average').textContent = average;
+
+            const topList = document.getElementById('profile-top-list');
+            topList.replaceChildren();
+            validRatings
+                .slice()
+                .sort((a, b) => Number(b.punkte) - Number(a.punkte) || new Date(b.datum || 0) - new Date(a.datum || 0))
+                .filter((review, index, sorted) => index < 3 || Number(review.punkte) === Number(sorted[2].punkte))
+                .forEach(review => {
+                    const episode = episodeForRating(review);
+                    const listItem = document.createElement('li');
+                    listItem.textContent = episodeLabel(episode);
+                    const score = document.createElement('span');
+                    score.className = 'profile-top-score';
+                    score.textContent = `${review.punkte}/10`;
+                    listItem.appendChild(score);
+                    const date = document.createElement('small');
+                    date.className = 'profile-top-date';
+                    const reviewDate = new Date(review.datum);
+                    date.textContent = Number.isNaN(reviewDate.getTime()) ? '' : reviewDate.toLocaleDateString();
+                    listItem.appendChild(date);
+                    topList.appendChild(listItem);
+                });
+            if (validRatings.length === 0) {
+                const empty = document.createElement('li');
+                empty.textContent = 'Noch keine Bewertungen vorhanden.';
+                topList.appendChild(empty);
+            }
+
+            const gradeColors = ['#ED1C24', '#F04438', '#F97316', '#FACC15', '#A3E635', '#22C55E', '#2DD4BF', '#00AEEF', '#168BD2', '#235B9B'];
+            const total = gradeCounts.reduce((sum, count) => sum + count, 0);
+            let degrees = 0;
+            const segments = gradeCounts.map((count, index) => {
+                const start = degrees;
+                degrees += total ? count / total * 360 : 0;
+                return `${gradeColors[index]} ${start}deg ${degrees}deg`;
+            });
+            document.getElementById('profile-donut').style.background = total
+                ? `conic-gradient(${segments.join(', ')})`
+                : 'conic-gradient(var(--card-gray) 0deg 360deg)';
+
+            const legend = document.getElementById('profile-grade-legend');
+            legend.replaceChildren();
+            gradeCounts.forEach((count, index) => {
+                const item = document.createElement('li');
+                const swatch = document.createElement('span');
+                swatch.className = 'profile-grade-swatch';
+                swatch.style.backgroundColor = gradeColors[index];
+                const label = document.createElement('span');
+                const percent = total ? (count / total * 100).toFixed(1) : '0.0';
+                label.textContent = `${index + 1}: ${count} (${percent} %)`;
+                item.append(swatch, label);
+                legend.appendChild(item);
+            });
+
+            const profileView = document.getElementById('user-profile-view');
+            profileView.classList.add('active');
+            profileView.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeUserProfile() {
+            const profileView = document.getElementById('user-profile-view');
+            profileView.classList.remove('active');
+            profileView.setAttribute('aria-hidden', 'true');
+        }
+        function showEpisodeReviews(folgeId) {
+            const folge = stammdaten.find(f => episodeId(f) === String(folgeId))
+                || stammdaten.find(f => String(f.nr) === String(folgeId));
             const title = document.getElementById('episode-reviews-title');
             const list = document.getElementById('episode-reviews-list');
             const modal = document.getElementById('episodeReviewsModal');
-            const reviews = bewertungen.filter(b => String(b.folgenNr) === String(nr));
+            const reviews = bewertungen.filter(b => ratingEpisodeId(b) === (folge ? episodeId(folge) : String(folgeId)));
 
-            title.textContent = folge ? `Folge ${folge.nr}: ${folge.titel}` : `Folge ${nr}`;
+            title.textContent = episodeLabel(folge);
             list.replaceChildren();
 
             if (reviews.length === 0) {
@@ -494,9 +733,11 @@
 
                     const header = document.createElement('div');
                     header.className = 'episode-review-header';
-                    const user = document.createElement('strong');
-                    user.style.color = 'var(--cyan)';
+                    const user = document.createElement('button');
+                    user.type = 'button';
+                    user.className = 'user-profile-link';
                     user.textContent = review.nutzerName || 'Anonym';
+                    user.addEventListener('click', () => openUserProfile(review.nutzerId, review.nutzerName || 'Anonym'));
                     const date = document.createElement('span');
                     date.className = 'episode-review-date';
                     date.textContent = review.datum ? new Date(review.datum).toLocaleDateString() : '';
@@ -530,32 +771,34 @@
             if (stammdaten.length === 0) return c.innerHTML = 'Lade Daten...';
 
             const state = getDailyState();
-            dailyFolge = stammdaten.find(f => String(f.nr) === String(state.selectedNr)) || null;
+            dailyFolge = stammdaten.find(f => episodeId(f) === String(state.selectedNr))
+                || stammdaten.find(f => String(f.nr) === String(state.selectedNr)) || null;
             if (!dailyFolge) {
-                const done = bewertungen.filter(b => b.nutzerName === currentUser.name).map(b => String(b.folgenNr));
-                const open = stammdaten.filter(f => !done.includes(String(f.nr)));
+                const done = bewertungen.filter(b => b.nutzerName === currentUser.name).map(ratingEpisodeId);
+                const open = stammdaten.filter(f => !done.includes(episodeId(f)));
                 if (open.length === 0) {
                     updateShuffleControls(state);
                     return c.innerHTML = '<h3>Alle Folgen bewertet!</h3>';
                 }
                 dailyFolge = open[Math.floor(Math.random() * open.length)];
-                state.selectedNr = dailyFolge.nr;
+                state.selectedNr = episodeId(dailyFolge);
                 state.selectedAt = Date.now();
                 saveDailyState(state);
             }
 
             updateShuffleControls(state);
-            const s = getStats(dailyFolge.nr);
-            const coverHTML = `<img src="${getCoverUrl(dailyFolge.nr)}" class="cover-img-daily" alt="Cover Folge ${dailyFolge.nr}" onerror="showCoverFallback(this)">`;
+            const s = getStats(episodeId(dailyFolge));
+            const coverHTML = `<img src="${getCoverUrl(dailyFolge)}" class="cover-img-daily" alt="Cover ${episodeLabel(dailyFolge)}" onerror="showCoverFallback(this)">`;
             const musicLinksHTML = getMusicLinks(dailyFolge);
+            const dailyEpisodeId = JSON.stringify(episodeId(dailyFolge));
 
             c.innerHTML = `
                 ${coverHTML}
                 ${musicLinksHTML}
-                <div style="color: var(--muted); font-size:14px; font-weight:bold;">FOLGE ${dailyFolge.nr} • ${dailyFolge.jahr}</div>
+                <div style="color: var(--muted); font-size:14px; font-weight:bold;">${String(dailyFolge.nr).toLowerCase() === 'special' ? 'SPECIAL' : `FOLGE ${dailyFolge.nr}`} • ${dailyFolge.jahr || ''}</div>
                 <h3 style="font-size:24px; margin: 10px 0;">${dailyFolge.titel}</h3>
                 <div class="rating-tag" style="margin-bottom: 20px;">⭐ Community: ${s.avg} (${s.count} Votes)</div>
-                <button class="btn btn-action" onclick="prefill(${dailyFolge.nr})">Diesen Fall bewerten</button>
+                <button class="btn btn-action" onclick="prefill(${dailyEpisodeId})">Diesen Fall bewerten</button>
             `;
         }
 
@@ -567,15 +810,15 @@
                 return;
             }
 
-            const done = bewertungen.filter(b => b.nutzerName === currentUser.name).map(b => String(b.folgenNr));
-            const unseen = stammdaten.filter(f => !done.includes(String(f.nr)));
+            const done = bewertungen.filter(b => b.nutzerName === currentUser.name).map(ratingEpisodeId);
+            const unseen = stammdaten.filter(f => !done.includes(episodeId(f)));
             const candidates = unseen.length ? unseen : stammdaten;
-            const alternatives = candidates.filter(f => String(f.nr) !== String(state.selectedNr));
+            const alternatives = candidates.filter(f => episodeId(f) !== String(state.selectedNr));
             const choices = alternatives.length ? alternatives : candidates;
             const next = choices[Math.floor(Math.random() * choices.length)];
 
             state.shuffles.push(Date.now());
-            state.selectedNr = next.nr;
+            state.selectedNr = episodeId(next);
             state.selectedAt = Date.now();
             saveDailyState(state);
             generateDailyCase();
