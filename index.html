@@ -268,6 +268,13 @@
             event.stopPropagation();
             openUserProfile(profileLink.dataset.userId, profileLink.dataset.userName);
         });
+        document.addEventListener('click', event => {
+            const rateButton = event.target.closest('[data-rate-episode]');
+            if (!rateButton) return;
+            event.preventDefault();
+            event.stopPropagation();
+            prefill(rateButton.dataset.rateEpisode);
+        });
 
         function initUser() {
             if (!currentUser.name) openUserModal();
@@ -330,7 +337,7 @@
         ]);
 
         function episodeTitleKey(title) {
-            return String(title || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+            return String(title || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(new RegExp(String.fromCharCode(223), 'g'), 'ss').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
         }
 
         function episodeId(episode) {
@@ -517,7 +524,16 @@
             return { avg: (f.reduce((a, c) => a + parseInt(c.punkte), 0) / f.length).toFixed(1), count: f.length };
         }
 
-        function prefill(folgeId) { document.getElementById('rate-select').value = folgeId; switchTab('tab-rate'); }
+        function prefill(folgeId) {
+            const select = document.getElementById('rate-select');
+            const requestedId = String(folgeId ?? '');
+            const episode = stammdaten.find(item => episodeId(item) === requestedId || String(item.nr) === requestedId);
+
+            switchTab('tab-rate');
+            select.value = episode ? episodeId(episode) : requestedId;
+            if (select.value) select.focus();
+            else console.warn('Folge konnte im Bewertungsformular nicht ausgewählt werden:', requestedId);
+        }
 
         function getCoverUrl(episode) {
             if (String(episode.nr).toLowerCase() === 'special') {
@@ -584,7 +600,7 @@
                             <h3 style="font-size:16px; margin:5px 0;">${f.titel}</h3>
                             <div class="rating-tag">⭐ ${s.avg} (${s.count})</div>
                         </div>
-                        <button class="btn btn-action" style="padding: 10px; width: auto;" onclick="event.stopPropagation(); prefill(${key})">Bewerten</button>
+                    <button class="btn btn-action" type="button" style="padding: 10px; width: auto;" data-rate-episode="${escapeHtml(episodeId(f))}">Bewerten</button>
                     </div>`;
             });
             c.querySelectorAll('.episode-card').forEach(card => {
@@ -888,15 +904,13 @@
             const s = getStats(episodeId(dailyFolge));
             const coverHTML = `<img src="${getCoverUrl(dailyFolge)}" class="cover-img-daily" alt="Cover ${episodeLabel(dailyFolge)}" onerror="showCoverFallback(this)">`;
             const musicLinksHTML = getMusicLinks(dailyFolge);
-            const dailyEpisodeId = JSON.stringify(episodeId(dailyFolge));
-
             c.innerHTML = `
                 ${coverHTML}
                 ${musicLinksHTML}
                 <div style="color: var(--muted); font-size:14px; font-weight:bold;">${String(dailyFolge.nr).toLowerCase() === 'special' ? 'SPECIAL' : `FOLGE ${dailyFolge.nr}`} • ${dailyFolge.jahr || ''}</div>
                 <h3 style="font-size:24px; margin: 10px 0;">${dailyFolge.titel}</h3>
                 <div class="rating-tag" style="margin-bottom: 20px;">⭐ Community: ${s.avg} (${s.count} Votes)</div>
-                <button class="btn btn-action" onclick="prefill(${dailyEpisodeId})">Diesen Fall bewerten</button>
+                <button class="btn btn-action" type="button" data-rate-episode="${escapeHtml(episodeId(dailyFolge))}">Diesen Fall bewerten</button>
             `;
         }
 
