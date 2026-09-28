@@ -77,11 +77,12 @@ function doPost(e) {
     }
 
     if (data.action === 'addRating') {
+      var user = validateRatingUser_(data);
       var rating = validateRating_(data);
       sheet.appendRow([
         Date.now(),
-        String(data.nutzerId || 'guest'),
-        String(data.nutzerName || 'Anonym'),
+        user.id,
+        user.name,
         rating.folgenNr,
         rating.punkte,
         rating.kommentar,
@@ -93,7 +94,8 @@ function doPost(e) {
     }
 
     if (data.action === 'updateRating') {
-      var userId = String(data.nutzerId || '');
+      var user = validateRatingUser_(data);
+      var userId = user.id;
       if (!userId) {
         throw new Error('Nutzer-ID fehlt; die Review wurde nicht geändert.');
       }
@@ -150,7 +152,7 @@ function doPost(e) {
 
       var existingName = sheet.getRange(targetRow, 3).getValue();
       sheet.getRange(targetRow, 3, 1, 5).setValues([[
-        String(data.nutzerName || existingName || 'Anonym'),
+        user.name || existingName,
         update.folgenNr,
         update.punkte,
         update.kommentar,
@@ -273,7 +275,7 @@ function validateRating_(data) {
     folgenNr = episode[0];
   }
   var parsedNr = parseInt(folgenNr, 10);
-  var punkte = parseInt(data.punkte, 10);
+  var punkte = Number(data.punkte);
 
   if (!folgeId && (!Number.isInteger(parsedNr) || parsedNr < 1)) {
     throw new Error('Ungültige Folgenummer.');
@@ -288,6 +290,30 @@ function validateRating_(data) {
     punkte: punkte,
     kommentar: String(data.kommentar || '')
   };
+}
+
+function validateRatingUser_(data) {
+  var id = String(data.nutzerId || '').trim();
+  var name = String(data.nutzerName || '').trim();
+  var genericValues = ['guest', 'gast', 'anonym', 'anonymous'];
+
+  if (!id || id.toLowerCase() === 'guest') {
+    throw new Error('Nutzer-ID fehlt. Die Bewertung wurde nicht gespeichert.');
+  }
+  if (!name || genericValues.indexOf(name.toLowerCase()) !== -1) {
+    throw new Error('Bitte einen Nutzernamen angeben. Die Bewertung wurde nicht gespeichert.');
+  }
+
+  var usersSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Nutzer');
+  var registeredUsers = getDataRows_(usersSheet);
+  var registeredUser = registeredUsers.find(function (row) {
+    return String(row[0] || '').trim() === id && String(row[1] || '').trim() === name;
+  });
+  if (!registeredUser) {
+    throw new Error('Der ausgewählte Nutzer ist nicht im Tabellenblatt Nutzer angelegt.');
+  }
+
+  return { id: id, name: name };
 }
 
 function jsonOutput_(value) {

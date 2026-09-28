@@ -98,6 +98,7 @@
         .profile-top-list { padding-left: 24px; }
         .profile-top-list li { padding: 7px 0; }
         .profile-top-score { color: var(--cyan); font-weight: 700; margin-left: 8px; }
+        .profile-worst-score { color: var(--red); font-weight: 700; margin-left: 8px; }
         .profile-top-date { color: var(--muted); font-size: 11px; margin-left: 8px; }
         .profile-chart-layout { display: flex; align-items: center; justify-content: center; gap: 28px; flex-wrap: wrap; }
         .profile-donut { width: 190px; height: 190px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto; }
@@ -177,8 +178,10 @@
     <!-- USER MODAL -->
     <div class="modal-overlay" id="userModal">
         <div class="modal-content">
-            <h2 style="color: white; margin-bottom: 20px;">Dein Profil</h2>
-            <input type="text" id="usernameInput" placeholder="Dein Name (z.B. Justus)">
+            <h2 style="color: white; margin-bottom: 20px;">Nutzer auswählen</h2>
+            <select id="user-select" aria-label="Nutzer auswählen">
+                <option value="">Nutzer werden geladen...</option>
+            </select>
             <button class="btn btn-primary" onclick="saveUser()">Speichern</button>
             <button class="btn" onclick="closeUserModal()">Abbrechen</button>
         </div>
@@ -206,6 +209,10 @@
             <section class="card">
                 <h2>Top 3 Bewertungen</h2>
                 <ol class="profile-top-list" id="profile-top-list"></ol>
+            </section>
+            <section class="card">
+                <h2>Schlechteste 3 Bewertungen</h2>
+                <ol class="profile-top-list" id="profile-worst-list"></ol>
             </section>
             <section class="card">
                 <h2>Notenverteilung</h2>
@@ -251,9 +258,9 @@
         let selectedPoints = 0, dailyFolge = null, editingRatingId = null, editingRatingOriginalNr = null, editingRatingOwnerId = null;
         let shuffleResetTimer = null;
         let ratingSaveInProgress = false;
-        let currentUser = { id: localStorage.getItem('d3_userId') || 'user_' + Math.random().toString(36).substr(2, 9), name: localStorage.getItem('d3_userName') || '' };
+        let currentUser = { id: localStorage.getItem('d3_userId') || '', name: localStorage.getItem('d3_userName') || '' };
 
-        window.onload = () => { initUser(); initRatingScale(); fetchData(); };
+        window.onload = () => { initRatingScale(); fetchData(); };
 
         document.addEventListener('click', event => {
             const profileLink = event.target.closest('.user-profile-link');
@@ -277,14 +284,46 @@
         });
 
         function initUser() {
-            if (!currentUser.name) openUserModal();
-            else document.getElementById('currentUserNameDisplay').textContent = currentUser.name;
+            const registeredUser = nutzer.find(user => String(user.id) === String(currentUser.id));
+            if (registeredUser) {
+                currentUser = { id: String(registeredUser.id), name: String(registeredUser.name || '') };
+                localStorage.setItem('d3_userId', currentUser.id);
+                localStorage.setItem('d3_userName', currentUser.name);
+                document.getElementById('currentUserNameDisplay').textContent = currentUser.name;
+                return;
+            }
+
+            currentUser = { id: '', name: '' };
+            localStorage.removeItem('d3_userId');
+            localStorage.removeItem('d3_userName');
+            document.getElementById('currentUserNameDisplay').textContent = 'Nutzer wählen';
+            openUserModal();
         }
-        function openUserModal() { document.getElementById('usernameInput').value = currentUser.name; document.getElementById('userModal').classList.add('active'); }
-        function closeUserModal() { if(currentUser.name) document.getElementById('userModal').classList.remove('active'); }
+        function openUserModal() {
+            const select = document.getElementById('user-select');
+            select.replaceChildren(new Option('Nutzer auswählen', ''));
+            nutzer.forEach(user => {
+                if (user.id === undefined || user.id === null || String(user.id).trim() === '' || !String(user.name || '').trim()) return;
+                select.add(new Option(String(user.name), String(user.id)));
+            });
+            select.value = currentUser.id;
+            document.getElementById('userModal').classList.add('active');
+        }
+        function closeUserModal() { if (currentUser.id) document.getElementById('userModal').classList.remove('active'); }
         function saveUser() {
-            const name = document.getElementById('usernameInput').value.trim();
-            if (name) { currentUser.name = name; localStorage.setItem('d3_userId', currentUser.id); localStorage.setItem('d3_userName', name); document.getElementById('currentUserNameDisplay').textContent = name; closeUserModal(); updateUserFilter(); renderReviews(); generateDailyCase(); }
+            const selectedId = document.getElementById('user-select').value;
+            const selectedUser = nutzer.find(user => String(user.id) === selectedId);
+            if (!selectedUser) return alert('Bitte wähle einen vorhandenen Nutzer aus.');
+
+            currentUser = { id: String(selectedUser.id), name: String(selectedUser.name) };
+            localStorage.setItem('d3_userId', currentUser.id);
+            localStorage.setItem('d3_userName', currentUser.name);
+            document.getElementById('currentUserNameDisplay').textContent = currentUser.name;
+            closeUserModal();
+            updateUserFilter();
+            renderReviews();
+            renderFolgenList();
+            generateDailyCase();
         }
 
         function switchTab(tabId) {
@@ -300,8 +339,8 @@
             try {
                 const res = await fetch(GOOGLE_SCRIPT_URL);
                 const data = await res.json();
-                stammdaten = data.stammdaten; bewertungen = data.bewertungen; nutzer = data.nutzer;
-                populateDropdown(); updateUserFilter(); renderFolgenList(); renderReviews(); generateDailyCase();
+                stammdaten = data.stammdaten || []; bewertungen = data.bewertungen || []; nutzer = data.nutzer || [];
+                initUser(); populateDropdown(); updateUserFilter(); renderFolgenList(); renderReviews(); generateDailyCase();
                 return true;
             } catch (err) { console.error(err); return false; }
         }
@@ -747,18 +786,23 @@
             document.getElementById('profile-average').textContent = average;
             document.getElementById('profile-donut-average').textContent = average;
 
-            const topList = document.getElementById('profile-top-list');
-            topList.replaceChildren();
-            validRatings
-                .slice()
-                .sort((a, b) => Number(b.punkte) - Number(a.punkte) || new Date(b.datum || 0) - new Date(a.datum || 0))
-                .filter((review, index, sorted) => index < 3 || Number(review.punkte) === Number(sorted[2].punkte))
-                .forEach(review => {
+            const renderRankedList = (listId, sortDirection, scoreClass) => {
+                const list = document.getElementById(listId);
+                list.replaceChildren();
+                const ranked = validRatings.slice().sort((a, b) => {
+                    const scoreDifference = (Number(a.punkte) - Number(b.punkte)) * sortDirection;
+                    const dateA = new Date(a.datum || 0).getTime() || 0;
+                    const dateB = new Date(b.datum || 0).getTime() || 0;
+                    return scoreDifference || dateB - dateA;
+                });
+                const cutoffScore = ranked.length >= 3 ? Number(ranked[2].punkte) : null;
+                ranked.filter((review, index) => index < 3 || Number(review.punkte) === cutoffScore)
+                    .forEach(review => {
                     const episode = episodeForRating(review);
                     const listItem = document.createElement('li');
                     listItem.textContent = episodeLabel(episode);
                     const score = document.createElement('span');
-                    score.className = 'profile-top-score';
+                    score.className = scoreClass;
                     score.textContent = `${review.punkte}/10`;
                     listItem.appendChild(score);
                     const date = document.createElement('small');
@@ -766,13 +810,16 @@
                     const reviewDate = new Date(review.datum);
                     date.textContent = Number.isNaN(reviewDate.getTime()) ? '' : reviewDate.toLocaleDateString();
                     listItem.appendChild(date);
-                    topList.appendChild(listItem);
+                    list.appendChild(listItem);
                 });
-            if (validRatings.length === 0) {
-                const empty = document.createElement('li');
-                empty.textContent = 'Noch keine Bewertungen vorhanden.';
-                topList.appendChild(empty);
-            }
+                if (validRatings.length === 0) {
+                    const empty = document.createElement('li');
+                    empty.textContent = 'Noch keine Bewertungen vorhanden.';
+                    list.appendChild(empty);
+                }
+            };
+            renderRankedList('profile-top-list', -1, 'profile-top-score');
+            renderRankedList('profile-worst-list', 1, 'profile-worst-score');
 
             const gradeColors = ['#ED1C24', '#F04438', '#F97316', '#FACC15', '#A3E635', '#22C55E', '#2DD4BF', '#00AEEF', '#168BD2', '#235B9B'];
             const total = gradeCounts.reduce((sum, count) => sum + count, 0);
@@ -847,7 +894,7 @@
 
                     const score = document.createElement('span');
                     score.className = 'rating-tag';
-                    score.textContent = `${review.punkte}/10`;
+                    score.textContent = `⭐ ${review.punkte}/10`;
 
                     const comment = document.createElement('p');
                     comment.className = 'episode-review-comment';
