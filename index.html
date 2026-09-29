@@ -255,7 +255,7 @@
 
         // --- HIER DEINE GOOGLE SCRIPT URL EINTRAGEN ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby29VmixLkuJCz5MJeEpTT_KvldBhCHa7woDsY8tqatt_AgmkBLJFW4LeaUj-M2Ws118Q/exec";
-        const DATA_LOAD_TIMEOUT_MS = 15000;
+        const DATA_LOAD_TIMEOUT_MS = 30000;
         
         let stammdaten = [], bewertungen = [], nutzer = [];
         let selectedPoints = 0, dailyFolge = null, editingRatingId = null, editingRatingOriginalNr = null, editingRatingOwnerId = null;
@@ -371,7 +371,7 @@
                 const res = await fetch(dataUrl.toString(), { signal: controller.signal });
                 if (!res.ok) throw new Error(`Datenabruf fehlgeschlagen (HTTP ${res.status}).`);
                 const data = await res.json();
-                if (!data || !Array.isArray(data.stammdaten) || !Array.isArray(data.bewertungen) || !Array.isArray(data.nutzer) || !data.dailyState) {
+                if (!data || !Array.isArray(data.stammdaten) || !Array.isArray(data.bewertungen) || !Array.isArray(data.nutzer)) {
                     throw new Error('Die Antwort des Datenservers hat ein ungültiges Format.');
                 }
                 stammdaten = data.stammdaten || []; bewertungen = data.bewertungen || []; nutzer = data.nutzer || [];
@@ -379,12 +379,13 @@
                 initUser(); populateDropdown(); updateUserFilter(); renderFolgenList(); renderReviews(); generateDailyCase();
                 document.getElementById('rate-load-error').style.display = 'none';
                 if (!sharedStatePollTimer) sharedStatePollTimer = setInterval(refreshSharedDailyState, 20000);
+                if (!sharedDailyState) await refreshSharedDailyState(true);
                 return true;
             } catch (err) {
                 console.error('App-Daten konnten nicht geladen werden:', err);
                 const errorMessage = err.name === 'AbortError'
-                    ? 'Der Datenabruf hat zu lange gedauert.'
-                    : 'Die App-Daten konnten gerade nicht geladen werden.';
+                    ? 'Der Datenabruf hat länger als 30 Sekunden gedauert.'
+                    : `Die App-Daten konnten nicht geladen werden: ${escapeHtml(err.message || String(err))}`;
                 const retryButton = '<button class="btn btn-primary" type="button" onclick="fetchData()">Erneut laden</button>';
                 document.getElementById('daily-content').innerHTML = `<p>${errorMessage}</p>${retryButton}`;
                 document.getElementById('folgen-list').innerHTML = `<p>${errorMessage}</p>${retryButton}`;
@@ -986,12 +987,18 @@
                 const response = await fetch(stateUrl.toString(), { signal: controller.signal });
                 if (!response.ok) throw new Error(`FdT-Abruf fehlgeschlagen (HTTP ${response.status}).`);
                 const data = await response.json();
-                if (!data || !data.dailyState) throw new Error('Der gemeinsame FdT fehlt in der Serverantwort.');
+                if (!data || !data.dailyState) throw new Error('Das Google Script liefert kein dailyState. Bitte Code.gs als neue Web-App-Version bereitstellen.');
                 sharedDailyState = data.dailyState;
                 generateDailyCase();
                 return true;
             } catch (err) {
                 console.warn('Gemeinsamer FdT konnte nicht aktualisiert werden:', err);
+                if (!sharedDailyState) {
+                    const detail = err.name === 'AbortError'
+                        ? 'Der Abruf hat länger als 30 Sekunden gedauert.'
+                        : escapeHtml(err.message || String(err));
+                    document.getElementById('daily-content').innerHTML = `<p>Folgen und Reviews sind geladen, aber der gemeinsame FdT fehlt: ${detail}</p><button class="btn btn-primary" type="button" onclick="refreshSharedDailyState(true)">FdT erneut laden</button>`;
+                }
                 return false;
             } finally {
                 clearTimeout(timeout);

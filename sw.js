@@ -1,4 +1,4 @@
-const CACHE_NAME = 'drei-fragezeichen-v18';
+const CACHE_NAME = 'drei-fragezeichen-v19';
 const ASSETS = [
     './index.html',
     './manifest.json',
