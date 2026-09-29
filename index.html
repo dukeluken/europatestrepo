@@ -745,7 +745,7 @@
 
             if (shuffleResetTimer) clearTimeout(shuffleResetTimer);
 
-            const remaining = Number.isInteger(Number(state && state.remainingShuffles))
+            const remaining = state && Number.isInteger(Number(state.remainingShuffles))
                 ? Math.max(0, Number(state.remainingShuffles))
                 : DAILY_SHUFFLE_LIMIT;
             const canShuffle = Boolean(state && state.canShuffle);
