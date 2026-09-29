@@ -145,6 +145,7 @@
         <div class="card">
             <h2>Folge bewerten</h2>
             <select id="rate-select"><option value="">Lade Folgen...</option></select>
+            <div id="rate-load-error" style="display:none;"></div>
             <label>Punkte (1-10)</label>
             <div class="rating-scale" id="rating-scale-container"></div>
             <textarea id="rate-comment" rows="3" placeholder="Wie fandest du die Folge?"></textarea>
@@ -184,6 +185,7 @@
             </select>
             <button class="btn btn-primary" onclick="saveUser()">Speichern</button>
             <button class="btn" onclick="closeUserModal()">Abbrechen</button>
+            <button class="btn" type="button" onclick="continueAsGuest()">Weiter als Gast</button>
         </div>
     </div>
 
@@ -253,11 +255,13 @@
 
         // --- HIER DEINE GOOGLE SCRIPT URL EINTRAGEN ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby29VmixLkuJCz5MJeEpTT_KvldBhCHa7woDsY8tqatt_AgmkBLJFW4LeaUj-M2Ws118Q/exec";
+        const DATA_LOAD_TIMEOUT_MS = 15000;
         
         let stammdaten = [], bewertungen = [], nutzer = [];
         let selectedPoints = 0, dailyFolge = null, editingRatingId = null, editingRatingOriginalNr = null, editingRatingOwnerId = null;
         let shuffleResetTimer = null;
         let ratingSaveInProgress = false;
+        let dataLoadInProgress = false;
         let currentUser = { id: localStorage.getItem('d3_userId') || '', name: localStorage.getItem('d3_userName') || '' };
 
         window.onload = () => { initRatingScale(); fetchData(); };
@@ -310,6 +314,13 @@
             document.getElementById('userModal').classList.add('active');
         }
         function closeUserModal() { if (currentUser.id) document.getElementById('userModal').classList.remove('active'); }
+        function continueAsGuest() {
+            currentUser = { id: '', name: '' };
+            localStorage.removeItem('d3_userId');
+            localStorage.removeItem('d3_userName');
+            document.getElementById('currentUserNameDisplay').textContent = 'Gast';
+            document.getElementById('userModal').classList.remove('active');
+        }
         function saveUser() {
             const selectedId = document.getElementById('user-select').value;
             const selectedUser = nutzer.find(user => String(user.id) === selectedId);
@@ -336,13 +347,38 @@
         }
 
         async function fetchData() {
+            if (dataLoadInProgress) return false;
+            dataLoadInProgress = true;
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), DATA_LOAD_TIMEOUT_MS);
             try {
-                const res = await fetch(GOOGLE_SCRIPT_URL);
+                const res = await fetch(GOOGLE_SCRIPT_URL, { signal: controller.signal });
+                if (!res.ok) throw new Error(`Datenabruf fehlgeschlagen (HTTP ${res.status}).`);
                 const data = await res.json();
+                if (!data || !Array.isArray(data.stammdaten) || !Array.isArray(data.bewertungen) || !Array.isArray(data.nutzer)) {
+                    throw new Error('Die Antwort des Datenservers hat ein ungültiges Format.');
+                }
                 stammdaten = data.stammdaten || []; bewertungen = data.bewertungen || []; nutzer = data.nutzer || [];
                 initUser(); populateDropdown(); updateUserFilter(); renderFolgenList(); renderReviews(); generateDailyCase();
+                document.getElementById('rate-load-error').style.display = 'none';
                 return true;
-            } catch (err) { console.error(err); return false; }
+            } catch (err) {
+                console.error('App-Daten konnten nicht geladen werden:', err);
+                const errorMessage = err.name === 'AbortError'
+                    ? 'Der Datenabruf hat zu lange gedauert.'
+                    : 'Die App-Daten konnten gerade nicht geladen werden.';
+                const retryButton = '<button class="btn btn-primary" type="button" onclick="fetchData()">Erneut laden</button>';
+                document.getElementById('daily-content').innerHTML = `<p>${errorMessage}</p>${retryButton}`;
+                document.getElementById('folgen-list').innerHTML = `<p>${errorMessage}</p>${retryButton}`;
+                document.getElementById('reviews-list').innerHTML = `<p>${errorMessage}</p>${retryButton}`;
+                document.getElementById('rate-select').innerHTML = '<option value="">Folgen konnten nicht geladen werden</option>';
+                document.getElementById('rate-load-error').innerHTML = `<p>${errorMessage}</p>${retryButton}`;
+                document.getElementById('rate-load-error').style.display = 'block';
+                return false;
+            } finally {
+                clearTimeout(timeout);
+                dataLoadInProgress = false;
+            }
         }
 
         function populateDropdown() {
@@ -448,6 +484,11 @@
 
         async function submitRating() {
             if (ratingSaveInProgress) return;
+
+            if (!currentUser.id) {
+                openUserModal();
+                return;
+            }
 
             const folgeId = document.getElementById('rate-select').value;
             const episode = stammdaten.find(item => episodeId(item) === folgeId);
