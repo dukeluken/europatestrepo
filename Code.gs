@@ -7,8 +7,14 @@
  * Nutzer: ID | Name | Registriert am
  */
 
-function doGet() {
+function doGet(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var requestedUserId = e && e.parameter ? String(e.parameter.userId || '') : '';
+  var dailyState = getSharedDailyState_(requestedUserId);
+  if (e && e.parameter && e.parameter.action === 'dailyState') {
+    return jsonOutput_({ dailyState: dailyState });
+  }
+
   var stammdatenSheet = ss.getSheetByName('Stammdaten');
   var bewertungenSheet = ss.getSheetByName('Bewertungen');
   var nutzerSheet = ss.getSheetByName('Nutzer');
@@ -52,7 +58,8 @@ function doGet() {
         name: row[1],
         registriertAm: row[2]
       };
-    })
+    }),
+    dailyState: dailyState
   };
 
   return jsonOutput_(result);
@@ -74,6 +81,30 @@ function doPost(e) {
 
     if (!sheet) {
       throw new Error("Tabellenblatt 'Bewertungen' nicht gefunden.");
+    }
+
+    if (data.action === 'shuffleDailyCase') {
+      var shuffleUser = validateRatingUser_(data);
+      var shuffleState = getOrCreateSharedDailyStateLocked_();
+      var shufflesByUser = shuffleState.shufflesByUser || {};
+      var usedShuffles = Number(shufflesByUser[shuffleUser.id] || 0);
+      if (usedShuffles >= 3) {
+        throw new Error('Du hast alle drei Mischungen für diesen Zeitraum verwendet.');
+      }
+
+      var alternatives = getEligibleDailyEpisodeIds_().filter(function (episodeId) {
+        return episodeId !== shuffleState.selectedEpisodeId;
+      });
+      if (!alternatives.length) {
+        throw new Error('Es gibt keine weitere Folge mit höchstens einer Bewertung zum Mischen.');
+      }
+
+      shuffleState.selectedEpisodeId = alternatives[Math.floor(Math.random() * alternatives.length)];
+      shuffleState.selectedAt = Date.now();
+      shuffleState.shufflesByUser[shuffleUser.id] = usedShuffles + 1;
+      PropertiesService.getScriptProperties().setProperty('DDF_SHARED_DAILY_STATE', JSON.stringify(shuffleState));
+
+      return jsonOutput_({ status: 'success', action: 'shuffleDailyCase' });
     }
 
     if (data.action === 'addRating') {
@@ -255,6 +286,144 @@ function autoFillCovers() {
     'Fertig! ' + completed + ' Cover-URLs wurden eingetragen.' +
     (failed.length ? '\nOhne Cover: ' + failed.join(', ') : '')
   );
+}
+
+function getSharedDailyState_(userId) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    return getSharedDailyStateLocked_(userId);
+  } finally {
+    if (lock.hasLock()) lock.releaseLock();
+  }
+}
+
+function getSharedDailyStateLocked_(userId) {
+  var state = getOrCreateSharedDailyStateLocked_();
+  var userShuffles = Number((state.shufflesByUser || {})[String(userId || '')] || 0);
+  var alternatives = getEligibleDailyEpisodeIds_().filter(function (episodeId) {
+    return episodeId !== state.selectedEpisodeId;
+  });
+  return {
+    selectedEpisodeId: state.selectedEpisodeId || '',
+    selectedAt: state.selectedAt || null,
+    caseDate: state.caseDate,
+    periodKey: state.shufflePeriodKey,
+    resetAt: state.resetAt,
+    remainingShuffles: Math.max(0, 3 - userShuffles),
+    canShuffle: alternatives.length > 0
+  };
+}
+
+function getOrCreateSharedDailyStateLocked_() {
+  var properties = PropertiesService.getScriptProperties();
+  var period = getShufflePeriod_();
+  var now = Date.now();
+  var caseDate = Utilities.formatDate(new Date(now), 'Europe/Berlin', 'yyyy-MM-dd');
+  var state = null;
+  try {
+    state = JSON.parse(properties.getProperty('DDF_SHARED_DAILY_STATE') || 'null');
+  } catch (err) {
+    state = null;
+  }
+
+  if (!state || typeof state !== 'object') state = {};
+
+  if (state.shufflePeriodKey !== period.key) {
+    state.shufflePeriodKey = period.key;
+    state.shufflesByUser = {};
+  }
+  if (!state.shufflesByUser || typeof state.shufflesByUser !== 'object') state.shufflesByUser = {};
+
+  if (state.caseDate !== caseDate) {
+    state.caseDate = caseDate;
+    state.selectedEpisodeId = '';
+    state.selectedAt = null;
+  }
+
+  if (!state.selectedEpisodeId) {
+    var episodes = getEligibleDailyEpisodeIds_();
+    if (episodes.length) {
+      state.selectedEpisodeId = episodes[Math.floor(Math.random() * episodes.length)];
+      state.selectedAt = now;
+    } else {
+      state.selectedEpisodeId = '';
+      state.selectedAt = null;
+    }
+  }
+  state.resetAt = period.resetAt;
+  properties.setProperty('DDF_SHARED_DAILY_STATE', JSON.stringify(state));
+  return state;
+}
+
+function getEligibleDailyEpisodeIds_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var episodes = getDataRows_(ss.getSheetByName('Stammdaten'));
+  var ratings = getDataRows_(ss.getSheetByName('Bewertungen'));
+  var users = getDataRows_(ss.getSheetByName('Nutzer'));
+  var registeredUserIds = {};
+  users.forEach(function (user) {
+    if (user[0] !== '' && user[0] !== null && user[0] !== undefined) {
+      registeredUserIds[String(user[0]).trim()] = true;
+    }
+  });
+
+  var episodeIds = episodes.map(function (episode) { return dailyEpisodeId_(episode); });
+  var episodeIdByNumber = {};
+  episodes.forEach(function (episode, index) {
+    var number = String(episode[0] || '');
+    if (number.toLowerCase() !== 'special') {
+      if (!episodeIdByNumber[number]) episodeIdByNumber[number] = [];
+      episodeIdByNumber[number].push(episodeIds[index]);
+    }
+  });
+
+  var counts = {};
+  ratings.forEach(function (rating) {
+    var points = Number(rating[4]);
+    var userId = String(rating[1] || '').trim();
+    if (!Number.isInteger(points) || points < 1 || points > 10 || !registeredUserIds[userId]) return;
+
+    var episodeId = String(rating[7] || '').trim();
+    if (!episodeId) {
+      var matchingIds = episodeIdByNumber[String(rating[3] || '')] || [];
+      if (matchingIds.length === 1) episodeId = matchingIds[0];
+    }
+    if (episodeIds.indexOf(episodeId) !== -1) counts[episodeId] = (counts[episodeId] || 0) + 1;
+  });
+
+  return episodeIds.filter(function (episodeId) {
+    return episodeId && (counts[episodeId] || 0) <= 1;
+  });
+}
+
+function dailyEpisodeId_(episode) {
+  var id = String(episode[4] || '').trim();
+  if (id) return id;
+  if (String(episode[0] || '').toLowerCase() === 'special') return '';
+  var number = Number(episode[0]);
+  return Number.isInteger(number) && number > 0 ? 'F-' + ('000' + number).slice(-3) : '';
+}
+
+function getShufflePeriod_() {
+  var timeZone = 'Europe/Berlin';
+  var now = new Date();
+  var dateText = Utilities.formatDate(now, timeZone, 'yyyy-MM-dd');
+  var hour = Number(Utilities.formatDate(now, timeZone, 'H'));
+  var startHour = hour < 12 ? 0 : 12;
+  var periodKey = dateText + '-' + (startHour === 0 ? '00' : '12');
+  var resetDateText = dateText;
+
+  if (startHour === 12) {
+    var dateParts = dateText.split('-').map(Number);
+    var nextDay = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2] + 1));
+    resetDateText = Utilities.formatDate(nextDay, 'UTC', 'yyyy-MM-dd');
+  }
+
+  var resetAt = startHour === 0
+    ? Utilities.parseDate(dateText + ' 12:00', timeZone, 'yyyy-MM-dd HH:mm').getTime()
+    : Utilities.parseDate(resetDateText + ' 00:00', timeZone, 'yyyy-MM-dd HH:mm').getTime();
+  return { key: periodKey, resetAt: resetAt };
 }
 
 function getDataRows_(sheet) {

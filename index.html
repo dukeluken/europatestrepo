@@ -262,9 +262,18 @@
         let shuffleResetTimer = null;
         let ratingSaveInProgress = false;
         let dataLoadInProgress = false;
+        let sharedStateRefreshPromise = null;
+        let sharedDailyState = null;
+        let sharedStatePollTimer = null;
         let currentUser = { id: localStorage.getItem('d3_userId') || '', name: localStorage.getItem('d3_userName') || '' };
 
-        window.onload = () => { initRatingScale(); fetchData(); };
+        window.onload = () => {
+            initRatingScale();
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) refreshSharedDailyState();
+            });
+            fetchData();
+        };
 
         document.addEventListener('click', event => {
             const profileLink = event.target.closest('.user-profile-link');
@@ -320,6 +329,7 @@
             localStorage.removeItem('d3_userName');
             document.getElementById('currentUserNameDisplay').textContent = 'Gast';
             document.getElementById('userModal').classList.remove('active');
+            refreshSharedDailyState();
         }
         function saveUser() {
             const selectedId = document.getElementById('user-select').value;
@@ -335,6 +345,7 @@
             renderReviews();
             renderFolgenList();
             generateDailyCase();
+            refreshSharedDailyState();
         }
 
         function switchTab(tabId) {
@@ -343,7 +354,10 @@
             const activeButton = [...document.querySelectorAll('.tab-btn')].find(button => button.getAttribute('onclick') === `switchTab('${tabId}')`);
             if (activeButton) activeButton.classList.add('active');
             document.getElementById(tabId).classList.add('active');
-            if(tabId === 'tab-daily') generateDailyCase();
+            if(tabId === 'tab-daily') {
+                generateDailyCase();
+                refreshSharedDailyState();
+            }
         }
 
         async function fetchData() {
@@ -352,15 +366,19 @@
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), DATA_LOAD_TIMEOUT_MS);
             try {
-                const res = await fetch(GOOGLE_SCRIPT_URL, { signal: controller.signal });
+                const dataUrl = new URL(GOOGLE_SCRIPT_URL);
+                if (currentUser.id) dataUrl.searchParams.set('userId', currentUser.id);
+                const res = await fetch(dataUrl.toString(), { signal: controller.signal });
                 if (!res.ok) throw new Error(`Datenabruf fehlgeschlagen (HTTP ${res.status}).`);
                 const data = await res.json();
-                if (!data || !Array.isArray(data.stammdaten) || !Array.isArray(data.bewertungen) || !Array.isArray(data.nutzer)) {
+                if (!data || !Array.isArray(data.stammdaten) || !Array.isArray(data.bewertungen) || !Array.isArray(data.nutzer) || !data.dailyState) {
                     throw new Error('Die Antwort des Datenservers hat ein ungültiges Format.');
                 }
                 stammdaten = data.stammdaten || []; bewertungen = data.bewertungen || []; nutzer = data.nutzer || [];
+                sharedDailyState = data.dailyState || null;
                 initUser(); populateDropdown(); updateUserFilter(); renderFolgenList(); renderReviews(); generateDailyCase();
                 document.getElementById('rate-load-error').style.display = 'none';
+                if (!sharedStatePollTimer) sharedStatePollTimer = setInterval(refreshSharedDailyState, 20000);
                 return true;
             } catch (err) {
                 console.error('App-Daten konnten nicht geladen werden:', err);
@@ -718,48 +736,7 @@
         }
 
         // --- FALL DES TAGES (MIT COVER) ---
-        const DAILY_CASE_DURATION = 24 * 60 * 60 * 1000;
         const DAILY_SHUFFLE_LIMIT = 3;
-        const DAILY_STATE_KEY = 'd3_dailyState';
-
-        function getShufflePeriodStart(timestamp = Date.now()) {
-            const boundary = new Date(timestamp);
-            boundary.setHours(boundary.getHours() < 12 ? 0 : 12, 0, 0, 0);
-            return boundary.getTime();
-        }
-
-        function getNextShuffleResetTime() {
-            const nextReset = new Date(getShufflePeriodStart());
-            nextReset.setHours(nextReset.getHours() + 12);
-            return nextReset.getTime();
-        }
-
-        function getDailyState() {
-            const now = Date.now();
-            let state;
-            try { state = JSON.parse(localStorage.getItem(DAILY_STATE_KEY)) || {}; }
-            catch (err) { state = {}; }
-
-            const periodStart = getShufflePeriodStart(now);
-            if (state.shufflePeriodStart !== periodStart) {
-                state.shufflePeriodStart = periodStart;
-                state.shuffles = [];
-            } else {
-                state.shuffles = Array.isArray(state.shuffles)
-                    ? state.shuffles.filter(timestamp => Number.isFinite(timestamp) && timestamp >= periodStart && timestamp <= now)
-                    : [];
-            }
-            if (!state.selectedAt || now - state.selectedAt >= DAILY_CASE_DURATION) {
-                state.selectedNr = null;
-                state.selectedAt = null;
-            }
-            saveDailyState(state);
-            return state;
-        }
-
-        function saveDailyState(state) {
-            localStorage.setItem(DAILY_STATE_KEY, JSON.stringify(state));
-        }
 
         function updateShuffleControls(state) {
             const button = document.getElementById('daily-shuffle-btn');
@@ -767,22 +744,36 @@
 
             if (shuffleResetTimer) clearTimeout(shuffleResetTimer);
 
-            const remaining = DAILY_SHUFFLE_LIMIT - state.shuffles.length;
-            button.disabled = remaining <= 0;
+            const remaining = Number.isInteger(Number(state && state.remainingShuffles))
+                ? Math.max(0, Number(state.remainingShuffles))
+                : DAILY_SHUFFLE_LIMIT;
+            const canShuffle = Boolean(state && state.canShuffle);
+            button.disabled = !state || !state.selectedEpisodeId || !canShuffle || remaining <= 0;
             button.title = '';
+            if (state && state.selectedEpisodeId && remaining <= 0) {
+                const millisecondsLeft = Math.max(0, Number(state.resetAt) - Date.now());
+                const secondsLeft = Math.ceil(millisecondsLeft / 1000);
+                const hours = String(Math.floor(secondsLeft / 3600)).padStart(2, '0');
+                const minutes = String(Math.floor((secondsLeft % 3600) / 60)).padStart(2, '0');
+                const seconds = String(secondsLeft % 60).padStart(2, '0');
+                button.textContent = `🔄 Neu Mischen (${hours}:${minutes}:${seconds})`;
+                shuffleResetTimer = setTimeout(() => millisecondsLeft <= 0 ? refreshSharedDailyState() : updateShuffleControls(state), Math.min(1000, Math.max(1, millisecondsLeft)));
+                return;
+            }
+            if (!canShuffle) {
+                button.textContent = state && state.selectedEpisodeId ? 'Keine weitere Folge im Pool' : 'Keine Folge im Pool';
+                return;
+            }
+            if (!currentUser.id) {
+                button.textContent = '🔄 Nutzer wählen zum Mischen';
+                return;
+            }
             if (remaining > 0) {
                 button.textContent = `🔄 Neu Mischen (${remaining})`;
-                shuffleResetTimer = setTimeout(() => updateShuffleControls(getDailyState()), Math.max(1, getNextShuffleResetTime() - Date.now()));
                 return;
             }
 
-            const millisecondsLeft = Math.max(0, getNextShuffleResetTime() - Date.now());
-            const secondsLeft = Math.ceil(millisecondsLeft / 1000);
-            const hours = String(Math.floor(secondsLeft / 3600)).padStart(2, '0');
-            const minutes = String(Math.floor((secondsLeft % 3600) / 60)).padStart(2, '0');
-            const seconds = String(secondsLeft % 60).padStart(2, '0');
-            button.textContent = `🔄 Neu Mischen (${hours}:${minutes}:${seconds})`;
-            shuffleResetTimer = setTimeout(() => updateShuffleControls(getDailyState()), Math.min(1000, Math.max(1, millisecondsLeft)));
+            button.textContent = `🔄 Neu Mischen (${remaining})`;
         }
         function escapeHtml(value) {
             return String(value == null ? '' : value).replace(/[&<>"']/g, character => ({
@@ -968,24 +959,58 @@
             modal.setAttribute('aria-hidden', 'true');
         }
 
+        function refreshSharedDailyState(force = false) {
+            if (!stammdaten.length) return Promise.resolve(false);
+            if (sharedStateRefreshPromise) {
+                return force
+                    ? sharedStateRefreshPromise.then(() => refreshSharedDailyState(false))
+                    : sharedStateRefreshPromise;
+            }
+            const refreshPromise = loadSharedDailyState();
+            let trackedPromise;
+            trackedPromise = refreshPromise.finally(() => {
+                if (sharedStateRefreshPromise === trackedPromise) sharedStateRefreshPromise = null;
+            });
+            sharedStateRefreshPromise = trackedPromise;
+            return trackedPromise;
+        }
+
+        async function loadSharedDailyState() {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), DATA_LOAD_TIMEOUT_MS);
+            try {
+                const stateUrl = new URL(GOOGLE_SCRIPT_URL);
+                stateUrl.searchParams.set('action', 'dailyState');
+                stateUrl.searchParams.set('userId', currentUser.id || '');
+                stateUrl.searchParams.set('_', String(Date.now()));
+                const response = await fetch(stateUrl.toString(), { signal: controller.signal });
+                if (!response.ok) throw new Error(`FdT-Abruf fehlgeschlagen (HTTP ${response.status}).`);
+                const data = await response.json();
+                if (!data || !data.dailyState) throw new Error('Der gemeinsame FdT fehlt in der Serverantwort.');
+                sharedDailyState = data.dailyState;
+                generateDailyCase();
+                return true;
+            } catch (err) {
+                console.warn('Gemeinsamer FdT konnte nicht aktualisiert werden:', err);
+                return false;
+            } finally {
+                clearTimeout(timeout);
+            }
+        }
+
         function generateDailyCase() {
             const c = document.getElementById('daily-content');
             if (stammdaten.length === 0) return c.innerHTML = 'Lade Daten...';
 
-            const state = getDailyState();
-            dailyFolge = stammdaten.find(f => episodeId(f) === String(state.selectedNr))
-                || stammdaten.find(f => String(f.nr) === String(state.selectedNr)) || null;
+            const state = sharedDailyState;
+            if (!state) {
+                updateShuffleControls(null);
+                return c.innerHTML = '<p>Der gemeinsame Fall des Tages wird geladen.</p>';
+            }
+            dailyFolge = stammdaten.find(f => episodeId(f) === String(state.selectedEpisodeId)) || null;
             if (!dailyFolge) {
-                const done = bewertungen.filter(b => b.nutzerName === currentUser.name).map(ratingEpisodeId);
-                const open = stammdaten.filter(f => !done.includes(episodeId(f)));
-                if (open.length === 0) {
-                    updateShuffleControls(state);
-                    return c.innerHTML = '<h3>Alle Folgen bewertet!</h3>';
-                }
-                dailyFolge = open[Math.floor(Math.random() * open.length)];
-                state.selectedNr = episodeId(dailyFolge);
-                state.selectedAt = Date.now();
-                saveDailyState(state);
+                updateShuffleControls(state);
+                return c.innerHTML = '<h3>Es gibt aktuell keine Folge mit höchstens einer Bewertung.</h3>';
             }
 
             updateShuffleControls(state);
@@ -1002,26 +1027,47 @@
             `;
         }
 
-        function shuffleDailyCase() {
-            if (stammdaten.length === 0) return;
-            const state = getDailyState();
-            if (state.shuffles.length >= DAILY_SHUFFLE_LIMIT) {
-                updateShuffleControls(state);
+        async function shuffleDailyCase() {
+            if (!currentUser.id) {
+                openUserModal();
+                return;
+            }
+            if (!sharedDailyState || !sharedDailyState.canShuffle || Number(sharedDailyState.remainingShuffles) <= 0) {
+                updateShuffleControls(sharedDailyState);
                 return;
             }
 
-            const done = bewertungen.filter(b => b.nutzerName === currentUser.name).map(ratingEpisodeId);
-            const unseen = stammdaten.filter(f => !done.includes(episodeId(f)));
-            const candidates = unseen.length ? unseen : stammdaten;
-            const alternatives = candidates.filter(f => episodeId(f) !== String(state.selectedNr));
-            const choices = alternatives.length ? alternatives : candidates;
-            const next = choices[Math.floor(Math.random() * choices.length)];
-
-            state.shuffles.push(Date.now());
-            state.selectedNr = episodeId(next);
-            state.selectedAt = Date.now();
-            saveDailyState(state);
-            generateDailyCase();
+            const previousEpisodeId = sharedDailyState.selectedEpisodeId;
+            const previousRemaining = Number(sharedDailyState.remainingShuffles);
+            const previousPeriodKey = sharedDailyState.periodKey;
+            const button = document.getElementById('daily-shuffle-btn');
+            button.disabled = true;
+            button.textContent = 'Mische…';
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+                    body: JSON.stringify({
+                        action: 'shuffleDailyCase',
+                        nutzerId: currentUser.id,
+                        nutzerName: currentUser.name
+                    })
+                });
+                await refreshSharedDailyState(true);
+                const changed = sharedDailyState && sharedDailyState.selectedEpisodeId !== previousEpisodeId;
+                const quotaUsed = sharedDailyState && (sharedDailyState.periodKey !== previousPeriodKey
+                    ? Number(sharedDailyState.remainingShuffles) < DAILY_SHUFFLE_LIMIT
+                    : Number(sharedDailyState.remainingShuffles) < previousRemaining);
+                if (!changed || !quotaUsed) {
+                    alert('Es konnte keine neue Folge ausgewählt werden. Prüfe, ob noch Folgen mit höchstens einer Bewertung im Pool sind.');
+                }
+            } catch (err) {
+                console.error('FdT konnte nicht neu gemischt werden:', err);
+                alert('Der FdT konnte gerade nicht neu gemischt werden. Bitte Verbindung prüfen und erneut versuchen.');
+            } finally {
+                updateShuffleControls(sharedDailyState);
+            }
         }
     </script>
 </body>
