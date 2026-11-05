@@ -1,0 +1,13 @@
+{
+  "name": "ddf-migration",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dry-run": "node migrate.mjs --dry-run",
+    "migrate": "node migrate.mjs",
+    "verify": "node verify.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}

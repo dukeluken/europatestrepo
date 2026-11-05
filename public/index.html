@@ -2,219 +2,908 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Die drei ??? - Ranking</title>
-    
+
     <!-- PWA / App Installation -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="dff_app_icon_192.png">
 
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --white: #FFFFFF;
             --red: #ED1C24;
             --cyan: #00AEEF;
             --black: #000000;
-            --dark-gray: #101010;
-            --card-gray: #171717;
-            --text-light: #F5F5F5;
-            --muted: #A3A3A3;
+
+            --bg: #000000;
+            --surface: #0D0D0F;
+            --surface-2: #151518;
+            --surface-3: #1D1D22;
+            --line: rgba(255, 255, 255, 0.07);
+            --line-strong: rgba(255, 255, 255, 0.13);
+            --text: #F5F5F7;
+            --muted: #94949C;
+            --faint: #5E5E66;
+
+            --cyan-soft: rgba(0, 174, 239, 0.14);
+            --red-soft: rgba(237, 28, 36, 0.14);
+
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius: 16px;
+            --radius-sm: 12px;
+
+            --header-h: 65px;
+            --nav-h: 72px;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --ease: cubic-bezier(0.22, 1, 0.36, 1);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--black); color: var(--text-light); line-height: 1.6; padding-bottom: 80px; }
-        
-        header { background-color: var(--black); border-bottom: 2px solid var(--card-gray); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .logo { font-family: 'Anton', sans-serif; font-size: 24px; text-transform: uppercase; color: white; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        html { background: var(--bg); }
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            font-size: 15px;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 24px);
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(60vw 40vh at 100% 0%, rgba(0, 174, 239, 0.10), transparent 70%),
+                radial-gradient(60vw 40vh at 0% 100%, rgba(237, 28, 36, 0.08), transparent 70%);
+        }
+        button, input, select, textarea { font: inherit; color: inherit; }
+        button { cursor: pointer; }
+        a { color: var(--cyan); }
+
+        .icon { width: 20px; height: 20px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .icon-sm { width: 16px; height: 16px; }
+        .icon-lg { width: 24px; height: 24px; }
+        .icon-fill { fill: currentColor; stroke: none; }
+
+        /* ---------- Header ---------- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: calc(var(--safe-top) + 12px) 20px 12px;
+            background: rgba(0, 0, 0, 0.72);
+            backdrop-filter: saturate(160%) blur(18px);
+            -webkit-backdrop-filter: saturate(160%) blur(18px);
+            border-bottom: 1px solid var(--line);
+        }
+        .logo { font-family: 'Anton', sans-serif; font-size: 24px; text-transform: uppercase; color: white; letter-spacing: 0.01em; }
         .logo span:nth-child(1) { color: var(--white); } .logo span:nth-child(2) { color: var(--red); } .logo span:nth-child(3) { color: var(--cyan); }
-        .user-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--card-gray); padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: 600; border: 1px solid rgba(255,255,255,0.14); }
-        
-        .tabs { display: flex; justify-content: space-around; background: var(--black); padding: 10px; border-bottom: 1px solid var(--card-gray); }
-        .tab-btn { background: none; border: none; color: var(--muted); font-size: 14px; font-weight: 600; padding: 10px 15px; cursor: pointer; border-bottom: 3px solid transparent; }
-        .tab-btn.active { color: white; border-bottom-color: var(--cyan); }
-        
-        .content-section { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
-        .content-section.active { display: block; animation: fadeIn 0.3s; }
-        .list-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-        .list-filters select { margin: 0; }
-        .rated-filter { display: flex; align-items: center; gap: 9px; color: var(--text-light); font-size: 14px; }
-        .rated-filter input { width: 18px; height: 18px; margin: 0; accent-color: var(--cyan); }
-        @media (max-width: 520px) { .list-filters { grid-template-columns: 1fr; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .card { background: var(--dark-gray); border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.12); }
-        h2 { font-family: 'Anton', sans-serif; font-size: 22px; color: white; margin-bottom: 15px; }
-        
-        .btn { background: var(--card-gray); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 12px 20px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        button, .music-link { transition: transform 90ms ease, filter 120ms ease, border-color 120ms ease; }
-        button:not(:disabled):hover, .music-link:hover { filter: brightness(1.08); }
-        button:not(:disabled):active, .music-link:active { transform: scale(0.97); filter: brightness(0.82); }
-        button:focus-visible, .music-link:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-        .btn-primary { background: var(--cyan); color: var(--black); border: none; }
-        .btn-action { background: var(--red); color: white; border: none; }
-        
-        input, select, textarea { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
-        
-        .rating-scale { display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 5px; margin-bottom: 20px; }
-        .rating-btn { flex: 1; background: transparent; border: none; color: var(--muted); padding: 10px 0; font-weight: bold; font-size: 16px; border-radius: 6px; }
-        .rating-btn.selected { background: var(--cyan); color: var(--black); }
-        
-        .rating-tag { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 14px; font-weight: bold; background: rgba(0, 174, 239, 0.16); color: var(--cyan); }
-        
-        /* Cover Image Styles */
-        .cover-img-daily { width: 100%; max-width: 300px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin: 0 auto 20px auto; display: block; border: 2px solid var(--card-gray); }
-        .music-links { display: flex; justify-content: center; gap: 10px; margin: -5px 0 20px; }
-        .music-link { display: inline-block; padding: 9px 14px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: var(--text-light); background: var(--card-gray); text-decoration: none; font-size: 13px; font-weight: 600; }
-        .music-link:hover { border-color: var(--cyan); }
-        .list-item { display: flex; gap: 15px; align-items: start; margin-bottom: 15px; }
-        .episode-card { cursor: pointer; }
-        .episode-card:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-        .cover-img-list { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; }
+
+        .user-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 14px 5px 5px;
+            border-radius: 999px;
+            background: var(--surface-2);
+            border: 1px solid var(--line-strong);
+            font-size: 14px;
+            font-weight: 600;
+            max-width: 42vw;
+            transition: background 160ms var(--ease), border-color 160ms var(--ease), transform 120ms var(--ease);
+        }
+        .user-chip:hover { background: var(--surface-3); }
+        .user-chip:active { transform: scale(0.97); }
+        .user-chip span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .avatar {
+            display: inline-grid;
+            place-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 13px;
+            flex: 0 0 auto;
+            background: var(--surface-3);
+            color: var(--muted);
+        }
+        .avatar.tone-cyan { background: var(--cyan-soft); color: var(--cyan); }
+        .avatar.tone-red { background: var(--red-soft); color: #FF5A61; }
+        .avatar.tone-white { background: rgba(255,255,255,0.10); color: var(--white); }
+        .avatar.lg { width: 72px; height: 72px; font-size: 28px; }
+
+        /* ---------- Mitteilungen ---------- */
+        .header-actions { display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .bell-btn { position: relative; width: 40px; height: 40px; }
+        .bell-btn.ring .icon { animation: bellRing 900ms var(--ease); transform-origin: 50% 10%; }
+        @keyframes bellRing { 0%,100% { transform: rotate(0); } 15% { transform: rotate(16deg); } 30% { transform: rotate(-14deg); } 45% { transform: rotate(10deg); } 60% { transform: rotate(-6deg); } 75% { transform: rotate(3deg); } }
+        .bell-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            min-width: 19px;
+            height: 19px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: var(--red);
+            color: var(--white);
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 19px;
+            text-align: center;
+            box-shadow: 0 0 0 2px var(--black);
+        }
+        .notif-panel {
+            position: fixed;
+            top: calc(var(--safe-top) + 70px);
+            right: 12px;
+            z-index: 950;
+            width: min(380px, calc(100% - 24px));
+            border-radius: var(--radius-lg);
+            background: rgba(18, 18, 21, 0.96);
+            backdrop-filter: saturate(160%) blur(20px);
+            -webkit-backdrop-filter: saturate(160%) blur(20px);
+            border: 1px solid var(--line-strong);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            transform: translateY(-8px) scale(0.98);
+            transform-origin: top right;
+            pointer-events: none;
+            transition: opacity 180ms var(--ease), transform 220ms var(--ease);
+        }
+        .notif-panel.active { opacity: 1; transform: none; pointer-events: all; }
+        .notif-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 10px; }
+        .notif-head h2 { margin: 0; font-size: 16px; }
+        .notif-head span { color: var(--muted); font-size: 12px; font-weight: 600; }
+        .notif-list { max-height: min(340px, 55vh); overflow-y: auto; padding: 0 8px 8px; overscroll-behavior: contain; }
+        .notif-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+            padding: 12px 10px;
+            border: 0;
+            border-radius: 14px;
+            background: transparent;
+            text-align: left;
+            transition: background 160ms var(--ease);
+        }
+        .notif-item:hover { background: var(--surface-3); }
+        .notif-item + .notif-item { margin-top: 2px; }
+        .notif-item.unread { background: rgba(0, 174, 239, 0.07); }
+        .notif-body { flex: 1; min-width: 0; }
+        .notif-text { font-size: 14px; line-height: 1.4; }
+        .notif-text strong { font-weight: 800; }
+        .notif-episode { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+        .notif-time { color: var(--faint); font-size: 12px; font-weight: 600; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+        .notif-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); }
+        .notif-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+        .notif-empty { padding: 24px 18px 28px; text-align: center; color: var(--muted); font-size: 14px; }
+        .review-card.flash { animation: reviewFlash 2.2s var(--ease); }
+        @keyframes reviewFlash { 0%, 40% { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.35); } 100% { border-color: var(--line); box-shadow: none; } }
+
+        /* ---------- Bottom-Navigation ---------- */
+        .bottom-nav {
+            position: fixed;
+            left: 50%;
+            bottom: calc(var(--safe-bottom) + 12px);
+            transform: translateX(-50%);
+            z-index: 900;
+            width: min(520px, calc(100% - 24px));
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            padding: 6px;
+            border-radius: 24px;
+            background: rgba(18, 18, 21, 0.78);
+            backdrop-filter: saturate(160%) blur(20px);
+            -webkit-backdrop-filter: saturate(160%) blur(20px);
+            border: 1px solid var(--line-strong);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+        }
+        .tab-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 9px 4px 8px;
+            border: 0;
+            border-radius: 18px;
+            background: transparent;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            transition: color 160ms var(--ease), background 200ms var(--ease);
+        }
+        .tab-btn .icon { width: 22px; height: 22px; }
+        .tab-btn:hover { color: var(--text); }
+        .tab-btn.active { color: var(--cyan); background: var(--cyan-soft); }
+
+        /* ---------- Layout ---------- */
+        main { max-width: 760px; margin: 0 auto; padding: 20px 16px 0; }
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 320ms var(--ease); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+        .page-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 6px 4px 16px; }
+        .page-title h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+        .page-title .eyebrow { color: var(--muted); font-size: 13px; font-weight: 600; }
+        h2 { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 14px; }
+        h3 { font-weight: 700; letter-spacing: -0.015em; }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.025), transparent 60%), var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 14px;
+        }
+
+        .label { display: block; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 2px 8px; }
+        .field { margin-bottom: 18px; }
+
+        /* ---------- Buttons ---------- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 20px;
+            border-radius: 14px;
+            border: 1px solid var(--line-strong);
+            background: var(--surface-2);
+            color: var(--text);
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: -0.005em;
+            transition: transform 120ms var(--ease), filter 160ms var(--ease), background 160ms var(--ease), border-color 160ms var(--ease), opacity 160ms;
+        }
+        .btn + .btn { margin-top: 10px; }
+        .btn:not(:disabled):hover { filter: brightness(1.12); }
+        .btn:not(:disabled):active { transform: scale(0.975); filter: brightness(0.9); }
+        .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+        .btn-primary { background: var(--cyan); color: var(--black); border-color: transparent; box-shadow: 0 8px 24px rgba(0, 174, 239, 0.25); }
+        .btn-action { background: var(--red); color: var(--white); border-color: transparent; box-shadow: 0 8px 24px rgba(237, 28, 36, 0.25); }
+        .btn-ghost { background: transparent; border-color: var(--line-strong); }
+        .btn-quiet { background: transparent; border-color: transparent; color: var(--muted); min-height: 40px; }
+        .btn-google { background: var(--white); color: #1F1F1F; border-color: transparent; }
+        .btn-inline { width: auto; }
+        button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+        .icon-btn {
+            display: inline-grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid var(--line-strong);
+            background: var(--surface-2);
+            color: var(--text);
+            flex: 0 0 auto;
+            transition: transform 120ms var(--ease), background 160ms var(--ease);
+        }
+        .icon-btn:hover { background: var(--surface-3); }
+        .icon-btn:active { transform: scale(0.92); }
+        .icon-btn.red { background: var(--red); border-color: transparent; color: var(--white); }
+
+        /* ---------- Formulare ---------- */
+        input[type="text"], select, textarea {
+            width: 100%;
+            background: var(--surface-2);
+            border: 1px solid var(--line-strong);
+            color: var(--text);
+            padding: 13px 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            transition: border-color 160ms var(--ease), background 160ms var(--ease);
+        }
+        input[type="text"]::placeholder, textarea::placeholder { color: var(--faint); }
+        input[type="text"]:focus, select:focus, textarea:focus { outline: none; border-color: var(--cyan); background: var(--surface-3); }
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            padding-right: 42px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394949C' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+        }
+        select option { background: #151518; color: var(--text); }
+        textarea { resize: vertical; min-height: 96px; }
+
+        .search { position: relative; margin-bottom: 12px; }
+        .search .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+        .search input { padding-left: 44px; }
+
+        .filters { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+        .filters .switch-row { grid-column: 1 / -1; }
+        @media (max-width: 520px) { .filters { grid-template-columns: 1fr; } }
+
+        .switch-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 14px;
+            background: var(--surface-2);
+            border: 1px solid var(--line-strong);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .switch { position: relative; width: 44px; height: 26px; flex: 0 0 auto; }
+        .switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+        .switch .track { position: absolute; inset: 0; border-radius: 999px; background: var(--surface-3); border: 1px solid var(--line-strong); transition: background 200ms var(--ease); }
+        .switch .track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: var(--white); transition: transform 220ms var(--ease); }
+        .switch input:checked + .track { background: var(--cyan); border-color: transparent; }
+        .switch input:checked + .track::after { transform: translateX(18px); }
+        .switch input:focus-visible + .track { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+        /* ---------- Bewertungsskala ---------- */
+        .rating-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 10px; }
+        .rating-value { font-size: 34px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--faint); transition: color 160ms; }
+        .rating-value.set { color: var(--cyan); }
+        .rating-value small { font-size: 15px; color: var(--muted); font-weight: 600; letter-spacing: 0; }
+        .rating-scale { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin-bottom: 20px; }
+        @media (max-width: 480px) { .rating-scale { grid-template-columns: repeat(5, 1fr); } }
+        .rating-btn {
+            aspect-ratio: 1 / 1;
+            min-height: 44px;
+            border-radius: 12px;
+            border: 1px solid var(--line-strong);
+            background: var(--surface-2);
+            color: var(--muted);
+            font-weight: 800;
+            font-size: 16px;
+            transition: transform 120ms var(--ease), background 160ms var(--ease), color 160ms, box-shadow 200ms;
+        }
+        .rating-btn:hover { color: var(--text); background: var(--surface-3); }
+        .rating-btn:active { transform: scale(0.92); }
+        .rating-btn.selected { background: var(--cyan); color: var(--black); border-color: transparent; box-shadow: 0 6px 18px rgba(0, 174, 239, 0.35); }
+        .rating-btn.in-range { color: var(--cyan); border-color: rgba(0, 174, 239, 0.35); }
+
+        /* ---------- Badges ---------- */
+        .score {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+            white-space: nowrap;
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+        }
+        .score .icon { width: 13px; height: 13px; }
+        .score.hi { background: var(--cyan-soft); color: var(--cyan); }
+        .score.lo { background: var(--red-soft); color: #FF5A61; }
+        .score.none { color: var(--muted); }
+        .score .count { color: var(--muted); font-weight: 600; }
+        .meta { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+        .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid var(--line); font-size: 12px; font-weight: 700; color: var(--muted); }
+
+        /* ---------- Fall des Tages ---------- */
+        .daily-hero { position: relative; overflow: hidden; padding: 0; text-align: center; }
+        .daily-backdrop { position: absolute; inset: -40px; background-image: var(--cover); background-size: cover; background-position: center; filter: blur(48px) saturate(140%); opacity: 0.45; transform: scale(1.1); }
+        .daily-backdrop::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,13,15,0.2) 0%, var(--surface) 70%); }
+        .daily-inner { position: relative; padding: 26px 20px 20px; }
+        .daily-kicker { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; }
+        .cover-img-daily { display: block; width: min(260px, 72%); aspect-ratio: 1 / 1; object-fit: cover; margin: 0 auto 20px; border-radius: 20px; box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08); background: var(--surface-2); }
+        .daily-title { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; margin: 6px 0 12px; }
+        .daily-actions { display: grid; gap: 10px; margin-top: 20px; }
+
+        /* FdT-Tab füllt genau den Platz zwischen Header und unterer Leiste – kein Scrollen.
+           Gesamthöhe = Header + main-Abstand (20px) + Tab + body-padding-bottom (Leiste + 24px) = Bildschirmhöhe. */
+        #tab-daily.active {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - var(--header-actual, calc(var(--header-h) + var(--safe-top))) - 20px - var(--nav-h) - var(--safe-bottom) - 24px);
+            height: calc(100dvh - var(--header-actual, calc(var(--header-h) + var(--safe-top))) - 20px - var(--nav-h) - var(--safe-bottom) - 24px);
+            min-height: 430px;
+        }
+        #tab-daily .page-title { flex: 0 0 auto; }
+        #tab-daily .daily-hero { flex: 1 1 auto; min-height: 0; margin-bottom: 0; display: flex; }
+        #tab-daily .daily-inner { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; padding: 18px 18px 16px; }
+        #daily-content { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+        #daily-content > .skeleton-hero { flex: 1 1 auto; height: auto; }
+        #daily-content > .empty-state { margin: auto 0; }
+        #tab-daily .daily-kicker { margin-bottom: 12px; align-self: center; }
+        #tab-daily .daily-title { margin: 2px 0 8px; }
+        #tab-daily #daily-content .daily-actions { margin-top: 14px; }
+        #tab-daily .daily-inner > .daily-actions { margin-top: 10px; }
+        #tab-daily .music-links { margin-top: 10px; }
+        /* Das Cover nimmt den restlichen Platz ein und bleibt quadratisch. */
+        .daily-cover { flex: 1 1 0; min-height: 90px; margin-bottom: 14px; container-type: size; display: grid; place-items: center; }
+        .daily-cover .cover-img-daily, .daily-cover .q-loader {
+            width: min(100cqw, 100cqh, 300px);
+            height: min(100cqw, 100cqh, 300px);
+            margin: 0;
+        }
+        @media (max-height: 720px) {
+            #tab-daily .daily-title { font-size: 21px; }
+            #tab-daily .page-title { margin-bottom: 10px; }
+            #tab-daily .page-title h1 { font-size: 24px; }
+            #tab-daily .btn { min-height: 44px; padding-top: 10px; padding-bottom: 10px; }
+            #tab-daily .music-link { padding: 6px 12px; }
+        }
+        .music-links { display: flex; justify-content: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+        .music-link { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,0.04); color: var(--text); text-decoration: none; font-size: 13px; font-weight: 700; transition: background 160ms var(--ease), border-color 160ms var(--ease), transform 120ms var(--ease); }
+        .music-link:hover { border-color: var(--cyan); background: var(--cyan-soft); }
+        .music-link:active { transform: scale(0.96); }
+        /* Ladeanimation beim Neu-Mischen: die drei ??? drehen sich nacheinander */
+        .q-loader {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: min(260px, 72%);
+            aspect-ratio: 1 / 1;
+            margin: 0 auto 20px;
+            border-radius: 20px;
+            background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.06), transparent 70%), var(--surface-2);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
+            perspective: 600px;
+        }
+        .q-loader span {
+            display: inline-block;
+            font-family: 'Anton', sans-serif;
+            font-size: clamp(36px, 9vh, 84px);
+            line-height: 1;
+            transform-style: preserve-3d;
+            animation: qSpin 2.1s var(--ease) infinite;
+        }
+        .q-loader span:nth-child(1) { color: var(--white); animation-delay: 0s; }
+        .q-loader span:nth-child(2) { color: var(--red); animation-delay: 0.7s; }
+        .q-loader span:nth-child(3) { color: var(--cyan); animation-delay: 1.4s; }
+        @keyframes qSpin {
+            0% { transform: rotateY(0deg); }
+            33.333% { transform: rotateY(360deg); }
+            100% { transform: rotateY(360deg); }
+        }
+        @keyframes qPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+        .daily-dim { opacity: 0.35; transition: opacity 200ms var(--ease); }
+        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+        .shuffle-dots { display: inline-flex; gap: 4px; margin-left: 4px; }
+        .shuffle-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); }
+        .shuffle-dots i.on { background: var(--cyan); }
+
+        /* ---------- Folgenliste ---------- */
+        .episode-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: var(--radius);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            cursor: pointer;
+            transition: background 160ms var(--ease), border-color 160ms var(--ease), transform 120ms var(--ease);
+        }
+        .episode-card:hover { background: var(--surface-2); border-color: var(--line-strong); }
+        .episode-card:active { transform: scale(0.99); }
+        .episode-body { flex: 1; min-width: 0; }
+        .episode-title { font-size: 15px; font-weight: 700; margin: 2px 0 6px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .cover-img-list { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; flex-shrink: 0; background: var(--surface-2); box-shadow: 0 0 0 1px rgba(255,255,255,0.06); }
+        .cover-thumb { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: var(--surface-2); }
+        .cover-fallback { display: grid; place-items: center; color: var(--faint); background: var(--surface-2); }
+        .list-count { color: var(--muted); font-size: 13px; font-weight: 600; margin: 0 4px 10px; }
+
+        /* ---------- Reviews ---------- */
+        .review-card { padding: 16px; }
+        .review-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .review-head .who { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .review-date { color: var(--muted); font-size: 12px; font-weight: 500; }
+        .review-episode { display: flex; align-items: center; gap: 12px; padding: 8px; margin-bottom: 12px; border-radius: 14px; background: var(--surface-2); }
+        .review-episode .episode-label { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .review-comment { color: #D6D6DC; font-size: 15px; line-height: 1.55; overflow-wrap: anywhere; white-space: pre-line; }
+        .review-comment.empty { color: var(--faint); font-style: italic; }
+        .review-foot { display: flex; justify-content: flex-end; margin-top: 12px; }
+        .user-profile-link { color: var(--text); background: transparent; border: 0; padding: 0; margin: 0; width: auto; text-align: left; font: inherit; font-weight: 700; overflow-wrap: anywhere; }
+        .user-profile-link:hover { color: var(--cyan); }
+        .edit-link { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line-strong); background: transparent; color: var(--cyan); font-size: 13px; font-weight: 700; }
+        .edit-link:hover { background: var(--cyan-soft); }
+
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+        .empty-state .icon { width: 36px; height: 36px; color: var(--faint); margin-bottom: 10px; }
+
+        /* ---------- Skeleton ---------- */
+        .skeleton { border-radius: var(--radius); background: linear-gradient(90deg, var(--surface) 0%, var(--surface-2) 50%, var(--surface) 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite linear; border: 1px solid var(--line); }
+        .skeleton-row { height: 90px; margin-bottom: 10px; }
+        .skeleton-hero { height: 420px; border-radius: var(--radius-lg); }
+        @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+        /* ---------- Modals (Bottom-Sheet auf dem Handy) ---------- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 220ms var(--ease);
+        }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-content { background: var(--dark-gray); width: 90%; max-width: 400px; padding: 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.14); }
-        .episode-reviews-modal { max-width: 600px; max-height: 90vh; overflow-y: auto; }
-        .episode-reviews-heading { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
-        .episode-reviews-heading h2 { margin-bottom: 18px; }
-        .modal-close { background: transparent; border: 0; color: var(--text-light); font-size: 28px; cursor: pointer; line-height: 1; }
-        .episode-review { padding: 14px; margin-bottom: 10px; background: var(--card-gray); border-radius: 8px; }
-        .episode-review-header { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-        .episode-review-date { color: var(--muted); font-size: 12px; }
-        .episode-review-comment { margin-top: 8px; overflow-wrap: anywhere; }
-        .user-profile-link { color: var(--cyan); background: transparent; border: 0; padding: 0; margin: 0; width: auto; text-align: left; font: inherit; font-weight: 700; cursor: pointer; overflow-wrap: anywhere; }
-        .profile-view { display: none; position: fixed; inset: 0; z-index: 1200; overflow-y: auto; padding: 20px; background: var(--black); }
-        .profile-view.active { display: block; }
-        .profile-view-inner { max-width: 850px; margin: 0 auto; padding-bottom: 30px; }
-        .profile-back-btn { max-width: 180px; }
-        .profile-heading { margin: 15px 0 20px; }
-        .profile-heading h1 { font-family: 'Anton', sans-serif; font-size: 30px; }
-        .profile-stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 15px; }
-        .profile-stat { background: var(--dark-gray); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 18px; }
-        .profile-stat-label { color: var(--muted); font-size: 13px; }
-        .profile-stat-value { display: block; color: var(--cyan); font-size: 28px; font-weight: 800; }
-        .profile-top-list { padding-left: 24px; }
-        .profile-top-list li { padding: 7px 0; }
-        .profile-top-score { color: var(--cyan); font-weight: 700; margin-left: 8px; }
-        .profile-worst-score { color: var(--red); font-weight: 700; margin-left: 8px; }
-        .profile-top-date { color: var(--muted); font-size: 11px; margin-left: 8px; }
+        .modal-content {
+            width: 100%;
+            max-width: 520px;
+            max-height: 88vh;
+            overflow-y: auto;
+            padding: 12px 20px calc(var(--safe-bottom) + 22px);
+            background: var(--surface);
+            border: 1px solid var(--line-strong);
+            border-bottom: 0;
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            transform: translateY(40px);
+            transition: transform 320ms var(--ease);
+        }
+        .modal-content::before { content: ''; display: block; width: 40px; height: 4px; border-radius: 4px; background: var(--line-strong); margin: 0 auto 16px; }
+        .modal-overlay.active .modal-content { transform: none; }
+        @media (min-width: 640px) {
+            .modal-overlay { align-items: center; }
+            .modal-content { border-radius: var(--radius-xl); border-bottom: 1px solid var(--line-strong); padding: 24px; transform: translateY(16px) scale(0.98); }
+            .modal-content::before { display: none; }
+        }
+        .modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+        .modal-head h2 { margin: 0; font-size: 22px; line-height: 1.25; }
+        .modal-text { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+        .modal-content select, .modal-content input[type="text"] { margin-bottom: 12px; }
+        /* ---------- Charts ---------- */
+        .chip-row { display: flex; gap: 8px; margin: 0 0 16px; overflow-x: auto; scrollbar-width: none; }
+        .chip-row::-webkit-scrollbar { display: none; }
+        .chip { flex: 0 0 auto; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--surface-2); color: var(--muted); font-size: 14px; font-weight: 700; transition: background 160ms var(--ease), color 160ms var(--ease), transform 120ms var(--ease); }
+        .chip:hover { color: var(--text); }
+        .chip:active { transform: scale(0.96); }
+        .chip.active { background: var(--cyan); border-color: transparent; color: var(--black); }
+        .rank-sub { color: var(--muted); font-size: 12px; }
+
+        .streak-card { padding: 18px; }
+        .streak-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .streak-head strong { flex: 1; font-size: 17px; font-weight: 800; }
+        .streak-flame { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-weight: 800; font-size: 14px; background: rgba(255,255,255,0.06); color: var(--muted); }
+        .streak-flame.on { background: var(--red-soft); color: #FF5A61; }
+        .streak-flame .icon { width: 16px; height: 16px; }
+        .streak-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; }
+        .streak-stat { padding: 12px; border-radius: 14px; background: var(--surface-2); }
+        .streak-stat span { display: block; color: var(--muted); font-size: 12px; font-weight: 600; }
+        .streak-stat strong { display: block; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin-top: 2px; }
+        .streak-stat small { color: var(--muted); font-size: 12px; font-weight: 500; }
+        /* Monatskalender der Hör-Aktivität */
+        .cal-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+        .cal-head strong { font-size: 15px; font-weight: 800; text-transform: capitalize; }
+        .cal-nav { width: 34px; height: 34px; }
+        .cal-nav:disabled { opacity: 0.3; cursor: default; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+        .cal-wd { text-align: center; color: var(--faint); font-size: 11px; font-weight: 700; padding-bottom: 2px; }
+        .cal-day {
+            position: relative;
+            height: 40px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--surface-2);
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+            transition: transform 120ms var(--ease), box-shadow 160ms var(--ease);
+        }
+        .cal-day:not(:disabled):active { transform: scale(0.92); }
+        .cal-day:disabled { cursor: default; }
+        .cal-day.blank { background: transparent; }
+        .cal-day.future, .cal-day.before { background: transparent; color: var(--faint); }
+        .cal-day.l1 { background: rgba(0, 174, 239, 0.28); color: var(--text); }
+        .cal-day.l2 { background: rgba(0, 174, 239, 0.5); color: var(--white); }
+        .cal-day.l3 { background: rgba(0, 174, 239, 0.75); color: var(--black); }
+        .cal-day.l4 { background: var(--cyan); color: var(--black); }
+        .cal-day.today { box-shadow: inset 0 0 0 1.5px var(--white); }
+        .cal-day.selected { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--white); z-index: 1; }
+        .cal-count { position: absolute; top: 3px; right: 5px; font-size: 9px; font-weight: 800; opacity: 0.85; }
+        .cal-detail { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); }
+        .cal-detail-head { font-size: 13px; font-weight: 800; margin-bottom: 6px; }
+        .cal-detail .rank-item { border-bottom-color: var(--line); }
+        .cal-detail-empty { color: var(--muted); font-size: 13px; }
+        .heat { width: 11px; height: 11px; border-radius: 3px; background: var(--surface-3); }
+        .heat.l1 { background: rgba(0, 174, 239, 0.28); }
+        .heat.l2 { background: rgba(0, 174, 239, 0.5); }
+        .heat.l3 { background: rgba(0, 174, 239, 0.75); }
+        .heat.l4 { background: var(--cyan); }
+        .heat-legend { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 10px; color: var(--faint); font-size: 11px; font-weight: 600; }
+
+        .episode-detail { text-align: center; margin-top: -18px; }
+        .cover-img-detail { display: block; width: min(220px, 62%); aspect-ratio: 1 / 1; object-fit: cover; margin: 0 auto 18px; border-radius: 18px; background: var(--surface-2); box-shadow: 0 20px 50px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.08); }
+        .episode-detail h2 { font-size: 24px; line-height: 1.2; margin: 10px 0 12px; }
+        .episode-detail .daily-actions { margin-top: 18px; }
+        .section-title { display: flex; align-items: baseline; justify-content: space-between; margin: 26px 2px 12px; font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+        .section-title span { color: var(--muted); font-size: 13px; font-weight: 600; }
+        [data-open-episode] { cursor: pointer; }
+        .review-episode[data-open-episode] { transition: background 160ms var(--ease); }
+        .review-episode[data-open-episode]:hover { background: var(--surface-3); }
+        .daily-title[data-open-episode]:hover, .rank-title[data-open-episode]:hover { color: var(--cyan); }
+        img[data-open-episode] { transition: transform 160ms var(--ease); }
+        img[data-open-episode]:hover { transform: scale(1.02); }
+        .episode-card.flash { animation: reviewFlash 2.2s var(--ease); }
+        .episode-review { padding: 14px; margin-bottom: 10px; background: var(--surface-2); border-radius: var(--radius); }
+        .legal-modal p { margin: 0 0 14px; color: #D6D6DC; font-size: 14px; }
+        .legal-note { color: var(--muted) !important; font-size: 12px !important; }
+        .modal-account { display: flex; align-items: center; gap: 14px; padding: 14px; margin-bottom: 16px; border-radius: var(--radius); background: var(--surface-2); }
+        .modal-account strong { display: block; font-size: 16px; }
+        .modal-account span { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+
+        /* ---------- Profil ---------- */
+        .profile-view { display: none; position: fixed; inset: 0; z-index: 1200; overflow-y: auto; background: var(--bg); }
+        .profile-view.active { display: block; animation: slideIn 320ms var(--ease); }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+        .profile-topbar { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 12px; padding: calc(var(--safe-top) + 12px) 16px 12px; background: rgba(0,0,0,0.72); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid var(--line); }
+        .profile-topbar span { font-weight: 700; }
+        .profile-view-inner { max-width: 760px; margin: 0 auto; padding: 24px 16px calc(40px + var(--safe-bottom)); }
+        .profile-heading { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+        .profile-heading h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+        .profile-stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+        .profile-stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+        .profile-stat-label { display: block; color: var(--muted); font-size: 12px; font-weight: 600; }
+        .profile-stat-value { display: block; color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.03em; margin-top: 2px; }
+        .profile-stat-value.accent { color: var(--cyan); }
+        .rank-list { list-style: none; }
+        .rank-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+        .rank-item:last-child { border-bottom: 0; padding-bottom: 0; }
+        .rank-item:first-child { padding-top: 0; }
+        .rank-no { width: 22px; color: var(--faint); font-weight: 800; font-size: 14px; text-align: center; flex: 0 0 auto; }
+        .rank-body { flex: 1; min-width: 0; }
+        .rank-title { font-size: 14px; font-weight: 600; line-height: 1.35; }
+        .rank-date { color: var(--muted); font-size: 12px; }
         .profile-chart-layout { display: flex; align-items: center; justify-content: center; gap: 28px; flex-wrap: wrap; }
-        .profile-donut { width: 190px; height: 190px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto; }
-        .profile-donut-center { width: 112px; height: 112px; border-radius: 50%; background: var(--dark-gray); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .profile-donut-average { font-size: 25px; font-weight: 800; }
-        .profile-donut-caption { color: var(--muted); font-size: 11px; }
-        .profile-grade-legend { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(105px, 1fr)); gap: 8px 16px; }
-        .profile-grade-legend li { display: flex; align-items: center; gap: 7px; font-size: 13px; }
-        .profile-grade-swatch { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
-        .app-footer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 900; display: flex; justify-content: center; padding: 7px 12px; background: rgba(0,0,0,0.94); border-top: 1px solid var(--card-gray); }
-        .app-footer button { border: 0; background: transparent; color: var(--muted); font-size: 11px; text-decoration: underline; cursor: pointer; padding: 3px 8px; }
-        .legal-modal { max-width: 680px; max-height: 85vh; overflow-y: auto; }
-        .legal-modal p { margin: 0 0 14px; }
-        .legal-modal a { color: var(--cyan); }
-        .legal-note { color: var(--muted); font-size: 12px; }
-        @media (max-width: 480px) { .profile-view { padding: 14px; } .profile-chart-layout { gap: 18px; } .profile-donut { width: 170px; height: 170px; } }
+        .profile-donut { width: 180px; height: 180px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto; }
+        .profile-donut-center { width: 124px; height: 124px; border-radius: 50%; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .profile-donut-average { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; }
+        .profile-donut-caption { color: var(--muted); font-size: 11px; font-weight: 600; }
+        .profile-grade-legend { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(110px, 1fr)); gap: 8px 18px; }
+        .profile-grade-legend li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #D6D6DC; }
+        .profile-grade-swatch { width: 10px; height: 10px; border-radius: 3px; flex: 0 0 auto; }
+        @media (max-width: 480px) { .profile-stat { padding: 12px; } .profile-stat-value { font-size: 21px; } }
+
+        /* ---------- Footer & Toast ---------- */
+        .modal-legal { display: flex; justify-content: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+        .modal-legal button { border: 0; background: transparent; color: var(--faint); font-size: 12px; font-weight: 600; padding: 6px 10px; }
+        .modal-legal button:hover { color: var(--muted); }
+
+        .toast-stack { position: fixed; left: 50%; bottom: calc(var(--nav-h) + var(--safe-bottom) + 28px); transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; align-items: center; gap: 8px; width: min(480px, calc(100% - 32px)); pointer-events: none; }
+        .toast { display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 13px 16px; border-radius: 16px; background: rgba(30, 30, 35, 0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--line-strong); box-shadow: 0 16px 40px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; animation: toastIn 320ms var(--ease); }
+        .toast .icon { margin-top: 1px; }
+        .toast.success .icon { color: var(--cyan); }
+        .toast.error .icon { color: #FF5A61; }
+        .toast.leaving { opacity: 0; transform: translateY(8px); transition: opacity 200ms, transform 200ms; }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+            .q-loader span { animation: qPulse 2.1s ease-in-out infinite !important; }
+        }
     </style>
 </head>
 <body>
 
+    <!-- SVG-Icons -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="i-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.3" fill="currentColor" stroke="none"/></symbol>
+        <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+        <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+        <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+        <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor" stroke="none"/></symbol>
+        <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="m4 4 5 5"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+        <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+        <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></symbol>
+        <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z" fill="currentColor" stroke="none"/></symbol>
+        <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+        <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></symbol>
+        <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+        <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M8 17v-5"/><path d="M13 17V8"/><path d="M18 17v-9"/></symbol>
+        <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+        <symbol id="i-google" viewBox="0 0 24 24"><path fill="#4285F4" stroke="none" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" stroke="none" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" stroke="none" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" stroke="none" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></symbol>
+    </svg>
+
     <header>
         <div class="logo"><span>?</span><span>?</span><span>?</span> Ranking</div>
-        <div class="user-profile" onclick="openUserModal()">👤 <span id="currentUserNameDisplay">Gast</span></div>
+        <div class="header-actions">
+            <button class="icon-btn bell-btn" id="bell-btn" type="button" onclick="toggleNotifications()" aria-label="Mitteilungen" aria-expanded="false" style="display:none;">
+                <svg class="icon"><use href="#i-bell"/></svg>
+                <span class="bell-badge" id="bell-badge" style="display:none;"></span>
+            </button>
+            <button class="user-chip" type="button" onclick="openUserModal()" aria-label="Konto">
+                <span class="avatar" id="header-avatar"><svg class="icon icon-sm"><use href="#i-user"/></svg></span>
+                <span id="currentUserNameDisplay">Gast</span>
+            </button>
+        </div>
     </header>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('tab-daily')">🎲 FdT</button>
-        <button class="tab-btn" onclick="switchTab('tab-rate')">✍️ Bewerten</button>
-        <button class="tab-btn" onclick="switchTab('tab-list')">📚 Folgen</button>
-        <button class="tab-btn" onclick="switchTab('tab-reviews')">⭐ Reviews</button>
+    <div class="notif-panel" id="notif-panel" role="dialog" aria-label="Mitteilungen">
+        <div class="notif-head"><h2>Mitteilungen</h2><span>Letzte 5</span></div>
+        <div class="notif-list" id="notif-list"></div>
     </div>
 
-    <!-- TAB 1: FALL DES TAGES -->
-    <div id="tab-daily" class="content-section active">
-        <div class="card" style="text-align: center;">
-            <h2>Dein Fall des Tages</h2>
-            <div id="daily-content">Lade Daten...</div>
-            <button class="btn" id="daily-shuffle-btn" onclick="shuffleDailyCase()">🔄 Neu Mischen</button>
-        </div>
-    </div>
+    <main>
+        <!-- TAB 1: FALL DES TAGES -->
+        <section id="tab-daily" class="content-section active">
+            <div class="page-title"><h1>Fall des Tages</h1><span class="eyebrow" id="daily-date"></span></div>
+            <div class="card daily-hero" id="daily-card">
+                <div class="daily-backdrop" id="daily-backdrop"></div>
+                <div class="daily-inner">
+                    <div id="daily-content"><div class="skeleton skeleton-hero"></div></div>
+                    <div class="daily-actions">
+                        <button class="btn btn-ghost" id="daily-shuffle-btn" type="button" onclick="shuffleDailyCase()">
+                            <svg class="icon"><use href="#i-shuffle"/></svg> Neu mischen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <!-- TAB 2: BEWERTEN -->
-    <div id="tab-rate" class="content-section">
-        <div class="card">
-            <h2>Folge bewerten</h2>
-            <select id="rate-select"><option value="">Lade Folgen...</option></select>
-            <div id="rate-load-error" style="display:none;"></div>
-            <label>Punkte (1-10)</label>
-            <div class="rating-scale" id="rating-scale-container"></div>
-            <textarea id="rate-comment" rows="3" placeholder="Wie fandest du die Folge?"></textarea>
-            <button class="btn btn-primary" id="rating-submit-btn" onclick="submitRating()">📝 Bewertung abgeben</button>
-            <button class="btn" id="rating-cancel-edit-btn" onclick="cancelEditRating()" style="display:none;">Bearbeiten abbrechen</button>
-        </div>
-    </div>
+        <!-- TAB 2: CHARTS -->
+        <section id="tab-charts" class="content-section">
+            <div class="page-title"><h1>Charts</h1></div>
+            <div class="chip-row" id="chart-user-filter" role="tablist" aria-label="Charts nach Nutzer"></div>
+            <section class="card">
+                <h2>Top 5</h2>
+                <ol class="rank-list" id="chart-top"></ol>
+            </section>
+            <section class="card">
+                <h2>Flop 5</h2>
+                <ol class="rank-list" id="chart-flop"></ol>
+            </section>
+            <div class="section-title" style="margin-top:28px;">Hör-Streaks <span>nach Tag der Bewertung</span></div>
+            <div id="streak-list"><div class="skeleton skeleton-row"></div></div>
+        </section>
 
-    <!-- TAB 3: ALLE FOLGEN -->
-    <div id="tab-list" class="content-section">
-        <input type="text" id="search-input" placeholder="🔍 Suche Titel oder Nummer..." onkeyup="renderFolgenList()">
-        <div class="list-filters">
-            <label class="rated-filter"><input type="checkbox" id="rated-only-filter" onchange="renderFolgenList()"> Nur bewertete Folgen</label>
-            <select id="list-filter-user" onchange="renderFolgenList()"><option value="all">Bewertungen aller Nutzer</option></select>
-            <select id="list-sort" onchange="renderFolgenList()" aria-label="Folgen sortieren">
-                <option value="number-asc">Nummer aufsteigend</option>
-                <option value="number-desc">Nummer absteigend</option>
-                <option value="rating-asc">Bewertung aufsteigend</option>
-                <option value="rating-desc">Bewertung absteigend</option>
-            </select>
-        </div>
-        <div id="folgen-list" style="margin-top: 20px;">Lade Daten...</div>
-    </div>
+        <!-- TAB 3: ALLE FOLGEN -->
+        <section id="tab-list" class="content-section">
+            <div class="page-title"><h1>Folgen</h1></div>
+            <div class="search">
+                <svg class="icon"><use href="#i-search"/></svg>
+                <input type="text" id="search-input" placeholder="Titel oder Nummer suchen" oninput="renderFolgenList()" autocomplete="off">
+            </div>
+            <div class="filters">
+                <label class="switch-row" for="rated-only-filter">
+                    Nur bewertete Folgen
+                    <span class="switch"><input type="checkbox" id="rated-only-filter" onchange="renderFolgenList()"><span class="track"></span></span>
+                </label>
+                <select id="list-filter-user" onchange="renderFolgenList()" aria-label="Nach Nutzer filtern"><option value="all">Alle Nutzer</option></select>
+                <select id="list-sort" onchange="renderFolgenList()" aria-label="Folgen sortieren">
+                    <option value="number-asc">Nummer aufsteigend</option>
+                    <option value="number-desc">Nummer absteigend</option>
+                    <option value="rating-desc">Beste zuerst</option>
+                    <option value="rating-asc">Schlechteste zuerst</option>
+                </select>
+            </div>
+            <div id="folgen-list"><div class="skeleton skeleton-row"></div><div class="skeleton skeleton-row"></div><div class="skeleton skeleton-row"></div></div>
+        </section>
 
-    <!-- TAB 4: REVIEWS -->
-    <div id="tab-reviews" class="content-section">
-        <select id="review-filter-user" onchange="renderReviews()"><option value="all">Alle Nutzer</option></select>
-        <div id="reviews-list" style="margin-top: 20px;">Lade Daten...</div>
+        <!-- TAB 4: REVIEWS -->
+        <section id="tab-reviews" class="content-section">
+            <div class="page-title"><h1>Reviews</h1></div>
+            <div class="filters" style="grid-template-columns:1fr;">
+                <select id="review-filter-user" onchange="renderReviews()" aria-label="Nach Nutzer filtern"><option value="all">Alle Nutzer</option></select>
+            </div>
+            <div id="reviews-list"><div class="skeleton skeleton-row"></div><div class="skeleton skeleton-row"></div></div>
+        </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Hauptnavigation">
+        <button class="tab-btn active" type="button" data-tab="tab-daily" onclick="switchTab('tab-daily')"><svg class="icon"><use href="#i-dice"/></svg>FdT</button>
+        <button class="tab-btn" type="button" data-tab="tab-charts" onclick="switchTab('tab-charts')"><svg class="icon"><use href="#i-chart"/></svg>Charts</button>
+        <button class="tab-btn" type="button" data-tab="tab-list" onclick="switchTab('tab-list')"><svg class="icon"><use href="#i-book"/></svg>Folgen</button>
+        <button class="tab-btn" type="button" data-tab="tab-reviews" onclick="switchTab('tab-reviews')"><svg class="icon"><use href="#i-chat"/></svg>Reviews</button>
+    </nav>
+
+    <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+    <!-- BEWERTEN (Bottom-Sheet) -->
+    <div class="modal-overlay" id="rateModal" onclick="if (event.target === this) closeRateModal()" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="rate-title">
+            <div class="modal-head">
+                <h2 id="rate-title">Folge bewerten</h2>
+                <button class="icon-btn" type="button" aria-label="Schließen" onclick="closeRateModal()"><svg class="icon"><use href="#i-x"/></svg></button>
+            </div>
+                <div class="review-episode" id="rate-episode-preview" style="display:none;"></div>
+                <div class="field">
+                    <label class="label" for="rate-select">Folge</label>
+                    <select id="rate-select" onchange="updateRatePreview()"><option value="">Lade Folgen…</option></select>
+                    <div id="rate-load-error" style="display:none;"></div>
+                </div>
+                <div class="field">
+                    <div class="rating-head">
+                        <span class="label" style="margin-bottom:0;">Punkte</span>
+                        <span class="rating-value" id="rating-value">–<small> / 10</small></span>
+                    </div>
+                    <div class="rating-scale" id="rating-scale-container"></div>
+                </div>
+                <div class="field">
+                    <label class="label" for="rate-comment">Kommentar</label>
+                    <textarea id="rate-comment" rows="4" placeholder="Wie fandest du die Folge?"></textarea>
+                </div>
+                <button class="btn btn-primary" id="rating-submit-btn" type="button" onclick="submitRating()"></button>
+                <button class="btn btn-quiet" id="rating-cancel-edit-btn" type="button" onclick="closeRateModal()">Abbrechen</button>
+            </div>
     </div>
 
     <!-- USER MODAL -->
-    <div class="modal-overlay" id="userModal">
-        <div class="modal-content">
-            <h2 style="color: white; margin-bottom: 20px;">Nutzer auswählen</h2>
-            <select id="user-select" aria-label="Nutzer auswählen">
-                <option value="">Nutzer werden geladen...</option>
-            </select>
-            <button class="btn btn-primary" onclick="saveUser()">Speichern</button>
-            <button class="btn" onclick="closeUserModal()">Abbrechen</button>
-            <button class="btn" type="button" onclick="continueAsGuest()">Weiter als Gast</button>
+    <div class="modal-overlay" id="userModal" onclick="if (event.target === this) closeUserModal()">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="user-modal-title">
+            <div class="modal-head">
+                <h2 id="user-modal-title">Anmelden</h2>
+                <button class="icon-btn" type="button" aria-label="Schließen" onclick="closeUserModal()"><svg class="icon"><use href="#i-x"/></svg></button>
+            </div>
+            <div id="user-modal-body"></div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="episodeReviewsModal" onclick="closeEpisodeReviews()" aria-hidden="true">
-        <div class="modal-content episode-reviews-modal" role="dialog" aria-modal="true" aria-labelledby="episode-reviews-title" onclick="event.stopPropagation()">
-            <div class="episode-reviews-heading">
-                <h2 id="episode-reviews-title">Bewertungen</h2>
-                <button class="modal-close" type="button" aria-label="Schließen" onclick="closeEpisodeReviews()">&times;</button>
+    <div class="modal-overlay" id="episodeReviewsModal" onclick="if (event.target === this) closeEpisodeReviews()" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="episode-reviews-title">
+            <div class="modal-head" style="justify-content:flex-end; margin-bottom:0;">
+                <button class="icon-btn" type="button" aria-label="Schließen" onclick="closeEpisodeReviews()"><svg class="icon"><use href="#i-x"/></svg></button>
             </div>
             <div id="episode-reviews-list"></div>
         </div>
     </div>
 
-
     <div class="profile-view" id="user-profile-view" aria-hidden="true">
+        <div class="profile-topbar">
+            <button class="icon-btn" type="button" aria-label="Zurück" onclick="closeUserProfile()"><svg class="icon"><use href="#i-back"/></svg></button>
+            <span>Profil</span>
+        </div>
         <div class="profile-view-inner">
-            <button class="btn profile-back-btn" type="button" onclick="closeUserProfile()">← Zurück</button>
-            <div class="profile-heading"><h1 id="profile-user-name">Profil</h1></div>
+            <div class="profile-heading">
+                <span class="avatar lg" id="profile-avatar"></span>
+                <div>
+                    <div class="meta">Detektiv</div>
+                    <h1 id="profile-user-name">Profil</h1>
+                </div>
+            </div>
             <div class="profile-stats-grid">
-                <div class="profile-stat"><span class="profile-stat-label">Bewertete Folgen</span><strong class="profile-stat-value" id="profile-rated-count">0</strong><span class="profile-stat-label" id="profile-rated-percent">0 % aller Folgen</span></div>
-                <div class="profile-stat"><span class="profile-stat-label">Durchschnitt</span><strong class="profile-stat-value" id="profile-average">–</strong></div>
+                <div class="profile-stat"><span class="profile-stat-label">Bewertet</span><strong class="profile-stat-value" id="profile-rated-count">0</strong></div>
+                <div class="profile-stat"><span class="profile-stat-label">aller Folgen</span><strong class="profile-stat-value" id="profile-rated-percent">0 %</strong></div>
+                <div class="profile-stat"><span class="profile-stat-label">Durchschnitt</span><strong class="profile-stat-value accent" id="profile-average">–</strong></div>
             </div>
             <section class="card">
-                <h2>Top 3 Bewertungen</h2>
-                <ol class="profile-top-list" id="profile-top-list"></ol>
+                <h2>Lieblingsfolgen</h2>
+                <ol class="rank-list" id="profile-top-list"></ol>
             </section>
             <section class="card">
-                <h2>Schlechteste 3 Bewertungen</h2>
-                <ol class="profile-top-list" id="profile-worst-list"></ol>
+                <h2>Schlechteste Folgen</h2>
+                <ol class="rank-list" id="profile-worst-list"></ol>
             </section>
             <section class="card">
                 <h2>Notenverteilung</h2>
@@ -228,21 +917,18 @@
         </div>
     </div>
 
-    <footer class="app-footer">
-        <button type="button" onclick="openImprint()">Impressum</button>
-    </footer>
-
-    <div class="modal-overlay" id="imprintModal" onclick="closeImprint()" aria-hidden="true">
-        <section class="modal-content legal-modal" role="dialog" aria-modal="true" aria-labelledby="imprint-title" onclick="event.stopPropagation()">
-            <div class="episode-reviews-heading">
+    <div class="modal-overlay" id="imprintModal" onclick="if (event.target === this) closeImprint()" aria-hidden="true">
+        <section class="modal-content legal-modal" role="dialog" aria-modal="true" aria-labelledby="imprint-title">
+            <div class="modal-head">
                 <h2 id="imprint-title">Impressum &amp; Rechtehinweis</h2>
-                <button class="modal-close" type="button" aria-label="Schließen" onclick="closeImprint()">&times;</button>
+                <button class="icon-btn" type="button" aria-label="Schließen" onclick="closeImprint()"><svg class="icon"><use href="#i-x"/></svg></button>
             </div>
             <p>Diese App ist ein unabhängiges Fanprojekt und kein offizielles Angebot von Franckh-Kosmos, EUROPA oder Sony Music. Sie beansprucht keine Rechte an „Die drei ???“, den Figuren, Hörspielaufnahmen oder Coverabbildungen.</p>
             <p>Die offiziellen Produktangaben nennen Franckh-Kosmos Verlags-GmbH &amp; Co. KG als Rechteinhaber der Marke „Die drei ???“. Die Hörspielaufnahmen werden mit „(P) &amp; © EUROPA a division of Sony Music Entertainment Germany GmbH“ gekennzeichnet. Coverillustrationen und Gestaltung werden den jeweiligen Künstlerinnen, Künstlern und Rechteinhabern zugeordnet. Die Rechte an den Inhalten liegen bei den jeweils genannten Rechteinhabern.</p>
             <p class="legal-note">Quellen: <a href="https://www.play-europa.de/produktwelt/hoerspiele/die-drei-fragezeichen/" target="_blank" rel="noopener noreferrer">Offizielle EUROPA-Produktseite</a> · <a href="https://www.dreifragezeichen.de/impressum" target="_blank" rel="noopener noreferrer">Impressum der offiziellen Die drei ???-Website</a></p>
         </section>
     </div>
+
     <script>
         // --- PWA SERVICE WORKER REGISTRIERUNG ---
         if ('serviceWorker' in navigator) {
@@ -253,24 +939,126 @@
             });
         }
 
-        // --- HIER DEINE GOOGLE SCRIPT URL EINTRAGEN ---
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFs9N1rfcNhDeZ7jausQ9w7jVFU3uHqXVNp_3dwEfFm2zaIcn_jr6QAFKckcIzb7Sgzw/exec";
-        const DATA_LOAD_TIMEOUT_MS = 30000;
-        
+        // --- FIREBASE ---
+        const FIREBASE_CONFIG = {
+            apiKey: "AIzaSyBs6sZ9hiAa0aOn8ZbqCPTzUbyQ9Z3zXTQ",
+            authDomain: "ddf-ranking-opzic.firebaseapp.com",
+            projectId: "ddf-ranking-opzic",
+            storageBucket: "ddf-ranking-opzic.firebasestorage.app",
+            messagingSenderId: "813311956071",
+            appId: "1:813311956071:web:d5aaaa2960e2b9590f30c2"
+        };
+        const FIREBASE_SDK = 'https://www.gstatic.com/firebasejs/11.0.2';
+        let fb = null; // { db, auth, ...SDK-Funktionen }
+
         let stammdaten = [], bewertungen = [], nutzer = [];
         let selectedPoints = 0, dailyFolge = null, editingRatingId = null, editingRatingOriginalNr = null, editingRatingOwnerId = null;
         let shuffleResetTimer = null;
         let ratingSaveInProgress = false;
-        let dataLoadInProgress = false;
-        let sharedStateRefreshPromise = null;
-        let sharedDailyState = null;
-        let sharedStatePollTimer = null;
-        let currentUser = { id: localStorage.getItem('d3_userId') || '', name: localStorage.getItem('d3_userName') || '' };
+        let sharedDailyState = null;   // abgeleitete Ansicht für die Oberfläche
+        let dailyDoc = null;           // Rohdaten aus meta/daily
+        let dailyRollInProgress = null;
+        let dailyShuffling = false;    // Ladeanimation beim Neu-Mischen aktiv
+        let authUser = null;
+        let authResolved = false;
+        let linkPromptShown = false;
+        let currentUser = { id: '', name: '' };
+        const loaded = { episodes: false, ratings: false, users: false };
+        let renderScheduled = false;
+
+        // --- UI-HELFER ---
+        function icon(name, extraClass = '') {
+            return `<svg class="icon ${extraClass}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+        }
+
+        function showToast(message, type = 'info') {
+            const stack = document.getElementById('toast-stack');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+            toast.innerHTML = `${icon(type === 'success' ? 'check' : 'alert')}<span>${escapeHtml(message)}</span>`;
+            stack.appendChild(toast);
+            const duration = type === 'error' ? 6000 : 3500;
+            setTimeout(() => {
+                toast.classList.add('leaving');
+                setTimeout(() => toast.remove(), 220);
+            }, duration);
+        }
+
+        function initials(name) {
+            const text = String(name || '').trim();
+            return text ? text[0].toUpperCase() : '?';
+        }
+
+        function avatarTone(key) {
+            const text = String(key || '');
+            let hash = 0;
+            for (let i = 0; i < text.length; i++) hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+            return ['tone-cyan', 'tone-red', 'tone-white'][hash % 3];
+        }
+
+        function avatarHtml(userId, name, extraClass = '') {
+            return `<span class="avatar ${avatarTone(userId || name)} ${extraClass}">${escapeHtml(initials(name))}</span>`;
+        }
+
+        function scoreClass(value) {
+            const number = parseFloat(value);
+            if (Number.isNaN(number)) return 'none';
+            if (number >= 7.5) return 'hi';
+            if (number <= 3.5) return 'lo';
+            return '';
+        }
+
+        function scoreBadge(value, count = null) {
+            const hasValue = !Number.isNaN(parseFloat(value));
+            const countHtml = count !== null ? ` <span class="count">· ${count}</span>` : '';
+            return `<span class="score ${scoreClass(value)}">${icon('star')}${hasValue ? escapeHtml(String(value).replace('.', ',')) : '–'}${countHtml}</span>`;
+        }
+
+        function formatDate(value) {
+            const date = new Date(value);
+            return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function episodeMeta(episode) {
+            if (!episode) return '';
+            const kind = String(episode.nr).toLowerCase() === 'special' ? 'Special' : `Folge ${episode.nr}`;
+            return episode.jahr ? `${kind} · ${episode.jahr}` : kind;
+        }
+
+        function openEpisodeAttr(episode) {
+            return episode ? ` data-open-episode="${escapeHtml(episodeId(episode))}"` : '';
+        }
+
+        function coverImg(episode, className, clickable = false) {
+            if (!episode) return `<div class="${className} cover-fallback">${icon('image')}</div>`;
+            return `<img src="${getCoverUrl(episode)}" class="${className}" alt="" loading="lazy" onerror="showCoverFallback(this)"${clickable ? openEpisodeAttr(episode) : ''}>`;
+        }
+
+        // Tatsächliche Header-Höhe (inkl. Notch-Abstand) messen, damit der FdT-Tab exakt bis über die Leiste reicht.
+        function syncHeaderHeight() {
+            const header = document.querySelector('header');
+            if (header) document.documentElement.style.setProperty('--header-actual', `${Math.ceil(header.getBoundingClientRect().height)}px`);
+        }
+        syncHeaderHeight();
+        // border-box: reagiert auch, wenn sich nur der Notch-Abstand (padding) ändert, z. B. beim Start vom Homescreen.
+        if ('ResizeObserver' in window) new ResizeObserver(syncHeaderHeight).observe(document.querySelector('header'), { box: 'border-box' });
+        window.addEventListener('resize', syncHeaderHeight);
+        window.addEventListener('orientationchange', () => setTimeout(syncHeaderHeight, 300));
 
         window.onload = () => {
             initRatingScale();
+            setRatingFormSaving(false);
             document.addEventListener('visibilitychange', () => {
                 if (!document.hidden) refreshSharedDailyState();
+            });
+            document.addEventListener('keydown', event => {
+                if (event.key !== 'Escape') return;
+                closeRateModal();
+                closeNotifications();
+                closeEpisodeReviews();
+                closeImprint();
+                closeUserModal();
             });
             fetchData();
         };
@@ -296,116 +1084,416 @@
             prefill(rateButton.dataset.rateEpisode);
         });
 
+        // --- NUTZER & LOGIN ---
         function initUser() {
-            const registeredUser = nutzer.find(user => String(user.id) === String(currentUser.id));
-            if (registeredUser) {
-                currentUser = { id: String(registeredUser.id), name: String(registeredUser.name || '') };
-                localStorage.setItem('d3_userId', currentUser.id);
-                localStorage.setItem('d3_userName', currentUser.name);
-                document.getElementById('currentUserNameDisplay').textContent = currentUser.name;
+            const linked = authUser ? nutzer.find(user => user.authUid && user.authUid === authUser.uid) : null;
+            currentUser = linked ? { id: String(linked.id), name: String(linked.name || '') } : { id: '', name: '' };
+            document.getElementById('currentUserNameDisplay').textContent = currentUser.name
+                || (authUser ? 'Verknüpfen' : 'Anmelden');
+            const headerAvatar = document.getElementById('header-avatar');
+            headerAvatar.className = `avatar ${currentUser.id ? avatarTone(currentUser.id) : ''}`;
+            headerAvatar.innerHTML = currentUser.id ? escapeHtml(initials(currentUser.name)) : icon('user', 'icon-sm');
+
+            if (!authResolved || !loaded.users) return;
+            const modalOpen = document.getElementById('userModal').classList.contains('active');
+            if (modalOpen) renderUserModal();
+            if (authUser && !linked && !linkPromptShown) {
+                linkPromptShown = true;
+                autoLinkByEmail().then(done => { if (!done) openUserModal(); });
+            } else if (!authUser && !linkPromptShown && localStorage.getItem('d3_guest') !== '1') {
+                linkPromptShown = true;
+                openUserModal();
+            }
+        }
+
+        function renderUserModal() {
+            const title = document.getElementById('user-modal-title');
+            const body = document.getElementById('user-modal-body');
+            body.replaceChildren();
+            const addButton = (html, className, handler) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `btn ${className || ''}`;
+                button.innerHTML = html;
+                button.onclick = handler;
+                body.appendChild(button);
+                return button;
+            };
+            const addText = text => {
+                const p = document.createElement('p');
+                p.className = 'modal-text';
+                p.textContent = text;
+                body.appendChild(p);
+            };
+            // Impressum & Rechtehinweis steht in jedem Zustand ganz unten im Konto-Fenster.
+            const addLegal = () => {
+                const legal = document.createElement('div');
+                legal.className = 'modal-legal';
+                legal.innerHTML = '<button type="button">Impressum &amp; Rechtehinweis</button>';
+                legal.querySelector('button').onclick = () => { closeUserModal(); openImprint(); };
+                body.appendChild(legal);
+            };
+
+            if (!authUser) {
+                title.textContent = 'Willkommen';
+                addText('Melde dich mit Google an, um Folgen zu bewerten und den Fall des Tages neu zu mischen. Ohne Anmeldung kannst du alles ansehen.');
+                addButton(`${icon('google', 'icon-fill')} Mit Google anmelden`, 'btn-google', signInWithGoogle);
+                addButton('Weiter als Gast', 'btn-ghost', continueAsGuest);
+                addLegal();
                 return;
             }
 
-            currentUser = { id: '', name: '' };
-            localStorage.removeItem('d3_userId');
-            localStorage.removeItem('d3_userName');
-            document.getElementById('currentUserNameDisplay').textContent = 'Nutzer wählen';
-            openUserModal();
+            if (currentUser.id) {
+                title.textContent = 'Dein Konto';
+                const account = document.createElement('div');
+                account.className = 'modal-account';
+                account.innerHTML = `${avatarHtml(currentUser.id, currentUser.name)}<div><strong>${escapeHtml(currentUser.name)}</strong><span>${escapeHtml(authUser.email || 'Google-Konto')}</span></div>`;
+                body.appendChild(account);
+                addButton(`${icon('user')} Mein Profil`, 'btn-ghost', () => { closeUserModal(); openUserProfile(currentUser.id, currentUser.name); });
+                addButton(`${icon('logout')} Abmelden`, 'btn-quiet', signOutUser);
+                addLegal();
+                return;
+            }
+
+            title.textContent = 'Konto verknüpfen';
+            addText(`Angemeldet mit ${authUser.email || 'Google'}. Wähle deinen Nutzer und gib deinen Einladungscode ein – das ist nur einmal nötig. Deine bisherigen Bewertungen bleiben erhalten.`);
+            const select = document.createElement('select');
+            select.id = 'user-select';
+            select.setAttribute('aria-label', 'Nutzer auswählen');
+            select.add(new Option('Nutzer auswählen', ''));
+            nutzer.filter(user => !user.authUid && String(user.name || '').trim())
+                .forEach(user => select.add(new Option(String(user.name), String(user.id))));
+            body.appendChild(select);
+            const code = document.createElement('input');
+            code.id = 'invite-code-input';
+            code.type = 'text';
+            code.placeholder = 'Einladungscode';
+            code.autocomplete = 'off';
+            code.style.textTransform = 'uppercase';
+            body.appendChild(code);
+            addButton(`${icon('link')} Verknüpfen`, 'btn-primary', linkUser);
+            addButton('Weiter als Gast', 'btn-ghost', closeUserModal);
+            addButton(`${icon('logout')} Abmelden`, 'btn-quiet', signOutUser);
+            addLegal();
         }
+
         function openUserModal() {
-            const select = document.getElementById('user-select');
-            select.replaceChildren(new Option('Nutzer auswählen', ''));
-            nutzer.forEach(user => {
-                if (user.id === undefined || user.id === null || String(user.id).trim() === '' || !String(user.name || '').trim()) return;
-                select.add(new Option(String(user.name), String(user.id)));
-            });
-            select.value = currentUser.id;
+            renderUserModal();
             document.getElementById('userModal').classList.add('active');
         }
-        function closeUserModal() { if (currentUser.id) document.getElementById('userModal').classList.remove('active'); }
+        function closeUserModal() { document.getElementById('userModal').classList.remove('active'); }
         function continueAsGuest() {
-            currentUser = { id: '', name: '' };
-            localStorage.removeItem('d3_userId');
-            localStorage.removeItem('d3_userName');
-            document.getElementById('currentUserNameDisplay').textContent = 'Gast';
-            document.getElementById('userModal').classList.remove('active');
-            refreshSharedDailyState();
-        }
-        function saveUser() {
-            const selectedId = document.getElementById('user-select').value;
-            const selectedUser = nutzer.find(user => String(user.id) === selectedId);
-            if (!selectedUser) return alert('Bitte wähle einen vorhandenen Nutzer aus.');
-
-            currentUser = { id: String(selectedUser.id), name: String(selectedUser.name) };
-            localStorage.setItem('d3_userId', currentUser.id);
-            localStorage.setItem('d3_userName', currentUser.name);
-            document.getElementById('currentUserNameDisplay').textContent = currentUser.name;
+            localStorage.setItem('d3_guest', '1');
             closeUserModal();
-            updateUserFilter();
-            renderReviews();
-            renderFolgenList();
-            generateDailyCase();
-            refreshSharedDailyState();
         }
+
+        async function signInWithGoogle() {
+            const provider = new fb.GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            try {
+                await fb.signInWithPopup(fb.auth, provider);
+            } catch (err) {
+                if (err && (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment')) {
+                    await fb.signInWithRedirect(fb.auth, provider);
+                    return;
+                }
+                if (err && err.code === 'auth/popup-closed-by-user') return;
+                console.error('Anmeldung fehlgeschlagen:', err);
+                showToast(`Anmeldung fehlgeschlagen: ${err.message || err}`, 'error');
+            }
+        }
+
+        async function signOutUser() {
+            await fb.signOut(fb.auth);
+            closeUserModal();
+            showToast('Du bist abgemeldet.');
+        }
+
+        // Ist die E-Mail des Google-Kontos einem Nutzer zugeordnet, wird automatisch verknüpft.
+        async function autoLinkByEmail() {
+            if (!authUser || !authUser.email || !authUser.emailVerified) return false;
+            try {
+                const link = await fb.getDoc(fb.doc(fb.db, 'emailLinks', authUser.email.toLowerCase()));
+                if (!link.exists()) return false;
+                const userId = String(link.data().userId);
+                const user = nutzer.find(item => String(item.id) === userId);
+                if (!user || user.authUid) return false;
+                await fb.updateDoc(fb.doc(fb.db, 'users', userId), {
+                    authUid: authUser.uid,
+                    linkedAt: new Date().toISOString()
+                });
+                return true;
+            } catch (err) {
+                console.warn('Automatisches Verknüpfen per E-Mail fehlgeschlagen:', err);
+                return false;
+            }
+        }
+
+        async function linkUser() {
+            const userId = document.getElementById('user-select').value;
+            const code = document.getElementById('invite-code-input').value.trim().toUpperCase();
+            if (!userId || !code) return showToast('Bitte Nutzer auswählen und Einladungscode eingeben.', 'error');
+            try {
+                await fb.updateDoc(fb.doc(fb.db, 'users', userId), {
+                    authUid: authUser.uid,
+                    linkCode: code,
+                    linkedAt: new Date().toISOString()
+                });
+                closeUserModal();
+                showToast('Konto verknüpft.', 'success');
+            } catch (err) {
+                console.error('Verknüpfen fehlgeschlagen:', err);
+                showToast(err && err.code === 'permission-denied'
+                    ? 'Der Einladungscode passt nicht zu diesem Nutzer, oder der Nutzer ist bereits verknüpft.'
+                    : `Verknüpfen fehlgeschlagen: ${err.message || err}`, 'error');
+            }
+        }
+
+        // --- MITTEILUNGEN ---
+        // Mitteilungen = die letzten Bewertungen anderer Nutzer. Der Gelesen-Stand liegt in users/{id}.notificationsSeenAt.
+        const NOTIFICATION_LIMIT = 5;
+        let notifBaseline = null;      // Gelesen-Stand beim Öffnen (für die Hervorhebung im offenen Panel)
+        let lastUnreadCount = null;
+
+        function reviewTime(review) {
+            return new Date(review.datum).getTime() || Number(review.id) || 0;
+        }
+
+        function notificationItems() {
+            if (!currentUser.id) return [];
+            return bewertungen
+                .filter(review => String(review.nutzerId) !== currentUser.id)
+                .sort((a, b) => reviewTime(b) - reviewTime(a))
+                .slice(0, NOTIFICATION_LIMIT);
+        }
+
+        function notificationsSeenAt() {
+            const me = nutzer.find(user => String(user.id) === currentUser.id);
+            return Number(me && me.notificationsSeenAt) || 0;
+        }
+
+        function relativeTime(time) {
+            const seconds = Math.round((time - Date.now()) / 1000);
+            const rtf = new Intl.RelativeTimeFormat('de', { numeric: 'auto' });
+            const steps = [[60, 'second'], [60, 'minute'], [24, 'hour'], [7, 'day'], [4.35, 'week'], [12, 'month'], [Infinity, 'year']];
+            let value = seconds;
+            for (const [size, unit] of steps) {
+                if (Math.abs(value) < size) return rtf.format(Math.round(value), unit);
+                value /= size;
+            }
+            return '';
+        }
+
+        function renderNotifications() {
+            const bell = document.getElementById('bell-btn');
+            const badge = document.getElementById('bell-badge');
+            if (!currentUser.id) {
+                bell.style.display = 'none';
+                closeNotifications();
+                lastUnreadCount = null;
+                return;
+            }
+            bell.style.display = '';
+
+            const items = notificationItems();
+            const seenAt = notificationsSeenAt();
+            const unread = items.filter(review => reviewTime(review) > seenAt).length;
+            badge.textContent = String(unread);
+            badge.style.display = unread ? '' : 'none';
+            bell.setAttribute('aria-label', unread ? `Mitteilungen, ${unread} neu` : 'Mitteilungen');
+            if (lastUnreadCount !== null && unread > lastUnreadCount) {
+                bell.classList.remove('ring');
+                void bell.offsetWidth;
+                bell.classList.add('ring');
+            }
+            lastUnreadCount = unread;
+
+            const panelOpen = document.getElementById('notif-panel').classList.contains('active');
+            if (panelOpen) renderNotificationList(items);
+        }
+
+        function renderNotificationList(items = notificationItems()) {
+            const list = document.getElementById('notif-list');
+            if (!items.length) {
+                list.innerHTML = `<div class="notif-empty">${icon('bell')}<p>Noch keine Bewertungen von anderen.</p></div>`;
+                return;
+            }
+            const baseline = notifBaseline ?? notificationsSeenAt();
+            list.innerHTML = items.map(review => {
+                const time = reviewTime(review);
+                const isUnread = time > baseline;
+                const edited = Number(review.id) && time - Number(review.id) > 60000;
+                const name = review.nutzerName || 'Anonym';
+                const episode = episodeForRating(review);
+                return `<button class="notif-item ${isUnread ? 'unread' : ''}" type="button" data-notif-review="${escapeHtml(String(review.id))}">
+                    ${avatarHtml(review.nutzerId, name)}
+                    <div class="notif-body">
+                        <div class="notif-text"><strong>${escapeHtml(name)}</strong> ${edited ? 'hat eine Bewertung aktualisiert' : 'hat eine Folge bewertet'}</div>
+                        <div class="notif-episode">${escapeHtml(episode ? episodeLabel(episode) : `Folge ${review.folgenNr}`)}</div>
+                        <div class="notif-time">${isUnread ? '<span class="notif-dot"></span>' : ''}${escapeHtml(relativeTime(time))}</div>
+                    </div>
+                    <div class="notif-side">${scoreBadge(review.punkte)}</div>
+                </button>`;
+            }).join('');
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notif-panel');
+            if (panel.classList.contains('active')) return closeNotifications();
+
+            notifBaseline = notificationsSeenAt();
+            const items = notificationItems();
+            renderNotificationList(items);
+            panel.classList.add('active');
+            document.getElementById('bell-btn').setAttribute('aria-expanded', 'true');
+            document.getElementById('notif-list').scrollTop = 0;
+
+            // Alles Angezeigte als gelesen markieren.
+            const newest = items.length ? reviewTime(items[0]) : 0;
+            if (newest > notifBaseline) {
+                fb.updateDoc(fb.doc(fb.db, 'users', currentUser.id), { notificationsSeenAt: Math.round(newest) })
+                    .catch(err => console.warn('Gelesen-Status konnte nicht gespeichert werden:', err));
+            }
+        }
+
+        function closeNotifications() {
+            const panel = document.getElementById('notif-panel');
+            if (!panel.classList.contains('active')) return;
+            panel.classList.remove('active');
+            document.getElementById('bell-btn').setAttribute('aria-expanded', 'false');
+            notifBaseline = null;
+        }
+
+        function openRatingFromNotification(reviewId) {
+            closeNotifications();
+            closeEpisodeReviews();
+            closeUserProfile();
+            document.getElementById('review-filter-user').value = 'all';
+            switchTab('tab-reviews');
+            renderReviews();
+            const card = document.getElementById(`review-${reviewId}`);
+            if (!card) return showToast('Diese Bewertung gibt es nicht mehr.', 'error');
+            requestAnimationFrame(() => {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                card.classList.remove('flash');
+                void card.offsetWidth;
+                card.classList.add('flash');
+            });
+        }
+
+        document.addEventListener('click', event => {
+            const item = event.target.closest('[data-notif-review]');
+            if (item) {
+                event.preventDefault();
+                openRatingFromNotification(item.dataset.notifReview);
+                return;
+            }
+            if (!event.target.closest('#notif-panel, #bell-btn')) closeNotifications();
+        });
 
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            const activeButton = [...document.querySelectorAll('.tab-btn')].find(button => button.getAttribute('onclick') === `switchTab('${tabId}')`);
-            if (activeButton) activeButton.classList.add('active');
             document.getElementById(tabId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            if (tabId === 'tab-charts' && loaded.ratings) renderCharts();
             if(tabId === 'tab-daily') {
                 generateDailyCase();
                 refreshSharedDailyState();
             }
         }
 
+        // --- DATEN LADEN (Echtzeit aus Firestore) ---
+        function showLoadError(err) {
+            console.error('App-Daten konnten nicht geladen werden:', err);
+            const errorHtml = `<div class="empty-state">${icon('alert')}<p>Die App-Daten konnten nicht geladen werden.<br><small>${escapeHtml(err.message || String(err))}</small></p>
+                <button class="btn btn-primary btn-inline" type="button" onclick="location.reload()" style="margin-top:16px;">${icon('refresh')} Erneut laden</button></div>`;
+            document.getElementById('daily-content').innerHTML = errorHtml;
+            document.getElementById('folgen-list').innerHTML = errorHtml;
+            document.getElementById('reviews-list').innerHTML = errorHtml;
+            document.getElementById('rate-select').innerHTML = '<option value="">Folgen konnten nicht geladen werden</option>';
+            document.getElementById('rate-load-error').innerHTML = errorHtml;
+            document.getElementById('rate-load-error').style.display = 'block';
+        }
+
+        function scheduleRender(changed) {
+            if (changed === 'episodes') populateDropdown();
+            if (renderScheduled) return;
+            renderScheduled = true;
+            setTimeout(() => {
+                renderScheduled = false;
+                if (!loaded.episodes || !loaded.ratings || !loaded.users) return;
+                initUser();
+                updateUserFilter();
+                renderFolgenList();
+                renderReviews();
+                renderCharts();
+                renderNotifications();
+                updateDailyView();
+                refreshSharedDailyState();
+            }, 0);
+        }
+
         async function fetchData() {
-            if (dataLoadInProgress) return false;
-            dataLoadInProgress = true;
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), DATA_LOAD_TIMEOUT_MS);
             try {
-                const dataUrl = new URL(GOOGLE_SCRIPT_URL);
-                if (currentUser.id) dataUrl.searchParams.set('userId', currentUser.id);
-                const res = await fetch(dataUrl.toString(), { signal: controller.signal });
-                if (!res.ok) throw new Error(`Datenabruf fehlgeschlagen (HTTP ${res.status}).`);
-                const data = await res.json();
-                if (!data || !Array.isArray(data.stammdaten) || !Array.isArray(data.bewertungen) || !Array.isArray(data.nutzer)) {
-                    throw new Error('Die Antwort des Datenservers hat ein ungültiges Format.');
-                }
-                stammdaten = data.stammdaten || []; bewertungen = data.bewertungen || []; nutzer = data.nutzer || [];
-                sharedDailyState = data.dailyState || null;
-                initUser(); populateDropdown(); updateUserFilter(); renderFolgenList(); renderReviews(); generateDailyCase();
-                document.getElementById('rate-load-error').style.display = 'none';
-                if (!sharedStatePollTimer) sharedStatePollTimer = setInterval(refreshSharedDailyState, 20000);
-                if (!sharedDailyState) await refreshSharedDailyState(true);
-                return true;
+                const [appSdk, authSdk, fsSdk] = await Promise.all([
+                    import(`${FIREBASE_SDK}/firebase-app.js`),
+                    import(`${FIREBASE_SDK}/firebase-auth.js`),
+                    import(`${FIREBASE_SDK}/firebase-firestore.js`)
+                ]);
+                const app = appSdk.initializeApp(FIREBASE_CONFIG);
+                fb = { ...authSdk, ...fsSdk, auth: authSdk.getAuth(app), db: fsSdk.getFirestore(app) };
             } catch (err) {
-                console.error('App-Daten konnten nicht geladen werden:', err);
-                const errorMessage = err.name === 'AbortError'
-                    ? 'Der Datenabruf hat länger als 30 Sekunden gedauert.'
-                    : `Die App-Daten konnten nicht geladen werden: ${escapeHtml(err.message || String(err))}`;
-                const retryButton = '<button class="btn btn-primary" type="button" onclick="fetchData()">Erneut laden</button>';
-                document.getElementById('daily-content').innerHTML = `<p>${errorMessage}</p>${retryButton}`;
-                document.getElementById('folgen-list').innerHTML = `<p>${errorMessage}</p>${retryButton}`;
-                document.getElementById('reviews-list').innerHTML = `<p>${errorMessage}</p>${retryButton}`;
-                document.getElementById('rate-select').innerHTML = '<option value="">Folgen konnten nicht geladen werden</option>';
-                document.getElementById('rate-load-error').innerHTML = `<p>${errorMessage}</p>${retryButton}`;
-                document.getElementById('rate-load-error').style.display = 'block';
+                showLoadError(err);
                 return false;
-            } finally {
-                clearTimeout(timeout);
-                dataLoadInProgress = false;
             }
+
+            fb.onAuthStateChanged(fb.auth, user => {
+                authUser = user;
+                authResolved = true;
+                if (user) localStorage.removeItem('d3_guest');
+                linkPromptShown = false;
+                initUser();
+                scheduleRender();
+            });
+
+            fb.onSnapshot(fb.query(fb.collection(fb.db, 'episodes'), fb.orderBy('order')), snap => {
+                stammdaten = snap.docs.map(d => d.data());
+                loaded.episodes = true;
+                scheduleRender('episodes');
+            }, showLoadError);
+
+            fb.onSnapshot(fb.collection(fb.db, 'ratings'), snap => {
+                bewertungen = snap.docs.map(d => d.data()).sort((a, b) => Number(a.id) - Number(b.id));
+                loaded.ratings = true;
+                scheduleRender();
+            }, showLoadError);
+
+            fb.onSnapshot(fb.collection(fb.db, 'users'), snap => {
+                nutzer = snap.docs.map(d => d.data());
+                loaded.users = true;
+                scheduleRender();
+            }, showLoadError);
+
+            fb.onSnapshot(fb.doc(fb.db, 'meta', 'daily'), snap => {
+                dailyDoc = snap.exists() ? snap.data() : null;
+                updateDailyView();
+                refreshSharedDailyState();
+            }, err => console.warn('FdT konnte nicht geladen werden:', err));
+
+            setInterval(refreshSharedDailyState, 60000);
+            return true;
         }
 
         function populateDropdown() {
             const sel = document.getElementById('rate-select');
-            sel.innerHTML = '<option value="">-- Folge auswählen --</option>';
+            const previous = sel.value;
+            sel.innerHTML = '<option value="">Folge auswählen…</option>';
             stammdaten.forEach(f => {
                 let opt = document.createElement('option'); opt.value = episodeId(f); opt.textContent = episodeLabel(f); sel.appendChild(opt);
             });
+            if (previous) sel.value = previous;
+            document.getElementById('rate-load-error').style.display = 'none';
         }
 
         const SPECIAL_FALLBACK_IDS = new Map([
@@ -431,7 +1519,7 @@
         ]);
 
         function episodeTitleKey(title) {
-            return String(title || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(new RegExp(String.fromCharCode(223), 'g'), 'ss').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+            return String(title || '').normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(new RegExp(String.fromCharCode(223), 'g'), 'ss').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
         }
 
         function episodeId(episode) {
@@ -471,30 +1559,47 @@
             const sel = document.getElementById('review-filter-user');
             const listSel = document.getElementById('list-filter-user');
             const previousListUser = listSel.value || 'all';
+            const previousReviewUser = sel.value || 'all';
             sel.innerHTML = '<option value="all">Alle Nutzer</option>';
-            listSel.innerHTML = '<option value="all">Bewertungen aller Nutzer</option>';
+            listSel.innerHTML = '<option value="all">Alle Nutzer</option>';
             [...new Set(bewertungen.map(b => b.nutzerName))].filter(n=>n).forEach(n => {
                 let opt = document.createElement('option'); opt.value = n; opt.textContent = n; sel.appendChild(opt);
                 let listOpt = document.createElement('option'); listOpt.value = n; listOpt.textContent = `Nur ${n}`; listSel.appendChild(listOpt);
             });
             if ([...listSel.options].some(option => option.value === previousListUser)) listSel.value = previousListUser;
+            if ([...sel.options].some(option => option.value === previousReviewUser)) sel.value = previousReviewUser;
+        }
+
+        // --- BEWERTEN ---
+        function updateRatingDisplay() {
+            const value = document.getElementById('rating-value');
+            value.innerHTML = `${selectedPoints || '–'}<small> / 10</small>`;
+            value.classList.toggle('set', selectedPoints > 0);
+            document.querySelectorAll('.rating-btn').forEach((button, index) => {
+                button.classList.toggle('selected', index + 1 === selectedPoints);
+                button.classList.toggle('in-range', index + 1 < selectedPoints);
+            });
         }
 
         function initRatingScale() {
             const c = document.getElementById('rating-scale-container'); c.innerHTML = '';
             for(let i=1; i<=10; i++) {
-                let b = document.createElement('button'); b.className = 'rating-btn'; b.textContent = i;
-                b.onclick = () => { selectedPoints = i; document.querySelectorAll('.rating-btn').forEach(x => x.classList.remove('selected')); b.classList.add('selected'); };
+                let b = document.createElement('button'); b.type = 'button'; b.className = 'rating-btn'; b.textContent = i;
+                b.setAttribute('aria-label', `${i} Punkte`);
+                b.onclick = () => { selectedPoints = i; updateRatingDisplay(); };
                 c.appendChild(b);
             }
+            updateRatingDisplay();
         }
 
         function setRatingFormSaving(isSaving) {
             const submitButton = document.getElementById('rating-submit-btn');
+            const isEditing = editingRatingOriginalNr !== null;
             submitButton.disabled = isSaving;
-            submitButton.textContent = isSaving
+            submitButton.innerHTML = isSaving
                 ? 'Speichere…'
-                : (editingRatingOriginalNr !== null ? 'Änderungen speichern' : '📝 Bewertung abgeben');
+                : (isEditing ? `${icon('check')} Änderungen speichern` : `${icon('send')} Bewertung abgeben`);
+            document.getElementById('rate-title').textContent = isEditing ? 'Review bearbeiten' : 'Folge bewerten';
             document.getElementById('rating-cancel-edit-btn').disabled = isSaving;
             document.getElementById('rate-select').disabled = isSaving;
             document.getElementById('rate-comment').disabled = isSaving;
@@ -512,95 +1617,78 @@
             const folgeId = document.getElementById('rate-select').value;
             const episode = stammdaten.find(item => episodeId(item) === folgeId);
             const kommentar = document.getElementById('rate-comment').value;
-            if (!currentUser.name || !episode || selectedPoints === 0) return alert('Bitte alle Felder ausfüllen!');
+            if (!currentUser.name || !episode || selectedPoints === 0) return showToast('Bitte Folge und Punkte auswählen.', 'error');
 
             const isEditing = editingRatingOriginalNr !== null;
-            const payload = {
-                action: isEditing ? 'updateRating' : 'addRating',
-                nutzerId: isEditing ? editingRatingOwnerId : currentUser.id,
-                nutzerName: currentUser.name,
-                folgenNr: episode.nr,
-                folgeId: folgeId,
-                punkte: selectedPoints,
-                kommentar: kommentar
-            };
-            if (isEditing) payload.originalFolgenNr = editingRatingOriginalNr;
-            if (editingRatingId !== null) payload.id = editingRatingId;
-
             ratingSaveInProgress = true;
             setRatingFormSaving(true);
 
             try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-                    body: JSON.stringify(payload)
-                });
+                if (isEditing) {
+                    const review = editingRatingId !== null
+                        ? bewertungen.find(b => String(b.id) === String(editingRatingId))
+                        : null;
+                    if (!review) throw new Error('Die Review wurde nicht gefunden.');
+                    await fb.updateDoc(fb.doc(fb.db, 'ratings', String(review.id)), {
+                        nutzerName: currentUser.name,
+                        folgenNr: episode.nr,
+                        folgeId: folgeId,
+                        punkte: selectedPoints,
+                        kommentar: kommentar,
+                        datum: new Date().toISOString()
+                    });
+                } else {
+                    const id = Date.now();
+                    await fb.setDoc(fb.doc(fb.db, 'ratings', String(id)), {
+                        id,
+                        nutzerId: currentUser.id,
+                        nutzerName: currentUser.name,
+                        folgenNr: episode.nr,
+                        folgeId: folgeId,
+                        punkte: selectedPoints,
+                        kommentar: kommentar,
+                        datum: new Date().toISOString()
+                    });
+                }
             } catch (err) {
-                console.error('Bewertung konnte nicht gesendet werden:', err);
+                console.error('Bewertung konnte nicht gespeichert werden:', err);
                 ratingSaveInProgress = false;
                 setRatingFormSaving(false);
-                alert('Die Bewertung konnte nicht an das Google Sheet gesendet werden. Bitte Verbindung prüfen und erneut versuchen.');
+                showToast(err && err.code === 'permission-denied'
+                    ? 'Keine Berechtigung: Bitte prüfe, ob du angemeldet und mit deinem Nutzer verknüpft bist.'
+                    : 'Die Bewertung konnte nicht gespeichert werden. Bitte Verbindung prüfen und erneut versuchen.', 'error');
                 return;
-            }
-
-            if (isEditing) {
-                const review = editingRatingId !== null
-                    ? bewertungen.find(b => String(b.id) === String(editingRatingId))
-                    : bewertungen.find(b => String(b.nutzerId) === String(editingRatingOwnerId) && String(b.folgenNr) === String(editingRatingOriginalNr));
-                if (review) {
-                    review.folgenNr = episode.nr;
-                    review.folgeId = folgeId;
-                    review.punkte = selectedPoints;
-                    review.kommentar = kommentar;
-                    review.datum = new Date().toISOString();
-                    review.nutzerName = currentUser.name;
-                }
-            } else {
-                bewertungen.push({
-                    id: Date.now(),
-                    nutzerId: currentUser.id,
-                    nutzerName: currentUser.name,
-                    folgenNr: episode.nr,
-                    folgeId: folgeId,
-                    punkte: selectedPoints,
-                    kommentar: kommentar,
-                    datum: new Date().toISOString()
-                });
             }
 
             document.getElementById('rate-select').value = '';
             document.getElementById('rate-comment').value = '';
             selectedPoints = 0;
-            document.querySelectorAll('.rating-btn').forEach(button => button.classList.remove('selected'));
             editingRatingId = null;
             editingRatingOriginalNr = null;
             editingRatingOwnerId = null;
             ratingSaveInProgress = false;
+            updateRatingDisplay();
             setRatingFormSaving(false);
+            updateRatePreview();
 
-            updateUserFilter();
-            renderReviews();
-            renderFolgenList();
-            switchTab('tab-reviews');
+            showToast(isEditing ? 'Review aktualisiert.' : 'Bewertung gespeichert.', 'success');
+            closeRateModal();
         }
         function editRating(id, folgenNr) {
             const review = id !== null
                 ? bewertungen.find(b => String(b.id) === String(id))
-                : bewertungen.find(b => String(b.folgenNr) === String(folgenNr) && (b.nutzerId === currentUser.id || b.nutzerName === currentUser.name));
-            if (!review || (review.nutzerId !== currentUser.id && review.nutzerName !== currentUser.name)) return;
+                : bewertungen.find(b => String(b.folgenNr) === String(folgenNr) && b.nutzerId === currentUser.id);
+            if (!review || !currentUser.id || review.nutzerId !== currentUser.id) return;
 
             editingRatingId = review.id ?? null;
             editingRatingOriginalNr = review.folgenNr;
-            editingRatingOwnerId = review.nutzerId || currentUser.id;
+            editingRatingOwnerId = review.nutzerId;
             document.getElementById('rate-select').value = ratingEpisodeId(review);
             document.getElementById('rate-comment').value = review.kommentar || '';
             selectedPoints = parseInt(review.punkte, 10);
-            document.querySelectorAll('.rating-btn').forEach((button, index) => button.classList.toggle('selected', index + 1 === selectedPoints));
-            document.getElementById('rating-submit-btn').textContent = 'Änderungen speichern';
-            document.getElementById('rating-cancel-edit-btn').style.display = 'block';
-            switchTab('tab-rate');
+            updateRatingDisplay();
+            setRatingFormSaving(false);
+            openRateModal();
         }
 
         function cancelEditRating() {
@@ -610,9 +1698,9 @@
             selectedPoints = 0;
             document.getElementById('rate-select').value = '';
             document.getElementById('rate-comment').value = '';
-            document.querySelectorAll('.rating-btn').forEach(button => button.classList.remove('selected'));
-            document.getElementById('rating-submit-btn').textContent = 'Bewertung abgeben';
-            document.getElementById('rating-cancel-edit-btn').style.display = 'none';
+            updateRatingDisplay();
+            setRatingFormSaving(false);
+            updateRatePreview();
         }
 
         function getStats(folgeId, nutzerName = null) {
@@ -628,10 +1716,44 @@
             const requestedId = String(folgeId ?? '');
             const episode = stammdaten.find(item => episodeId(item) === requestedId || String(item.nr) === requestedId);
 
-            switchTab('tab-rate');
+            if (!currentUser.id) {
+                openUserModal();
+                return;
+            }
+            // Wurde vorher eine Review bearbeitet, nicht versehentlich diese überschreiben.
+            if (editingRatingOriginalNr !== null) cancelEditRating();
             select.value = episode ? episodeId(episode) : requestedId;
-            if (select.value) select.focus();
-            else console.warn('Folge konnte im Bewertungsformular nicht ausgewählt werden:', requestedId);
+            if (!select.value) console.warn('Folge konnte im Bewertungsformular nicht ausgewählt werden:', requestedId);
+            openRateModal();
+        }
+
+        function updateRatePreview() {
+            const preview = document.getElementById('rate-episode-preview');
+            const episode = stammdaten.find(item => episodeId(item) === document.getElementById('rate-select').value);
+            if (!episode) {
+                preview.style.display = 'none';
+                return;
+            }
+            preview.innerHTML = `${coverImg(episode, 'cover-thumb')}<span class="episode-label">${escapeHtml(episodeLabel(episode))}</span>`;
+            preview.style.display = 'flex';
+        }
+
+        function openRateModal() {
+            closeEpisodeReviews();
+            closeNotifications();
+            updateRatePreview();
+            const modal = document.getElementById('rateModal');
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        // Schließen bricht ein laufendes Bearbeiten ab; ein Entwurf für eine neue Bewertung bleibt erhalten.
+        function closeRateModal() {
+            if (ratingSaveInProgress) return;
+            const modal = document.getElementById('rateModal');
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            if (editingRatingOriginalNr !== null) cancelEditRating();
         }
 
         function getCoverUrl(episode) {
@@ -645,27 +1767,26 @@
         function getMusicLinks(folge) {
             const query = encodeURIComponent(`${String(folge.nr).toLowerCase() === 'special' ? 'Die drei ???' : `Die drei ??? Folge ${folge.nr}`} ${folge.titel}`);
             return `<div class="music-links">
-                <a class="music-link" href="https://open.spotify.com/search/${query}" target="_blank" rel="noopener noreferrer">Spotify</a>
-                <a class="music-link" href="https://music.apple.com/de/search?term=${query}" target="_blank" rel="noopener noreferrer">Apple Music</a>
+                <a class="music-link" href="https://open.spotify.com/search/${query}" target="_blank" rel="noopener noreferrer">${icon('play', 'icon-sm')} Spotify</a>
+                <a class="music-link" href="https://music.apple.com/de/search?term=${query}" target="_blank" rel="noopener noreferrer">${icon('music', 'icon-sm')} Apple Music</a>
             </div>`;
         }
         function showCoverFallback(image) {
             const fallback = document.createElement('div');
-            fallback.className = image.className;
-            fallback.textContent = image.classList.contains('cover-img-daily') ? 'Kein Cover vorhanden' : 'Kein Bild';
-            fallback.style.cssText = 'background:#171717; display:flex; align-items:center; justify-content:center; text-align:center; font-size:12px;';
-            if (image.classList.contains('cover-img-daily')) fallback.style.height = '250px';
+            fallback.className = `${image.className} cover-fallback`;
+            if (image.dataset.openEpisode) fallback.dataset.openEpisode = image.dataset.openEpisode;
+            fallback.innerHTML = icon(image.classList.contains('cover-img-daily') ? 'image' : 'image', image.classList.contains('cover-img-daily') ? 'icon-lg' : '');
             image.replaceWith(fallback);
         }
 
-        // --- RENDER LISTENANSICHT (MIT COVER) ---
+        // --- FOLGENLISTE ---
         function renderFolgenList() {
             const term = document.getElementById('search-input').value.toLowerCase();
             const ratedOnly = document.getElementById('rated-only-filter').checked;
             const selectedUser = document.getElementById('list-filter-user').value;
             const sortMode = document.getElementById('list-sort').value;
-            const c = document.getElementById('folgen-list'); c.innerHTML = '';
-            
+            const c = document.getElementById('folgen-list');
+
             const folgen = stammdaten.filter(f => f.titel.toLowerCase().includes(term) || String(f.nr).toLowerCase().includes(term) || episodeId(f).toLowerCase().includes(term))
                 .filter(f => !ratedOnly || bewertungen.some(b => isReviewForEpisode(b, f)))
                 .filter(f => selectedUser === 'all' || bewertungen.some(b => isReviewForEpisode(b, f) && b.nutzerName === selectedUser));
@@ -685,23 +1806,26 @@
                 return (valueA - valueB) * (sortMode.endsWith('desc') ? -1 : 1);
             });
 
-            folgen.forEach(f => {
+            if (!folgen.length) {
+                c.innerHTML = `<div class="empty-state">${icon('search')}<p>Keine Folgen gefunden.</p></div>`;
+                return;
+            }
+
+            const html = folgen.map(f => {
                 const s = getStats(episodeId(f), selectedUser === 'all' ? null : selectedUser);
-                // Cover-Fallback falls keine URL eingetragen wurde
-                const coverHTML = `<img src="${getCoverUrl(f)}" class="cover-img-list" alt="Cover ${episodeLabel(f)}" onerror="showCoverFallback(this)">`;
-                const key = JSON.stringify(episodeId(f));
-                
-                c.innerHTML += `
-                    <div class="card list-item episode-card" role="button" tabindex="0" data-episode-id="${escapeHtml(episodeId(f))}">
-                        ${coverHTML}
-                        <div style="flex: 1;">
-                            <div style="font-size:12px; color:var(--muted);">${String(f.nr).toLowerCase() === 'special' ? 'Special' : `Folge ${f.nr}`} • ${f.jahr || ''}</div>
-                            <h3 style="font-size:16px; margin:5px 0;">${f.titel}</h3>
-                            <div class="rating-tag">⭐ ${s.avg} (${s.count})</div>
+                return `
+                    <div class="episode-card" role="button" tabindex="0" data-episode-id="${escapeHtml(episodeId(f))}" aria-label="${escapeHtml(episodeLabel(f))}">
+                        ${coverImg(f, 'cover-img-list')}
+                        <div class="episode-body">
+                            <div class="meta">${escapeHtml(episodeMeta(f))}</div>
+                            <div class="episode-title">${escapeHtml(f.titel)}</div>
+                            ${scoreBadge(s.avg, s.count)}
                         </div>
-                    <button class="btn btn-action" type="button" style="padding: 10px; width: auto;" data-rate-episode="${escapeHtml(episodeId(f))}">Bewerten</button>
+                        <button class="icon-btn red" type="button" aria-label="${escapeHtml(episodeLabel(f))} bewerten" data-rate-episode="${escapeHtml(episodeId(f))}">${icon('pen')}</button>
                     </div>`;
-            });
+            }).join('');
+            c.innerHTML = `<div class="list-count">${folgen.length} ${folgen.length === 1 ? 'Folge' : 'Folgen'}</div>${html}`;
+
             c.querySelectorAll('.episode-card').forEach(card => {
                 const openReviews = () => showEpisodeReviews(card.dataset.episodeId);
                 card.addEventListener('click', event => {
@@ -716,28 +1840,298 @@
             });
         }
 
+        // --- REVIEWS ---
         function renderReviews() {
             const u = document.getElementById('review-filter-user').value;
-            const c = document.getElementById('reviews-list'); c.innerHTML = '';
-            
-            [...bewertungen].reverse().filter(b => u === 'all' || b.nutzerName === u).forEach(b => {
+            const c = document.getElementById('reviews-list');
+            const list = [...bewertungen].reverse().filter(b => u === 'all' || b.nutzerName === u);
+
+            if (!list.length) {
+                c.innerHTML = `<div class="empty-state">${icon('chat')}<p>Noch keine Reviews.</p></div>`;
+                return;
+            }
+
+            c.innerHTML = list.map(b => {
                 const f = episodeForRating(b);
-                const t = f ? f.titel : 'Unbekannt';
-                const isOwnReview = b.nutzerId === currentUser.id || b.nutzerName === currentUser.name;
-                c.innerHTML += `
-                    <div class="card">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <button type="button" class="user-profile-link" data-user-id="${escapeHtml(b.nutzerId || '')}" data-user-name="${escapeHtml(b.nutzerName || 'Anonym')}">👤 ${escapeHtml(b.nutzerName || 'Anonym')}</button> <span style="color:var(--muted); font-size:12px;">${new Date(b.datum).toLocaleDateString()}</span>
+                const isOwnReview = Boolean(currentUser.id) && b.nutzerId === currentUser.id;
+                const name = b.nutzerName || 'Anonym';
+                return `
+                    <article class="card review-card" id="review-${escapeHtml(String(b.id))}">
+                        <div class="review-head">
+                            ${avatarHtml(b.nutzerId, name)}
+                            <div class="who">
+                                <button type="button" class="user-profile-link" data-user-id="${escapeHtml(b.nutzerId || '')}" data-user-name="${escapeHtml(name)}">${escapeHtml(name)}</button>
+                                <span class="review-date">${escapeHtml(formatDate(b.datum))}</span>
+                            </div>
+                            ${scoreBadge(b.punkte)}
                         </div>
-                        <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">${episodeLabel(f) || `Folge ${b.folgenNr}`}</div>
-                        <div><span class="rating-tag">⭐ ${b.punkte}/10</span> <i style="margin-left:10px;">${b.kommentar || ''}</i></div>
-                        ${isOwnReview ? `<button class="btn btn-primary" style="margin-top:15px;" onclick="editRating(${JSON.stringify(b.id ?? null)}, ${JSON.stringify(b.folgenNr)})">Review bearbeiten</button>` : ''}
-                    </div>`;
-            });
+                        <div class="review-episode"${openEpisodeAttr(f)}>
+                            ${coverImg(f, 'cover-thumb')}
+                            <span class="episode-label">${escapeHtml(f ? episodeLabel(f) : `Folge ${b.folgenNr}`)}</span>
+                        </div>
+                        <p class="review-comment ${b.kommentar ? '' : 'empty'}">${b.kommentar ? escapeHtml(b.kommentar) : 'Kein Kommentar'}</p>
+                        ${isOwnReview ? `<div class="review-foot"><button class="edit-link" type="button" onclick="editRating(${escapeHtml(JSON.stringify(b.id ?? null))}, ${escapeHtml(JSON.stringify(b.folgenNr))})">${icon('pen', 'icon-sm')} Bearbeiten</button></div>` : ''}
+                    </article>`;
+            }).join('');
         }
 
-        // --- FALL DES TAGES (MIT COVER) ---
+        // --- CHARTS ---
+        const DAY_MS = 86400000;
+        const HEATMAP_MAX_WEEKS = 17;
+        let chartUserId = 'all';
+
+        function berlinDayKey(time) {
+            return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(time));
+        }
+        function dayKeyToUtc(key) {
+            const [year, month, day] = key.split('-').map(Number);
+            return Date.UTC(year, month - 1, day);
+        }
+        function utcToDayKey(ms) {
+            return new Date(ms).toISOString().slice(0, 10);
+        }
+        function formatDayKey(key, withWeekday = true) {
+            if (!key) return '';
+            return new Date(dayKeyToUtc(key)).toLocaleDateString('de-DE', {
+                timeZone: 'UTC', day: 'numeric', month: 'short', ...(withWeekday ? { weekday: 'short' } : {})
+            });
+        }
+        // Hörtag = Zeitpunkt, an dem die Bewertung angelegt wurde (ID = Zeitstempel), nicht das letzte Bearbeiten.
+        function ratingCreatedAt(review) {
+            return Number(review.id) || new Date(review.datum).getTime() || 0;
+        }
+        function isValidPoints(review) {
+            const points = Number(review.punkte);
+            return Number.isInteger(points) && points >= 1 && points <= 10;
+        }
+
+        function setChartUser(id) {
+            chartUserId = String(id);
+            renderCharts();
+        }
+
+        function renderCharts() {
+            const activeUsers = nutzer.filter(user => bewertungen.some(b => String(b.nutzerId) === String(user.id)));
+            if (chartUserId !== 'all' && !activeUsers.some(user => String(user.id) === chartUserId)) chartUserId = 'all';
+
+            const chip = (id, label) => `<button class="chip ${chartUserId === id ? 'active' : ''}" type="button" role="tab" aria-selected="${chartUserId === id}" onclick="setChartUser(${escapeHtml(JSON.stringify(id))})">${escapeHtml(label)}</button>`;
+            document.getElementById('chart-user-filter').innerHTML = chip('all', 'Alle') + activeUsers.map(user => chip(String(user.id), user.name)).join('');
+
+            // Top / Flop
+            const byEpisode = new Map();
+            bewertungen
+                .filter(b => isValidPoints(b) && (chartUserId === 'all' || String(b.nutzerId) === chartUserId))
+                .forEach(b => {
+                    const id = ratingEpisodeId(b);
+                    const entry = byEpisode.get(id) || { id, sum: 0, count: 0 };
+                    entry.sum += Number(b.punkte);
+                    entry.count++;
+                    byEpisode.set(id, entry);
+                });
+            const entries = [...byEpisode.values()]
+                .map(entry => ({ ...entry, avg: entry.sum / entry.count, episode: stammdaten.find(f => episodeId(f) === entry.id) }))
+                .filter(entry => entry.episode);
+            const byNumber = (a, b) => (Number(a.episode.nr) || 9999) - (Number(b.episode.nr) || 9999);
+            const top = entries.slice().sort((a, b) => (b.avg - a.avg) || (b.count - a.count) || byNumber(a, b)).slice(0, 5);
+            const topIds = new Set(top.map(entry => entry.id));
+            const flop = entries.filter(entry => !topIds.has(entry.id))
+                .sort((a, b) => (a.avg - b.avg) || (b.count - a.count) || byNumber(a, b)).slice(0, 5);
+
+            const renderRank = (listId, list) => {
+                document.getElementById(listId).innerHTML = list.length
+                    ? list.map((entry, index) => `<li class="rank-item">
+                        <span class="rank-no">${index + 1}</span>
+                        ${coverImg(entry.episode, 'cover-thumb', true)}
+                        <div class="rank-body">
+                            <div class="rank-title"${openEpisodeAttr(entry.episode)}>${escapeHtml(episodeLabel(entry.episode))}</div>
+                            <div class="rank-sub">${entry.count} ${entry.count === 1 ? 'Bewertung' : 'Bewertungen'}</div>
+                        </div>
+                        ${scoreBadge(entry.avg.toFixed(1))}
+                    </li>`).join('')
+                    : '<li class="rank-item"><span class="rank-title" style="color:var(--muted)">Noch keine Bewertungen.</span></li>';
+            };
+            renderRank('chart-top', top);
+            renderRank('chart-flop', flop);
+
+            // Streaks. Der erste Tag der Erfassung (Nachtragen beim App-Start) zählt nicht für den Tagesrekord.
+            const firstRecordedDay = bewertungen.length
+                ? berlinDayKey(Math.min(...bewertungen.map(ratingCreatedAt).filter(Boolean)))
+                : null;
+            const streakUsers = activeUsers
+                .filter(user => chartUserId === 'all' || String(user.id) === chartUserId)
+                .map(user => ({ user, activity: userActivity(user.id, firstRecordedDay) }))
+                .sort((a, b) => (b.activity.current - a.activity.current) || (b.activity.longest - a.activity.longest));
+            document.getElementById('streak-list').innerHTML = streakUsers.length
+                ? streakUsers.map(({ user, activity }) => streakCardHtml(user, activity)).join('')
+                : `<div class="empty-state">${icon('flame')}<p>Noch keine Bewertungen.</p></div>`;
+        }
+
+        function userActivity(userId, excludeFromRecordDay = null) {
+            const days = new Map();
+            const reviewsByDay = new Map();
+            bewertungen.forEach(b => {
+                if (String(b.nutzerId) !== String(userId)) return;
+                const key = berlinDayKey(ratingCreatedAt(b));
+                days.set(key, (days.get(key) || 0) + 1);
+                if (!reviewsByDay.has(key)) reviewsByDay.set(key, []);
+                reviewsByDay.get(key).push(b);
+            });
+            const todayKey = berlinDayKey(Date.now());
+            const sorted = [...days.keys()].sort();
+
+            // Aktuelle Serie: zählt ab heute, oder ab gestern, solange heute noch nichts bewertet wurde.
+            let current = 0;
+            let cursor = days.has(todayKey) ? dayKeyToUtc(todayKey) : dayKeyToUtc(todayKey) - DAY_MS;
+            while (days.has(utcToDayKey(cursor))) { current++; cursor -= DAY_MS; }
+
+            let longest = 0, run = 0, previous = null;
+            let record = 0, recordDay = null;
+            sorted.forEach(key => {
+                const time = dayKeyToUtc(key);
+                run = previous !== null && time - previous === DAY_MS ? run + 1 : 1;
+                longest = Math.max(longest, run);
+                previous = time;
+                if (key !== excludeFromRecordDay && days.get(key) > record) { record = days.get(key); recordDay = key; }
+            });
+
+            const first = sorted[0] || null;
+            const span = first ? Math.round((dayKeyToUtc(todayKey) - dayKeyToUtc(first)) / DAY_MS) + 1 : 0;
+            return { days, reviewsByDay, current, longest, record, recordDay, activeDays: days.size, span, todayKey, first, listenedToday: days.has(todayKey) };
+        }
+
+        function heatLevel(count) {
+            if (!count) return '';
+            if (count === 1) return 'l1';
+            if (count === 2) return 'l2';
+            if (count <= 4) return 'l3';
+            return 'l4';
+        }
+
+        function streakCardHtml(user, a) {
+            const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+            const stat = (label, value, sub = '') => `<div class="streak-stat"><span>${label}</span><strong>${value}</strong>${sub ? `<small>${sub}</small>` : ''}</div>`;
+            const currentSub = a.listenedToday ? 'heute schon gehört' : (a.current ? 'heute noch offen' : 'jetzt neu starten');
+
+            const calendarHtml = calendarCardHtml(user, a);
+
+            return `<article class="card streak-card">
+                <div class="streak-head">
+                    ${avatarHtml(user.id, user.name)}
+                    <strong>${escapeHtml(user.name)}</strong>
+                    <span class="streak-flame ${a.current ? 'on' : ''}">${icon('flame')} ${plural(a.current, 'Tag', 'Tage')}</span>
+                </div>
+                <div class="streak-stats">
+                    ${stat('Aktuelle Serie', plural(a.current, 'Tag', 'Tage'), currentSub)}
+                    ${stat('Längste Serie', plural(a.longest, 'Tag', 'Tage'))}
+                    ${stat('Tagesrekord', a.record ? plural(a.record, 'Folge', 'Folgen') : '–', escapeHtml(formatDayKey(a.recordDay, false)))}
+                    ${stat('Aktive Tage', `${a.activeDays} / ${a.span}`, `${a.span - a.activeDays} ausgelassen`)}
+                </div>
+                ${calendarHtml}
+                <div class="heat-legend">weniger <span class="heat"></span><span class="heat l1"></span><span class="heat l2"></span><span class="heat l3"></span><span class="heat l4"></span> mehr</div>
+            </article>`;
+        }
+
+        // Kalenderzustand pro Nutzer: angezeigter Monat (YYYY-MM) und ausgewählter Tag.
+        const calendarState = {};
+
+        function calendarFor(userId, a) {
+            const key = String(userId);
+            if (!calendarState[key]) calendarState[key] = { month: a.todayKey.slice(0, 7), day: null };
+            return calendarState[key];
+        }
+
+        function shiftMonth(month, delta) {
+            const [year, mon] = month.split('-').map(Number);
+            const date = new Date(Date.UTC(year, mon - 1 + delta, 1));
+            return date.toISOString().slice(0, 7);
+        }
+
+        function calendarNav(userId, delta) {
+            const state = calendarState[String(userId)];
+            if (!state) return;
+            state.month = shiftMonth(state.month, delta);
+            state.day = null;
+            renderCharts();
+        }
+
+        function calendarSelect(userId, dayKey) {
+            const state = calendarState[String(userId)];
+            if (!state) return;
+            state.day = state.day === dayKey ? null : dayKey;
+            renderCharts();
+        }
+
+        function calendarCardHtml(user, a) {
+            const state = calendarFor(user.id, a);
+            const userArg = escapeHtml(JSON.stringify(String(user.id)));
+            const [year, mon] = state.month.split('-').map(Number);
+            const firstOfMonth = Date.UTC(year, mon - 1, 1);
+            const daysInMonth = new Date(Date.UTC(year, mon, 0)).getUTCDate();
+            const offset = (new Date(firstOfMonth).getUTCDay() + 6) % 7; // Montag = 0
+            const todayUtc = dayKeyToUtc(a.todayKey);
+            const firstUtc = a.first ? dayKeyToUtc(a.first) : todayUtc;
+            const monthLabel = new Date(firstOfMonth).toLocaleDateString('de-DE', { timeZone: 'UTC', month: 'long', year: 'numeric' });
+            const canPrev = a.first && state.month > a.first.slice(0, 7);
+            const canNext = state.month < a.todayKey.slice(0, 7);
+
+            let cells = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map(day => `<div class="cal-wd">${day}</div>`).join('');
+            cells += '<span class="cal-day blank"></span>'.repeat(offset);
+            for (let day = 1; day <= daysInMonth; day++) {
+                const time = Date.UTC(year, mon - 1, day);
+                const key = utcToDayKey(time);
+                const count = a.days.get(key) || 0;
+                const isFuture = time > todayUtc;
+                const isBefore = time < firstUtc;
+                const classes = ['cal-day', heatLevel(count)];
+                if (isFuture) classes.push('future');
+                else if (isBefore) classes.push('before');
+                if (key === a.todayKey) classes.push('today');
+                if (state.day === key) classes.push('selected');
+                const label = `${formatDayKey(key)}: ${count === 1 ? '1 Folge' : `${count} Folgen`}`;
+                cells += isFuture || isBefore
+                    ? `<button class="${classes.join(' ')}" type="button" disabled>${day}</button>`
+                    : `<button class="${classes.join(' ')}" type="button" aria-label="${escapeHtml(label)}" onclick="calendarSelect(${userArg}, '${key}')">${day}${count ? `<span class="cal-count">${count}</span>` : ''}</button>`;
+            }
+
+            let detail = '';
+            if (state.day) {
+                const reviews = (a.reviewsByDay.get(state.day) || []).slice().sort((x, y) => ratingCreatedAt(x) - ratingCreatedAt(y));
+                detail = `<div class="cal-detail">
+                    <div class="cal-detail-head">${escapeHtml(formatDayKey(state.day))} · ${reviews.length === 1 ? '1 Folge' : `${reviews.length} Folgen`}</div>
+                    ${reviews.length
+                        ? `<ol class="rank-list">${reviews.map(review => {
+                            const episode = episodeForRating(review);
+                            return `<li class="rank-item">
+                                ${coverImg(episode, 'cover-thumb', true)}
+                                <div class="rank-body"><div class="rank-title"${openEpisodeAttr(episode)}>${escapeHtml(episode ? episodeLabel(episode) : `Folge ${review.folgenNr}`)}</div></div>
+                                ${scoreBadge(review.punkte)}
+                            </li>`;
+                        }).join('')}</ol>`
+                        : '<div class="cal-detail-empty">An diesem Tag wurde nichts bewertet.</div>'}
+                </div>`;
+            }
+
+            return `<div class="cal-head">
+                    <button class="icon-btn cal-nav" type="button" aria-label="Vorheriger Monat" onclick="calendarNav(${userArg}, -1)" ${canPrev ? '' : 'disabled'}>${icon('back', 'icon-sm')}</button>
+                    <strong>${escapeHtml(monthLabel)}</strong>
+                    <button class="icon-btn cal-nav" type="button" aria-label="Nächster Monat" onclick="calendarNav(${userArg}, 1)" ${canNext ? '' : 'disabled'} style="transform:scaleX(-1)">${icon('back', 'icon-sm')}</button>
+                </div>
+                <div class="cal-grid">${cells}</div>
+                ${detail}`;
+        }
+
+        // --- FALL DES TAGES ---
         const DAILY_SHUFFLE_LIMIT = 3;
+        // TEMPORÄR zum Testen: heute (05.11.2026, bis 24:00 Uhr Berliner Zeit) unbegrenzt mischen. Läuft automatisch ab.
+        const UNLIMITED_SHUFFLE_UNTIL = Date.parse('2026-11-05T23:00:00Z');
+        function shuffleLimit() {
+            return Date.now() < UNLIMITED_SHUFFLE_UNTIL ? Infinity : DAILY_SHUFFLE_LIMIT;
+        }
+
+        function setShuffleButton(button, label, remaining = null) {
+            const dots = remaining === null ? '' : `<span class="shuffle-dots" aria-hidden="true">${Array.from({ length: DAILY_SHUFFLE_LIMIT }, (_, i) => `<i class="${i < remaining ? 'on' : ''}"></i>`).join('')}</span>`;
+            button.innerHTML = `${icon('shuffle')} ${escapeHtml(label)}${dots}`;
+        }
 
         function updateShuffleControls(state) {
             const button = document.getElementById('daily-shuffle-btn');
@@ -745,9 +2139,15 @@
 
             if (shuffleResetTimer) clearTimeout(shuffleResetTimer);
 
-            const remaining = state && Number.isInteger(Number(state.remainingShuffles))
+            if (dailyShuffling) {
+                button.disabled = true;
+                setShuffleButton(button, 'Mische…');
+                return;
+            }
+
+            const remaining = state && !Number.isNaN(Number(state.remainingShuffles))
                 ? Math.max(0, Number(state.remainingShuffles))
-                : DAILY_SHUFFLE_LIMIT;
+                : shuffleLimit();
             const canShuffle = Boolean(state && state.canShuffle);
             button.disabled = !state || !state.selectedEpisodeId || !canShuffle || remaining <= 0;
             button.title = '';
@@ -757,24 +2157,21 @@
                 const hours = String(Math.floor(secondsLeft / 3600)).padStart(2, '0');
                 const minutes = String(Math.floor((secondsLeft % 3600) / 60)).padStart(2, '0');
                 const seconds = String(secondsLeft % 60).padStart(2, '0');
-                button.textContent = `🔄 Neu Mischen (${hours}:${minutes}:${seconds})`;
+                setShuffleButton(button, `Wieder in ${hours}:${minutes}:${seconds}`);
                 shuffleResetTimer = setTimeout(() => millisecondsLeft <= 0 ? refreshSharedDailyState() : updateShuffleControls(state), Math.min(1000, Math.max(1, millisecondsLeft)));
                 return;
             }
             if (!canShuffle) {
-                button.textContent = state && state.selectedEpisodeId ? 'Keine weitere Folge im Pool' : 'Keine Folge im Pool';
+                setShuffleButton(button, state && state.selectedEpisodeId ? 'Keine weitere Folge im Pool' : 'Keine Folge im Pool');
                 return;
             }
             if (!currentUser.id) {
-                button.textContent = '🔄 Nutzer wählen zum Mischen';
+                setShuffleButton(button, 'Anmelden zum Mischen');
+                button.disabled = false;
                 return;
             }
-            if (remaining > 0) {
-                button.textContent = `🔄 Neu Mischen (${remaining})`;
-                return;
-            }
-
-            button.textContent = `🔄 Neu Mischen (${remaining})`;
+            if (!Number.isFinite(remaining)) return setShuffleButton(button, 'Neu mischen · unbegrenzt');
+            setShuffleButton(button, 'Neu mischen', remaining);
         }
         function escapeHtml(value) {
             return String(value == null ? '' : value).replace(/[&<>"']/g, character => ({
@@ -782,6 +2179,7 @@
             })[character]);
         }
 
+        // --- PROFIL ---
         function openUserProfile(userId, userName) {
             const hasUserId = userId !== null && userId !== undefined && String(userId) !== '';
             const name = String(userName || 'Anonym');
@@ -812,16 +2210,18 @@
             const gradeCounts = Array(10).fill(0);
             validRatings.forEach(review => { gradeCounts[Number(review.punkte) - 1]++; });
 
+            const profileAvatar = document.getElementById('profile-avatar');
+            profileAvatar.className = `avatar lg ${avatarTone(userId || name)}`;
+            profileAvatar.textContent = initials(name);
             document.getElementById('profile-user-name').textContent = name;
             document.getElementById('profile-rated-count').textContent = String(episodeRatings.length);
             const ratedPercent = stammdaten.length ? (episodeRatings.length / stammdaten.length * 100).toFixed(1) : '0.0';
-            document.getElementById('profile-rated-percent').textContent = `${ratedPercent} % aller Folgen`;
-            document.getElementById('profile-average').textContent = average;
-            document.getElementById('profile-donut-average').textContent = average;
+            document.getElementById('profile-rated-percent').textContent = `${ratedPercent.replace('.', ',')} %`;
+            document.getElementById('profile-average').textContent = average.replace('.', ',');
+            document.getElementById('profile-donut-average').textContent = average.replace('.', ',');
 
-            const renderRankedList = (listId, sortDirection, scoreClass) => {
+            const renderRankedList = (listId, sortDirection) => {
                 const list = document.getElementById(listId);
-                list.replaceChildren();
                 const ranked = validRatings.slice().sort((a, b) => {
                     const scoreDifference = (Number(a.punkte) - Number(b.punkte)) * sortDirection;
                     const dateA = new Date(a.datum || 0).getTime() || 0;
@@ -829,30 +2229,26 @@
                     return scoreDifference || dateB - dateA;
                 });
                 const cutoffScore = ranked.length >= 3 ? Number(ranked[2].punkte) : null;
-                ranked.filter((review, index) => index < 3 || Number(review.punkte) === cutoffScore)
-                    .forEach(review => {
-                    const episode = episodeForRating(review);
-                    const listItem = document.createElement('li');
-                    listItem.textContent = episodeLabel(episode);
-                    const score = document.createElement('span');
-                    score.className = scoreClass;
-                    score.textContent = `${review.punkte}/10`;
-                    listItem.appendChild(score);
-                    const date = document.createElement('small');
-                    date.className = 'profile-top-date';
-                    const reviewDate = new Date(review.datum);
-                    date.textContent = Number.isNaN(reviewDate.getTime()) ? '' : reviewDate.toLocaleDateString();
-                    listItem.appendChild(date);
-                    list.appendChild(listItem);
-                });
-                if (validRatings.length === 0) {
-                    const empty = document.createElement('li');
-                    empty.textContent = 'Noch keine Bewertungen vorhanden.';
-                    list.appendChild(empty);
+                const shown = ranked.filter((review, index) => index < 3 || Number(review.punkte) === cutoffScore);
+                if (!shown.length) {
+                    list.innerHTML = '<li class="rank-item"><span class="rank-title" style="color:var(--muted)">Noch keine Bewertungen vorhanden.</span></li>';
+                    return;
                 }
+                list.innerHTML = shown.map((review, index) => {
+                    const episode = episodeForRating(review);
+                    return `<li class="rank-item">
+                        <span class="rank-no">${index + 1}</span>
+                        ${coverImg(episode, 'cover-thumb', true)}
+                        <div class="rank-body">
+                            <div class="rank-title"${openEpisodeAttr(episode)}>${escapeHtml(episodeLabel(episode))}</div>
+                            <div class="rank-date">${escapeHtml(formatDate(review.datum))}</div>
+                        </div>
+                        ${scoreBadge(review.punkte)}
+                    </li>`;
+                }).join('');
             };
-            renderRankedList('profile-top-list', -1, 'profile-top-score');
-            renderRankedList('profile-worst-list', 1, 'profile-worst-score');
+            renderRankedList('profile-top-list', -1);
+            renderRankedList('profile-worst-list', 1);
 
             const gradeColors = ['#ED1C24', '#F04438', '#F97316', '#FACC15', '#A3E635', '#22C55E', '#2DD4BF', '#00AEEF', '#168BD2', '#235B9B'];
             const total = gradeCounts.reduce((sum, count) => sum + count, 0);
@@ -864,23 +2260,17 @@
             });
             document.getElementById('profile-donut').style.background = total
                 ? `conic-gradient(${segments.join(', ')})`
-                : 'conic-gradient(var(--card-gray) 0deg 360deg)';
+                : 'conic-gradient(var(--surface-3) 0deg 360deg)';
 
             const legend = document.getElementById('profile-grade-legend');
-            legend.replaceChildren();
-            gradeCounts.forEach((count, index) => {
-                const item = document.createElement('li');
-                const swatch = document.createElement('span');
-                swatch.className = 'profile-grade-swatch';
-                swatch.style.backgroundColor = gradeColors[index];
-                const label = document.createElement('span');
+            legend.innerHTML = gradeCounts.map((count, index) => {
                 const percent = total ? (count / total * 100).toFixed(1) : '0.0';
-                label.textContent = `${index + 1}: ${count} (${percent} %)`;
-                item.append(swatch, label);
-                legend.appendChild(item);
-            });
+                return `<li><span class="profile-grade-swatch" style="background:${gradeColors[index]}"></span><span><strong>${index + 1}</strong> · ${count} (${percent.replace('.', ',')} %)</span></li>`;
+            }).join('');
 
+            closeEpisodeReviews();
             const profileView = document.getElementById('user-profile-view');
+            profileView.scrollTop = 0;
             profileView.classList.add('active');
             profileView.setAttribute('aria-hidden', 'false');
         }
@@ -890,57 +2280,77 @@
             profileView.classList.remove('active');
             profileView.setAttribute('aria-hidden', 'true');
         }
+
         function showEpisodeReviews(folgeId) {
             const folge = stammdaten.find(f => episodeId(f) === String(folgeId))
                 || stammdaten.find(f => String(f.nr) === String(folgeId));
-            const title = document.getElementById('episode-reviews-title');
             const list = document.getElementById('episode-reviews-list');
             const modal = document.getElementById('episodeReviewsModal');
             const reviews = folge
                 ? bewertungen.filter(review => isReviewForEpisode(review, folge))
                 : bewertungen.filter(review => String(review.folgeId || '') === String(folgeId));
 
-            title.textContent = episodeLabel(folge);
-            list.replaceChildren();
+            const stats = folge ? getStats(episodeId(folge)) : { avg: '-', count: reviews.length };
+            const header = `<div class="episode-detail">
+                    ${coverImg(folge, 'cover-img-detail')}
+                    <span class="pill">${escapeHtml(folge ? episodeMeta(folge) : '')}</span>
+                    <h2 id="episode-reviews-title">${escapeHtml(folge ? folge.titel : 'Unbekannte Folge')}</h2>
+                    <div>${scoreBadge(stats.avg, `${stats.count} ${stats.count === 1 ? 'Stimme' : 'Stimmen'}`)}</div>
+                    ${folge ? getMusicLinks(folge) : ''}
+                    <div class="daily-actions">
+                        <button class="btn btn-action" type="button" data-rate-episode="${escapeHtml(folge ? episodeId(folge) : folgeId)}">${icon('pen')} Diese Folge bewerten</button>
+                    </div>
+                </div>
+                <div class="section-title">Bewertungen <span>${reviews.length}</span></div>`;
 
             if (reviews.length === 0) {
-                const empty = document.createElement('p');
-                empty.textContent = 'Für diese Folge gibt es noch keine Bewertungen.';
-                list.appendChild(empty);
+                list.innerHTML = `${header}<div class="empty-state" style="padding:16px 20px;">${icon('chat')}<p>Für diese Folge gibt es noch keine Bewertungen.</p></div>`;
             } else {
-                reviews.sort((a, b) => new Date(b.datum || 0) - new Date(a.datum || 0)).forEach(review => {
-                    const item = document.createElement('article');
-                    item.className = 'episode-review';
-
-                    const header = document.createElement('div');
-                    header.className = 'episode-review-header';
-                    const user = document.createElement('button');
-                    user.type = 'button';
-                    user.className = 'user-profile-link';
-                    user.textContent = review.nutzerName || 'Anonym';
-                    user.dataset.userId = review.nutzerId || '';
-                    user.dataset.userName = review.nutzerName || 'Anonym';
-                    const date = document.createElement('span');
-                    date.className = 'episode-review-date';
-                    date.textContent = review.datum ? new Date(review.datum).toLocaleDateString() : '';
-                    header.append(user, date);
-
-                    const score = document.createElement('span');
-                    score.className = 'rating-tag';
-                    score.textContent = `⭐ ${review.punkte}/10`;
-
-                    const comment = document.createElement('p');
-                    comment.className = 'episode-review-comment';
-                    comment.textContent = review.kommentar || 'Kein Kommentar';
-
-                    item.append(header, score, comment);
-                    list.appendChild(item);
-                });
+                list.innerHTML = header + reviews.sort((a, b) => new Date(b.datum || 0) - new Date(a.datum || 0)).map(review => {
+                    const name = review.nutzerName || 'Anonym';
+                    return `<article class="episode-review">
+                        <div class="review-head" style="margin-bottom:8px;">
+                            ${avatarHtml(review.nutzerId, name)}
+                            <div class="who">
+                                <button type="button" class="user-profile-link" data-user-id="${escapeHtml(review.nutzerId || '')}" data-user-name="${escapeHtml(name)}">${escapeHtml(name)}</button>
+                                <span class="review-date">${escapeHtml(formatDate(review.datum))}</span>
+                            </div>
+                            ${scoreBadge(review.punkte)}
+                        </div>
+                        <p class="review-comment ${review.kommentar ? '' : 'empty'}">${review.kommentar ? escapeHtml(review.kommentar) : 'Kein Kommentar'}</p>
+                    </article>`;
+                }).join('');
             }
 
+            modal.querySelector('.modal-content').scrollTop = 0;
             modal.classList.add('active');
             modal.setAttribute('aria-hidden', 'false');
         }
+
+        // Von überall: Folge in der Folgenübersicht öffnen (Tab "Folgen" + Detailansicht).
+        function openEpisode(folgeId) {
+            closeNotifications();
+            closeUserProfile();
+            closeUserModal();
+            closeEpisodeReviews();
+            if (!document.getElementById('tab-list').classList.contains('active')) switchTab('tab-list');
+            const card = [...document.querySelectorAll('#folgen-list .episode-card')].find(item => item.dataset.episodeId === String(folgeId));
+            if (card) {
+                card.scrollIntoView({ block: 'center' });
+                card.classList.remove('flash');
+                void card.offsetWidth;
+                card.classList.add('flash');
+            }
+            showEpisodeReviews(folgeId);
+        }
+
+        document.addEventListener('click', event => {
+            const target = event.target.closest('[data-open-episode]');
+            if (!target || event.target.closest('[data-rate-episode], .user-profile-link')) return;
+            event.preventDefault();
+            event.stopPropagation();
+            openEpisode(target.dataset.openEpisode);
+        });
 
         function closeEpisodeReviews() {
             const modal = document.getElementById('episodeReviewsModal');
@@ -960,77 +2370,139 @@
             modal.setAttribute('aria-hidden', 'true');
         }
 
-        function refreshSharedDailyState(force = false) {
-            if (!stammdaten.length) return Promise.resolve(false);
-            if (sharedStateRefreshPromise) {
-                return force
-                    ? sharedStateRefreshPromise.then(() => refreshSharedDailyState(false))
-                    : sharedStateRefreshPromise;
-            }
-            const refreshPromise = loadSharedDailyState();
-            let trackedPromise;
-            trackedPromise = refreshPromise.finally(() => {
-                if (sharedStateRefreshPromise === trackedPromise) sharedStateRefreshPromise = null;
-            });
-            sharedStateRefreshPromise = trackedPromise;
-            return trackedPromise;
+        // --- GEMEINSAMER FALL DES TAGES (Firestore: meta/daily) ---
+        function berlinPeriod(now = Date.now()) {
+            const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+            }).formatToParts(new Date(now)).map(part => [part.type, part.value]));
+            const caseDate = `${parts.year}-${parts.month}-${parts.day}`;
+            const hour = Number(parts.hour);
+            const startHour = hour < 12 ? 0 : 12;
+            const secondsLeft = (startHour + 12 - hour) * 3600 - Number(parts.minute) * 60 - Number(parts.second);
+            return {
+                caseDate,
+                periodKey: `${caseDate}-${startHour === 0 ? '00' : '12'}`,
+                resetAt: now + secondsLeft * 1000
+            };
         }
 
-        async function loadSharedDailyState() {
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), DATA_LOAD_TIMEOUT_MS);
-            try {
-                const stateUrl = new URL(GOOGLE_SCRIPT_URL);
-                stateUrl.searchParams.set('action', 'dailyState');
-                stateUrl.searchParams.set('userId', currentUser.id || '');
-                stateUrl.searchParams.set('_', String(Date.now()));
-                const response = await fetch(stateUrl.toString(), { signal: controller.signal });
-                if (!response.ok) throw new Error(`FdT-Abruf fehlgeschlagen (HTTP ${response.status}).`);
-                const data = await response.json();
-                if (!data || !data.dailyState) throw new Error('Das Google Script liefert kein dailyState. Bitte Code.gs als neue Web-App-Version bereitstellen.');
-                sharedDailyState = data.dailyState;
-                generateDailyCase();
-                return true;
-            } catch (err) {
-                console.warn('Gemeinsamer FdT konnte nicht aktualisiert werden:', err);
-                if (!sharedDailyState) {
-                    const detail = err.name === 'AbortError'
-                        ? 'Der Abruf hat länger als 30 Sekunden gedauert.'
-                        : escapeHtml(err.message || String(err));
-                    document.getElementById('daily-content').innerHTML = `<p>Folgen und Reviews sind geladen, aber der gemeinsame FdT fehlt: ${detail}</p><button class="btn btn-primary" type="button" onclick="refreshSharedDailyState(true)">FdT erneut laden</button>`;
-                }
-                return false;
-            } finally {
-                clearTimeout(timeout);
+        // Folgen mit höchstens einer gültigen Bewertung eines registrierten Nutzers.
+        function eligibleDailyEpisodeIds() {
+            const registered = new Set(nutzer.map(user => String(user.id)));
+            const counts = {};
+            bewertungen.forEach(rating => {
+                const points = Number(rating.punkte);
+                if (!Number.isInteger(points) || points < 1 || points > 10 || !registered.has(String(rating.nutzerId))) return;
+                const id = ratingEpisodeId(rating);
+                counts[id] = (counts[id] || 0) + 1;
+            });
+            return stammdaten.map(episodeId).filter(id => id && (counts[id] || 0) <= 1);
+        }
+
+        function updateDailyView() {
+            if (!dailyDoc) {
+                sharedDailyState = null;
+            } else {
+                const period = berlinPeriod();
+                const samePeriod = dailyDoc.shufflePeriodKey === period.periodKey;
+                const used = samePeriod ? Number((dailyDoc.shufflesByUser || {})[currentUser.id] || 0) : 0;
+                sharedDailyState = {
+                    selectedEpisodeId: dailyDoc.selectedEpisodeId || '',
+                    selectedAt: dailyDoc.selectedAt || null,
+                    caseDate: dailyDoc.caseDate,
+                    periodKey: dailyDoc.shufflePeriodKey,
+                    resetAt: period.resetAt,
+                    remainingShuffles: Math.max(0, shuffleLimit() - used),
+                    canShuffle: eligibleDailyEpisodeIds().some(id => id !== dailyDoc.selectedEpisodeId)
+                };
             }
+            generateDailyCase();
+        }
+
+        // Neuer Tag / neuer Halbtag: Zustand per Transaktion fortschreiben (nur angemeldete Nutzer dürfen schreiben).
+        function refreshSharedDailyState() {
+            if (!fb || !authUser || !loaded.episodes || !loaded.ratings || !loaded.users) {
+                updateDailyView();
+                return Promise.resolve(false);
+            }
+            const period = berlinPeriod();
+            if (dailyDoc && dailyDoc.caseDate === period.caseDate && dailyDoc.shufflePeriodKey === period.periodKey) {
+                updateDailyView();
+                return Promise.resolve(true);
+            }
+            if (dailyRollInProgress) return dailyRollInProgress;
+            const ref = fb.doc(fb.db, 'meta', 'daily');
+            dailyRollInProgress = fb.runTransaction(fb.db, async tx => {
+                const snap = await tx.get(ref);
+                const current = snap.exists() ? snap.data() : null;
+                const now = berlinPeriod();
+                if (current && (current.caseDate > now.caseDate || current.shufflePeriodKey > now.periodKey)) return;
+                if (current && current.caseDate === now.caseDate && current.shufflePeriodKey === now.periodKey) return;
+                const next = current ? { ...current } : {};
+                if (!current || current.caseDate !== now.caseDate) {
+                    const episodes = eligibleDailyEpisodeIds();
+                    next.caseDate = now.caseDate;
+                    next.selectedEpisodeId = episodes.length ? episodes[Math.floor(Math.random() * episodes.length)] : '';
+                    next.selectedAt = Date.now();
+                }
+                if (!current || current.shufflePeriodKey !== now.periodKey) {
+                    next.shufflePeriodKey = now.periodKey;
+                    next.shufflesByUser = {};
+                }
+                tx.set(ref, next);
+            }).then(() => true).catch(err => {
+                console.warn('Gemeinsamer FdT konnte nicht aktualisiert werden:', err);
+                return false;
+            }).finally(() => { dailyRollInProgress = null; });
+            return dailyRollInProgress;
         }
 
         function generateDailyCase() {
             const c = document.getElementById('daily-content');
-            if (stammdaten.length === 0) return c.innerHTML = 'Lade Daten...';
+            const backdrop = document.getElementById('daily-backdrop');
+            // Läuft die Misch-Animation schon, nicht neu zeichnen (sonst springt die Drehung zurück).
+            if (dailyShuffling && c.querySelector('.q-loader')) {
+                updateShuffleControls(sharedDailyState);
+                return;
+            }
+            document.getElementById('daily-date').textContent = new Date().toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+            if (stammdaten.length === 0) {
+                backdrop.style.removeProperty('--cover');
+                return c.innerHTML = '<div class="skeleton skeleton-hero"></div>';
+            }
 
             const state = sharedDailyState;
             if (!state) {
                 updateShuffleControls(null);
-                return c.innerHTML = '<p>Der gemeinsame Fall des Tages wird geladen.</p>';
+                backdrop.style.removeProperty('--cover');
+                return c.innerHTML = `<div class="empty-state">${icon('dice')}<p>Der gemeinsame Fall des Tages wird geladen.</p></div>`;
             }
             dailyFolge = stammdaten.find(f => episodeId(f) === String(state.selectedEpisodeId)) || null;
             if (!dailyFolge) {
                 updateShuffleControls(state);
-                return c.innerHTML = '<h3>Es gibt aktuell keine Folge mit höchstens einer Bewertung.</h3>';
+                backdrop.style.removeProperty('--cover');
+                return c.innerHTML = `<div class="empty-state">${icon('dice')}<p>Es gibt aktuell keine Folge mit höchstens einer Bewertung.</p></div>`;
             }
 
             updateShuffleControls(state);
             const s = getStats(episodeId(dailyFolge));
-            const coverHTML = `<img src="${getCoverUrl(dailyFolge)}" class="cover-img-daily" alt="Cover ${episodeLabel(dailyFolge)}" onerror="showCoverFallback(this)">`;
-            const musicLinksHTML = getMusicLinks(dailyFolge);
+            const dim = dailyShuffling ? 'daily-dim' : '';
+            if (!dailyShuffling) backdrop.style.setProperty('--cover', `url("${getCoverUrl(dailyFolge)}")`);
+            const coverHtml = dailyShuffling
+                ? `<div class="q-loader" role="status"><span aria-hidden="true">?</span><span aria-hidden="true">?</span><span aria-hidden="true">?</span><span class="sr-only">Neuer Fall wird gemischt…</span></div>`
+                : `<img src="${getCoverUrl(dailyFolge)}" class="cover-img-daily" alt="Cover ${escapeHtml(episodeLabel(dailyFolge))}" onerror="showCoverFallback(this)"${openEpisodeAttr(dailyFolge)}>`;
             c.innerHTML = `
-                ${coverHTML}
-                ${musicLinksHTML}
-                <div style="color: var(--muted); font-size:14px; font-weight:bold;">${String(dailyFolge.nr).toLowerCase() === 'special' ? 'SPECIAL' : `FOLGE ${dailyFolge.nr}`} • ${dailyFolge.jahr || ''}</div>
-                <h3 style="font-size:24px; margin: 10px 0;">${dailyFolge.titel}</h3>
-                <div class="rating-tag" style="margin-bottom: 20px;">⭐ Community: ${s.avg} (${s.count} Votes)</div>
-                <button class="btn btn-action" type="button" data-rate-episode="${escapeHtml(episodeId(dailyFolge))}">Diesen Fall bewerten</button>
+                <div class="daily-kicker ${dim}"><span class="pill">${escapeHtml(episodeMeta(dailyFolge))}</span></div>
+                <div class="daily-cover">${coverHtml}</div>
+                <div class="${dim}">
+                <h3 class="daily-title"${dailyShuffling ? '' : openEpisodeAttr(dailyFolge)}>${escapeHtml(dailyFolge.titel)}</h3>
+                <div>${scoreBadge(s.avg, `${s.count} ${s.count === 1 ? 'Stimme' : 'Stimmen'}`)}</div>
+                ${getMusicLinks(dailyFolge)}
+                </div>
+                <div class="daily-actions ${dim}">
+                    <button class="btn btn-action" type="button" data-rate-episode="${escapeHtml(episodeId(dailyFolge))}">${icon('pen')} Diesen Fall bewerten</button>
+                </div>
             `;
         }
 
@@ -1045,36 +2517,69 @@
             }
 
             const previousEpisodeId = sharedDailyState.selectedEpisodeId;
-            const previousRemaining = Number(sharedDailyState.remainingShuffles);
-            const previousPeriodKey = sharedDailyState.periodKey;
-            const button = document.getElementById('daily-shuffle-btn');
-            button.disabled = true;
-            button.textContent = 'Mische…';
+            const startedAt = Date.now();
+            dailyShuffling = true;
+            generateDailyCase();
             try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-                    body: JSON.stringify({
-                        action: 'shuffleDailyCase',
-                        nutzerId: currentUser.id,
-                        nutzerName: currentUser.name
-                    })
+                await refreshSharedDailyState();
+                const ref = fb.doc(fb.db, 'meta', 'daily');
+                await fb.runTransaction(fb.db, async tx => {
+                    const snap = await tx.get(ref);
+                    if (!snap.exists()) throw new Error('Es gibt noch keinen Fall des Tages.');
+                    const state = snap.data();
+                    const period = berlinPeriod();
+                    if (state.caseDate !== period.caseDate || state.shufflePeriodKey !== period.periodKey) {
+                        throw new Error('Der Fall des Tages wurde gerade zurückgesetzt. Bitte erneut versuchen.');
+                    }
+                    const used = Number((state.shufflesByUser || {})[currentUser.id] || 0);
+                    if (used >= shuffleLimit()) throw new Error('Du hast alle drei Mischungen für diesen Zeitraum verwendet.');
+                    const alternatives = eligibleDailyEpisodeIds().filter(id => id !== state.selectedEpisodeId);
+                    if (!alternatives.length) throw new Error('Es gibt keine weitere Folge mit höchstens einer Bewertung zum Mischen.');
+                    tx.update(ref, {
+                        selectedEpisodeId: alternatives[Math.floor(Math.random() * alternatives.length)],
+                        selectedAt: Date.now(),
+                        shufflesByUser: { ...(state.shufflesByUser || {}), [currentUser.id]: used + 1 },
+                        lastShuffleBy: currentUser.id
+                    });
                 });
-                await refreshSharedDailyState(true);
-                const changed = sharedDailyState && sharedDailyState.selectedEpisodeId !== previousEpisodeId;
-                const quotaUsed = sharedDailyState && (sharedDailyState.periodKey !== previousPeriodKey
-                    ? Number(sharedDailyState.remainingShuffles) < DAILY_SHUFFLE_LIMIT
-                    : Number(sharedDailyState.remainingShuffles) < previousRemaining);
-                if (!changed || !quotaUsed) {
-                    alert('Es konnte keine neue Folge ausgewählt werden. Prüfe, ob noch Folgen mit höchstens einer Bewertung im Pool sind.');
-                }
+                // Warten, bis der neue Fall über den Listener angekommen ist, dann sein Cover vorladen.
+                await waitFor(() => dailyDoc && dailyDoc.selectedEpisodeId !== previousEpisodeId, 10000);
+                const nextEpisode = stammdaten.find(f => episodeId(f) === String(dailyDoc.selectedEpisodeId));
+                if (nextEpisode) await preloadImage(getCoverUrl(nextEpisode), 8000);
             } catch (err) {
                 console.error('FdT konnte nicht neu gemischt werden:', err);
-                alert('Der FdT konnte gerade nicht neu gemischt werden. Bitte Verbindung prüfen und erneut versuchen.');
+                showToast(err && err.code === 'permission-denied'
+                    ? 'Keine Berechtigung zum Mischen. Bitte prüfe, ob du angemeldet und verknüpft bist.'
+                    : (err.message || 'Der FdT konnte gerade nicht neu gemischt werden. Bitte erneut versuchen.'), 'error');
             } finally {
-                updateShuffleControls(sharedDailyState);
+                // Mindestens ein voller Durchlauf der Animation (alle drei ? einmal gedreht).
+                const remainingAnimation = SHUFFLE_ANIMATION_MIN_MS - (Date.now() - startedAt);
+                if (remainingAnimation > 0) await new Promise(resolve => setTimeout(resolve, remainingAnimation));
+                dailyShuffling = false;
+                updateDailyView();
             }
+        }
+
+        const SHUFFLE_ANIMATION_MIN_MS = 2100;
+
+        function waitFor(condition, timeoutMs) {
+            return new Promise(resolve => {
+                const started = Date.now();
+                const check = () => {
+                    if (condition() || Date.now() - started > timeoutMs) return resolve();
+                    setTimeout(check, 80);
+                };
+                check();
+            });
+        }
+
+        function preloadImage(url, timeoutMs) {
+            return new Promise(resolve => {
+                const image = new Image();
+                const timer = setTimeout(resolve, timeoutMs);
+                image.onload = image.onerror = () => { clearTimeout(timer); resolve(); };
+                image.src = url;
+            });
         }
     </script>
 </body>

@@ -1,0 +1,147 @@
+rules_version = '2';
+
+// Datenmodell
+//   episodes/{folgeId}      Stammdaten (nur Admin schreibt, per Migrationsskript)
+//   users/{userId}          Nutzer; authUid verknüpft den Google-Login mit dem Nutzer
+//   ratings/{id}            Bewertungen; Dokument-ID == String(id)
+//   inviteCodes/{code}      Einladungscodes zum Verknüpfen (für Clients unsichtbar)
+//   meta/daily              Gemeinsamer "Fall des Tages"
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc(userId) {
+      return get(/databases/$(database)/documents/users/$(userId));
+    }
+
+    // Der eingeloggte Google-Account gehört zu genau diesem Nutzer.
+    function ownsUser(userId) {
+      return signedIn()
+        && userId is string
+        && exists(/databases/$(database)/documents/users/$(userId))
+        && userDoc(userId).data.get('authUid', null) == request.auth.uid;
+    }
+
+    function validRating(d) {
+      return d.keys().hasOnly(['id', 'nutzerId', 'nutzerName', 'folgenNr', 'folgeId',
+                               'punkte', 'kommentar', 'datum', 'legacyFolgeId'])
+        && d.keys().hasAll(['id', 'nutzerId', 'nutzerName', 'folgenNr', 'folgeId',
+                            'punkte', 'kommentar', 'datum'])
+        && d.punkte is int && d.punkte >= 1 && d.punkte <= 10
+        && d.kommentar is string && d.kommentar.size() <= 5000
+        && d.datum is string
+        && d.folgeId is string
+        && exists(/databases/$(database)/documents/episodes/$(d.folgeId))
+        && get(/databases/$(database)/documents/episodes/$(d.folgeId)).data.nr == d.folgenNr
+        && d.nutzerName == userDoc(d.nutzerId).data.name;
+    }
+
+    match /episodes/{folgeId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    function verifiedEmail() {
+      return request.auth.token.email.lower();
+    }
+
+    function hasVerifiedEmail() {
+      return signedIn()
+        && request.auth.token.email is string
+        && request.auth.token.email_verified == true;
+    }
+
+    match /users/{userId} {
+      allow read: if true;
+      // Einmaliges Verknüpfen eines noch freien Nutzers mit dem eigenen Google-Login:
+      // entweder per hinterlegter E-Mail-Adresse (emailLinks) oder per Einladungscode.
+      allow update: if signedIn()
+        && resource.data.get('authUid', null) == null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['authUid', 'linkCode', 'linkedAt'])
+        && request.resource.data.authUid == request.auth.uid
+        && (linkedByEmail(userId) || linkedByCode(userId));
+
+      function linkedByEmail(userId) {
+        return hasVerifiedEmail()
+          && request.resource.data.get('linkCode', null) == null
+          && exists(/databases/$(database)/documents/emailLinks/$(verifiedEmail()))
+          && get(/databases/$(database)/documents/emailLinks/$(verifiedEmail())).data.userId == userId;
+      }
+
+      function linkedByCode(userId) {
+        return request.resource.data.get('linkCode', null) is string
+          && exists(/databases/$(database)/documents/inviteCodes/$(request.resource.data.linkCode))
+          && get(/databases/$(database)/documents/inviteCodes/$(request.resource.data.linkCode)).data.userId == userId;
+      }
+
+      // Eigener Gelesen-Stand der Mitteilungen (Zeitstempel in ms).
+      allow update: if ownsUser(userId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['notificationsSeenAt'])
+        && request.resource.data.notificationsSeenAt is int;
+
+      allow create, delete: if false;
+    }
+
+    // E-Mail -> Nutzer. Jeder darf nur den Eintrag zu seiner eigenen, verifizierten Adresse lesen.
+    match /emailLinks/{email} {
+      allow get: if hasVerifiedEmail() && verifiedEmail() == email;
+      allow list, write: if false;
+    }
+
+    match /inviteCodes/{code} {
+      allow read, write: if false;
+    }
+
+    match /ratings/{ratingId} {
+      allow read: if true;
+      allow create: if ownsUser(request.resource.data.nutzerId)
+        && validRating(request.resource.data)
+        && request.resource.data.id is int
+        && ratingId == string(request.resource.data.id);
+      allow update: if ownsUser(resource.data.nutzerId)
+        && request.resource.data.id == resource.data.id
+        && request.resource.data.nutzerId == resource.data.nutzerId
+        && validRating(request.resource.data);
+      // Bewertungen werden nie gelöscht.
+      allow delete: if false;
+    }
+
+    match /meta/daily {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.shufflesByUser == {};
+      allow update: if signedIn() && (isRoll() || isShuffle());
+
+      // Neuer Tag und/oder neuer Halbtag: Zustand darf nur vorwärts laufen.
+      function isRoll() {
+        let before = resource.data;
+        let after = request.resource.data;
+        return after.caseDate >= before.caseDate
+          && after.shufflePeriodKey >= before.shufflePeriodKey
+          && (after.caseDate != before.caseDate || after.shufflePeriodKey != before.shufflePeriodKey)
+          && (after.shufflePeriodKey == before.shufflePeriodKey
+                ? after.shufflesByUser == before.shufflesByUser
+                : after.shufflesByUser == {})
+          && (after.caseDate != before.caseDate || after.selectedEpisodeId == before.selectedEpisodeId);
+      }
+
+      // Neu mischen: nur der eigene Zähler steigt um 1, höchstens auf 3.
+      function isShuffle() {
+        let before = resource.data;
+        let after = request.resource.data;
+        let uid = after.lastShuffleBy;
+        return after.caseDate == before.caseDate
+          && after.shufflePeriodKey == before.shufflePeriodKey
+          && ownsUser(uid)
+          && after.diff(before).affectedKeys().hasOnly(['selectedEpisodeId', 'selectedAt', 'shufflesByUser', 'lastShuffleBy'])
+          && after.shufflesByUser.diff(before.shufflesByUser).affectedKeys().hasOnly([uid])
+          && after.shufflesByUser[uid] == before.shufflesByUser.get(uid, 0) + 1
+          // TEMPORÄR: am 05.11.2026 (bis 24:00 Uhr Berliner Zeit = 23:00 UTC) unbegrenzt mischen zum Testen.
+          && (after.shufflesByUser[uid] <= 3 || request.time < timestamp.date(2026, 11, 5) + duration.value(23, 'h'))
+          && after.selectedEpisodeId != before.selectedEpisodeId;
+      }
+    }
+  }
+}

@@ -9,9 +9,10 @@ RAW_DATA = """
 1und der Super-Papagei2und der Phantomsee3und der Karpatenhund4und die schwarze Katze5und der Fluch des Rubins6und der sprechende Totenkopf7und der unheimliche Drache8und der grüne Geist9und die rätselhaften Bilder10und die flüsternde Mumie11und das Gespensterschloss12und der seltsame Wecker13und der lachende Schatten14und das Bergmonster15und der rasende Löwe16und der Zauberspiegel17und die gefährliche Erbschaft18und die Geisterinsel19und der Teufelsberg20und die flammende Spur21und der tanzende Teufel22und der verschwundene Schatz23und das Aztekenschwert24und die silberne Spinne25und die singende Schlange26und die Silbermine27und der magische Kreis28und der Doppelgänger29Die Originalmusik30und das Riff der Haie31und das Narbengesicht32und der Ameisenmensch33und die bedrohte Ranch34und der rote Pirat35und der Höhlenmensch36und der Super-Wal37und der heimliche Hehler38und der unsichtbare Gegner39und die Perlenvögel40und der Automarder41und das Volk der Winde42und der weinende Sarg43und der höllische Werwolf44und der gestohlene Preis45und das Gold der Wikinger46und der schrullige Millionär47und der giftige Gockel48und die gefährlichen Fässer49und die Comic-Diebe50und der verschwundene Filmstar51und der riskante Ritt52und die Musikpiraten53und die Automafia54Gefahr im Verzug55Gekaufte Spieler56Angriff der Computer-Viren57Tatort Zirkus58und der verrückte Maler59Giftiges Wasser60Dopingmixer61und die Rache des Tigers62Spuk im Hotel63Fußball-Gangster64Geisterstadt65Diamantenschmuggel66und die Schattenmänner67und das Geheimnis der Särge68und der Schatz im Bergsee69Späte Rache70Schüsse aus dem Dunkel71Die verschwundene Seglerin72Dreckiger Deal73Poltergeist74und das brennende Schwert75Die Spur des Raben76Stimmen aus dem Nichts77Pistenteufel78Das leere Grab79Im Bann des Voodoo80Geheimakte UFO81Verdeckte Fouls82Die Karten des Bösen83Meuterei auf hoher See84Musik des Teufels85Feuerturm86Nacht in Angst87Wolfsgesicht88Vampir im Internet89Tödliche Spur90Der Feuerteufel91Labyrinth der Götter92Todesflug93und das Geisterschiff94Das schwarze Monster95Botschaft von Geisterhand96und der rote Rächer97Insektenstachel98Tal des Schreckens99Rufmord100Toteninsel101und das Hexen-Handy102Doppelte Täuschung103Das Erbe des Meisterdiebes104Gift per E-Mail105Der Nebelberg106Der Mann ohne Kopf107und der Schatz der Mönche108Die sieben Tore109Gefährliches Quiz110Panik im Park111Die Höhle des Grauens112Schlucht der Dämonen113Das Auge des Drachen114Die Villa der Toten115Auf tödlichem Kurs116Codename: Cobra117Der finstere Rivale118Das düstere Vermächtnis119Der geheime Schlüssel120Der schwarze Skorpion121Spur ins Nichts122und der Geisterzug123Fußballfieber124Geister-Canyon125Feuermond126Schrecken aus dem Moor127Schwarze Madonna128Schatten über Hollywood129SMS aus dem Grab130Der Fluch des Drachen131Haus des Schreckens132Spuk im Netz133Fels der Dämonen134Der tote Mönch135Fluch des Piraten136und das versunkene Dorf137Pfad der Angst138Die geheime Treppe139Das Geheimnis der Diva140Stadt der Vampire141und die Fußball-Falle142Tödliches Eis143und die Poker-Hölle144Zwillinge der Finsternis145und die Rache der Samurai146Der Biss der Bestie147Grusel auf Campbell Castle148und die feurige Flut149Der namenlose Gegner150Geisterbucht151Schwarze Sonne152Skateboardfieber153und das Fußballphantom154Botschaft aus der Unterwelt155und der Meister des Todes156Im Netz des Drachen157Im Zeichen der Schlangen158und der Feuergeist159Nacht der Tiger160Geheimnisvolle Botschaften161Die blutenden Bilder162und der schreiende Nebel163und der verschollene Pilot164Fußball-Teufel165Im Schatten des Giganten166und die brennende Stadt167und das blaue Biest168GPS-Gangster169Die Spur des Spielers170Straße des Grauens171und das Phantom aus dem Meer172und der Eisenmann173Dämon der Rache174und das Tuch der Toten175Schattenwelt176und der gestohlene Sieg177Der Geist des Goldgräbers178Der gefiederte Schrecken179Die Rache des Untoten180und die flüsternden Puppen181Das Kabinett des Zauberers182Im Haus des Henkers183und der letzte Song184und der Hexengarten185und der Mann ohne Augen186Insel des Vergessens187und das silberne Amulett188Signale aus dem Jenseits189und der unsichtbare Passagier190und die Kammer der Rätsel191Verbrechen im Nichts192Im Bann des Drachen193Schrecken aus der Tiefe194und die Zeitreisende195Im Reich der Ungeheuer196Geheimnis des Bauchredners197Im Auge des Sturms198Die Legende der Gaukler199und der grüne Kobold200Feuriges Auge201Höhenangst202Das weiße Grab203Tauchgang ins Ungewisse204Der dunkle Wächter205Das rätselhafte Erbe206und der Mottenmann207Die falschen Detektive208Kelch des Schicksals209Kreaturen der Nacht210Die schweigende Grotte211und der Jadekönig212und der weiße Leopard213Der Fluch der Medusa214und der Geisterbunker215und die verlorene Zeit216Die Schwingen des Unheils217und der Kristallschädel218Im Netz der Lügen219und die Teufelsklippe220Im Wald der Gefahren221Manuskript des Satans222und die Gesetzlosen223und der Knochenmann224Die Yacht des Verrats225und der Puppenmacher226Die Spur der Toten227Melodie der Rache228Der Ruf der Krähen229Drehbuch der Täuschung230Der Tag der Toten231und der Dreiäugige Schakal232Die Stadt aus Gold233Die Nacht der Gewitter234und der lebende Tresor235und das Fantasmofon236Im Bann des Barrakudas237und der rote Büffel238Falsche Schuld239Das Geheimnis der sieben Palmen240und die schwarze Rose241Meister des Lichts
 """
 
-OUTPUT_DIR = "ddf_covers"
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "public", "ddf_covers")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby29VmixLkuJCz5MJeEpTT_KvldBhCHa7woDsY8tqatt_AgmkBLJFW4LeaUj-M2Ws118Q/exec"
+# Folgen sind in Firestore öffentlich lesbar (siehe firestore.rules).
+FIRESTORE_EPISODES_URL = "https://firestore.googleapis.com/v1/projects/ddf-ranking-opzic/databases/(default)/documents/episodes"
 SPECIAL_COVER_PREFIX = "ddf_special_"
 
 headers = {
@@ -119,12 +120,26 @@ for nummer, titel in folgen:
 print(f"\n🎉 Fertig! Alle verfügbaren Cover liegen im Ordner '{OUTPUT_DIR}'.")
 
 def fetch_specials():
-    """Lädt Special-Folgen inklusive IDs aus dem veröffentlichten Apps-Script-Endpoint."""
-    response = requests.get(GOOGLE_SCRIPT_URL, headers=headers, timeout=20)
-    response.raise_for_status()
-    payload = response.json()
+    """Lädt Special-Folgen inklusive IDs aus Firestore (Collection "episodes")."""
+    def plain(value):
+        return next(iter(value.values())) if isinstance(value, dict) and value else ""
+
+    episodes, page_token = [], None
+    while True:
+        params = {"pageSize": 300}
+        if page_token:
+            params["pageToken"] = page_token
+        response = requests.get(FIRESTORE_EPISODES_URL, params=params, headers=headers, timeout=20)
+        response.raise_for_status()
+        payload = response.json()
+        for document in payload.get("documents", []):
+            fields = document.get("fields", {})
+            episodes.append({key: plain(fields.get(key)) for key in ("nr", "titel", "folgeId")})
+        page_token = payload.get("nextPageToken")
+        if not page_token:
+            break
     return [
-        episode for episode in payload.get("stammdaten", [])
+        episode for episode in episodes
         if str(episode.get("nr", "")).strip().lower() == "special"
         and str(episode.get("titel", "")).strip()
     ]

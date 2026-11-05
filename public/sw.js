@@ -1,4 +1,4 @@
-const CACHE_NAME = 'drei-fragezeichen-v20';
+const CACHE_NAME = 'drei-fragezeichen-v32-devices';
 const ASSETS = [
     './index.html',
     './manifest.json',
@@ -27,6 +27,11 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // Firebase (Firestore, Auth, SDK) und andere fremde Domains nie über den Cache leiten.
+  if (new URL(event.request.url).origin !== self.location.origin) return;
+  // Firebase-Hosting-Auth-Handler immer direkt aus dem Netz.
+  if (new URL(event.request.url).pathname.startsWith('/__/')) return;
+
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
