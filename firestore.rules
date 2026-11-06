@@ -105,8 +105,8 @@ service cloud.firestore {
         && request.resource.data.id == resource.data.id
         && request.resource.data.nutzerId == resource.data.nutzerId
         && validRating(request.resource.data);
-      // Bewertungen werden nie gelöscht.
-      allow delete: if false;
+      // Nur der Besitzer darf seine eigene Bewertung löschen.
+      allow delete: if ownsUser(resource.data.nutzerId);
     }
 
     match /meta/daily {
@@ -138,8 +138,7 @@ service cloud.firestore {
           && after.diff(before).affectedKeys().hasOnly(['selectedEpisodeId', 'selectedAt', 'shufflesByUser', 'lastShuffleBy'])
           && after.shufflesByUser.diff(before.shufflesByUser).affectedKeys().hasOnly([uid])
           && after.shufflesByUser[uid] == before.shufflesByUser.get(uid, 0) + 1
-          // TEMPORÄR: am 05.11.2026 (bis 24:00 Uhr Berliner Zeit = 23:00 UTC) unbegrenzt mischen zum Testen.
-          && (after.shufflesByUser[uid] <= 3 || request.time < timestamp.date(2026, 11, 5) + duration.value(23, 'h'))
+          && after.shufflesByUser[uid] <= 3
           && after.selectedEpisodeId != before.selectedEpisodeId;
       }
     }

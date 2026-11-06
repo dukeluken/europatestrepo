@@ -1,4 +1,4 @@
-const CACHE_NAME = 'drei-fragezeichen-v32-devices';
+const CACHE_NAME = 'drei-fragezeichen-v35';
 const ASSETS = [
     './index.html',
     './manifest.json',

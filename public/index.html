@@ -585,6 +585,15 @@
         .chip.active { background: var(--cyan); border-color: transparent; color: var(--black); }
         .rank-sub { color: var(--muted); font-size: 12px; }
 
+        .catchup-card { padding: 18px; }
+        .catchup-card .icon-btn.small { width: 36px; height: 36px; }
+        .catchup-card .icon-btn.small .icon { width: 17px; height: 17px; }
+        .catchup-side { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+        .catchup-done { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
+        .catchup-done .icon { color: var(--cyan); }
+        .catchup-more { margin-top: 8px; min-height: 40px; }
+        .count-pill { display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 999px; font-size: 13px; font-weight: 800; background: rgba(255,255,255,0.06); color: var(--muted); }
+        .count-pill.open { background: var(--cyan-soft); color: var(--cyan); }
         .streak-card { padding: 18px; }
         .streak-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
         .streak-head strong { flex: 1; font-size: 17px; font-weight: 800; }
@@ -698,6 +707,14 @@
         .toast .icon { margin-top: 1px; }
         .toast.success .icon { color: var(--cyan); }
         .toast.error .icon { color: #FF5A61; }
+        .toast > span { flex: 1; }
+        .toast-action { margin: -4px -6px -4px 4px; padding: 4px 8px; border: 0; border-radius: 8px; background: transparent; color: var(--cyan); font-weight: 800; font-size: 14px; white-space: nowrap; }
+        .toast-action:hover { background: var(--cyan-soft); }
+        .btn-danger { background: transparent; color: #FF5A61; border-color: rgba(237, 28, 36, 0.35); }
+        .btn-danger:not(:disabled):hover { background: var(--red-soft); }
+        .edit-link.danger { color: #FF5A61; }
+        .edit-link.danger:hover { background: var(--red-soft); }
+        .review-foot { gap: 8px; }
         .toast.leaving { opacity: 0; transform: translateY(8px); transition: opacity 200ms, transform 200ms; }
         @keyframes toastIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
 
@@ -732,6 +749,7 @@
         <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></symbol>
         <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M8 17v-5"/><path d="M13 17V8"/><path d="M18 17v-9"/></symbol>
         <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/></symbol>
         <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
         <symbol id="i-google" viewBox="0 0 24 24"><path fill="#4285F4" stroke="none" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" stroke="none" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" stroke="none" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" stroke="none" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></symbol>
     </svg>
@@ -784,6 +802,8 @@
                 <h2>Flop 5</h2>
                 <ol class="rank-list" id="chart-flop"></ol>
             </section>
+            <div class="section-title" style="margin-top:28px;">Aufholen <span>von anderen bewertet, selbst noch nicht</span></div>
+            <div id="catchup-list"></div>
             <div class="section-title" style="margin-top:28px;">Hör-Streaks <span>nach Tag der Bewertung</span></div>
             <div id="streak-list"><div class="skeleton skeleton-row"></div></div>
         </section>
@@ -855,8 +875,19 @@
                     <textarea id="rate-comment" rows="4" placeholder="Wie fandest du die Folge?"></textarea>
                 </div>
                 <button class="btn btn-primary" id="rating-submit-btn" type="button" onclick="submitRating()"></button>
+                <button class="btn btn-danger" id="rating-delete-btn" type="button" onclick="deleteRating(editingRatingId)" style="display:none;"><svg class="icon"><use href="#i-trash"/></svg> Bewertung löschen</button>
                 <button class="btn btn-quiet" id="rating-cancel-edit-btn" type="button" onclick="closeRateModal()">Abbrechen</button>
             </div>
+    </div>
+
+    <!-- BESTÄTIGUNG (z. B. Löschen) -->
+    <div class="modal-overlay" id="confirmModal" onclick="if (event.target === this) resolveConfirm(false)" aria-hidden="true">
+        <div class="modal-content" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+            <div class="modal-head"><h2 id="confirm-title"></h2></div>
+            <p class="modal-text" id="confirm-text"></p>
+            <button class="btn btn-action" id="confirm-ok" type="button" onclick="resolveConfirm(true)"></button>
+            <button class="btn btn-ghost" type="button" onclick="resolveConfirm(false)">Abbrechen</button>
+        </div>
     </div>
 
     <!-- USER MODAL -->
@@ -971,18 +1002,30 @@
             return `<svg class="icon ${extraClass}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
         }
 
-        function showToast(message, type = 'info') {
+        // action: optional { label, handler } – z. B. "Rückgängig".
+        function showToast(message, type = 'info', action = null) {
             const stack = document.getElementById('toast-stack');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
             toast.innerHTML = `${icon(type === 'success' ? 'check' : 'alert')}<span>${escapeHtml(message)}</span>`;
-            stack.appendChild(toast);
-            const duration = type === 'error' ? 6000 : 3500;
-            setTimeout(() => {
+            const dismiss = () => {
+                if (!toast.isConnected) return;
                 toast.classList.add('leaving');
                 setTimeout(() => toast.remove(), 220);
-            }, duration);
+            };
+            if (action) {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'toast-action';
+                button.textContent = action.label;
+                button.onclick = () => { dismiss(); action.handler(); };
+                toast.appendChild(button);
+                toast.style.pointerEvents = 'auto';
+            }
+            stack.appendChild(toast);
+            const duration = action ? 7000 : (type === 'error' ? 6000 : 3500);
+            setTimeout(dismiss, duration);
         }
 
         function initials(name) {
@@ -1054,6 +1097,7 @@
             });
             document.addEventListener('keydown', event => {
                 if (event.key !== 'Escape') return;
+                if (confirmResolver) return resolveConfirm(false);
                 closeRateModal();
                 closeNotifications();
                 closeEpisodeReviews();
@@ -1600,6 +1644,9 @@
                 ? 'Speichere…'
                 : (isEditing ? `${icon('check')} Änderungen speichern` : `${icon('send')} Bewertung abgeben`);
             document.getElementById('rate-title').textContent = isEditing ? 'Review bearbeiten' : 'Folge bewerten';
+            const deleteButton = document.getElementById('rating-delete-btn');
+            deleteButton.style.display = isEditing && editingRatingId !== null ? '' : 'none';
+            deleteButton.disabled = isSaving;
             document.getElementById('rating-cancel-edit-btn').disabled = isSaving;
             document.getElementById('rate-select').disabled = isSaving;
             document.getElementById('rate-comment').disabled = isSaving;
@@ -1689,6 +1736,65 @@
             updateRatingDisplay();
             setRatingFormSaving(false);
             openRateModal();
+        }
+
+        // --- BESTÄTIGEN & LÖSCHEN ---
+        let confirmResolver = null;
+
+        function confirmDialog({ title, text, confirmLabel }) {
+            if (confirmResolver) resolveConfirm(false);
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-text').textContent = text;
+            document.getElementById('confirm-ok').innerHTML = `${icon('trash')} ${escapeHtml(confirmLabel)}`;
+            const modal = document.getElementById('confirmModal');
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            return new Promise(resolve => { confirmResolver = resolve; });
+        }
+
+        function resolveConfirm(value) {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            const resolve = confirmResolver;
+            confirmResolver = null;
+            if (resolve) resolve(value);
+        }
+
+        async function deleteRating(id) {
+            const review = bewertungen.find(b => String(b.id) === String(id));
+            if (!review || !currentUser.id || review.nutzerId !== currentUser.id) return;
+            const episode = episodeForRating(review);
+            const confirmed = await confirmDialog({
+                title: 'Bewertung löschen?',
+                text: `Deine Bewertung für „${episode ? episodeLabel(episode) : `Folge ${review.folgenNr}`}“ (${review.punkte}/10) wird vollständig gelöscht – inklusive Kommentar.`,
+                confirmLabel: 'Löschen'
+            });
+            if (!confirmed) return;
+
+            const backup = { ...review };
+            try {
+                await fb.deleteDoc(fb.doc(fb.db, 'ratings', String(review.id)));
+            } catch (err) {
+                console.error('Bewertung konnte nicht gelöscht werden:', err);
+                showToast(err && err.code === 'permission-denied'
+                    ? 'Keine Berechtigung: Du kannst nur deine eigenen Bewertungen löschen.'
+                    : 'Die Bewertung konnte nicht gelöscht werden. Bitte Verbindung prüfen.', 'error');
+                return;
+            }
+
+            if (editingRatingId !== null && String(editingRatingId) === String(review.id)) closeRateModal();
+            showToast('Bewertung gelöscht.', 'success', { label: 'Rückgängig', handler: () => restoreRating(backup) });
+        }
+
+        async function restoreRating(data) {
+            try {
+                await fb.setDoc(fb.doc(fb.db, 'ratings', String(data.id)), data);
+                showToast('Bewertung wiederhergestellt.', 'success');
+            } catch (err) {
+                console.error('Bewertung konnte nicht wiederhergestellt werden:', err);
+                showToast('Wiederherstellen fehlgeschlagen.', 'error');
+            }
         }
 
         function cancelEditRating() {
@@ -1870,7 +1976,10 @@
                             <span class="episode-label">${escapeHtml(f ? episodeLabel(f) : `Folge ${b.folgenNr}`)}</span>
                         </div>
                         <p class="review-comment ${b.kommentar ? '' : 'empty'}">${b.kommentar ? escapeHtml(b.kommentar) : 'Kein Kommentar'}</p>
-                        ${isOwnReview ? `<div class="review-foot"><button class="edit-link" type="button" onclick="editRating(${escapeHtml(JSON.stringify(b.id ?? null))}, ${escapeHtml(JSON.stringify(b.folgenNr))})">${icon('pen', 'icon-sm')} Bearbeiten</button></div>` : ''}
+                        ${isOwnReview ? `<div class="review-foot">
+                            <button class="edit-link danger" type="button" onclick="deleteRating(${escapeHtml(JSON.stringify(b.id ?? null))})">${icon('trash', 'icon-sm')} Löschen</button>
+                            <button class="edit-link" type="button" onclick="editRating(${escapeHtml(JSON.stringify(b.id ?? null))}, ${escapeHtml(JSON.stringify(b.folgenNr))})">${icon('pen', 'icon-sm')} Bearbeiten</button>
+                        </div>` : ''}
                     </article>`;
             }).join('');
         }
@@ -1953,6 +2062,8 @@
             renderRank('chart-top', top);
             renderRank('chart-flop', flop);
 
+            renderCatchup(activeUsers);
+
             // Streaks. Der erste Tag der Erfassung (Nachtragen beim App-Start) zählt nicht für den Tagesrekord.
             const firstRecordedDay = bewertungen.length
                 ? berlinDayKey(Math.min(...bewertungen.map(ratingCreatedAt).filter(Boolean)))
@@ -1964,6 +2075,86 @@
             document.getElementById('streak-list').innerHTML = streakUsers.length
                 ? streakUsers.map(({ user, activity }) => streakCardHtml(user, activity)).join('')
                 : `<div class="empty-state">${icon('flame')}<p>Noch keine Bewertungen.</p></div>`;
+        }
+
+        // --- AUFHOLEN: Folgen, die andere bewertet haben, ein Nutzer aber noch nicht ---
+        const CATCHUP_PREVIEW = 5;
+        const catchupExpanded = {};
+
+        function toggleCatchup(userId) {
+            catchupExpanded[userId] = !catchupExpanded[userId];
+            renderCharts();
+        }
+
+        function catchupItems(userId) {
+            const ratedByUser = new Set(bewertungen.filter(b => String(b.nutzerId) === String(userId)).map(ratingEpisodeId));
+            const byEpisode = new Map();
+            bewertungen.forEach(b => {
+                if (String(b.nutzerId) === String(userId) || !isValidPoints(b)) return;
+                const id = ratingEpisodeId(b);
+                if (ratedByUser.has(id)) return;
+                const entry = byEpisode.get(id) || { id, ratings: [], latest: 0 };
+                entry.ratings.push(b);
+                entry.latest = Math.max(entry.latest, ratingCreatedAt(b));
+                byEpisode.set(id, entry);
+            });
+            return [...byEpisode.values()]
+                .map(entry => ({ ...entry, episode: stammdaten.find(f => episodeId(f) === entry.id) }))
+                .filter(entry => entry.episode)
+                .sort((a, b) => b.latest - a.latest);
+        }
+
+        function renderCatchup(activeUsers) {
+            const container = document.getElementById('catchup-list');
+            if (activeUsers.length < 2) {
+                container.innerHTML = `<div class="card catchup-card"><div class="catchup-done">${icon('check')} Sobald mehrere Nutzer bewerten, siehst du hier, was du nachholen kannst.</div></div>`;
+                return;
+            }
+            const users = activeUsers
+                .filter(user => chartUserId === 'all' || String(user.id) === chartUserId)
+                .sort((a, b) => (String(b.id) === currentUser.id) - (String(a.id) === currentUser.id));
+
+            container.innerHTML = users.map(user => {
+                const userId = String(user.id);
+                const isMe = userId === currentUser.id;
+                const items = catchupItems(userId);
+                const expanded = Boolean(catchupExpanded[userId]);
+                const shown = expanded ? items : items.slice(0, CATCHUP_PREVIEW);
+                const userArg = escapeHtml(JSON.stringify(userId));
+
+                const list = shown.map(entry => {
+                    const avg = entry.ratings.reduce((sum, r) => sum + Number(r.punkte), 0) / entry.ratings.length;
+                    const who = entry.ratings
+                        .slice().sort((a, b) => ratingCreatedAt(b) - ratingCreatedAt(a))
+                        .map(r => r.nutzerName || 'Anonym').filter((name, i, all) => all.indexOf(name) === i).join(', ');
+                    return `<li class="rank-item">
+                        ${coverImg(entry.episode, 'cover-thumb', true)}
+                        <div class="rank-body">
+                            <div class="rank-title"${openEpisodeAttr(entry.episode)}>${escapeHtml(episodeLabel(entry.episode))}</div>
+                            <div class="rank-sub">${escapeHtml(who)} · ${escapeHtml(formatDayKey(berlinDayKey(entry.latest), false))}</div>
+                        </div>
+                        <div class="catchup-side">
+                            ${scoreBadge(Number.isInteger(avg) ? String(avg) : avg.toFixed(1))}
+                            ${isMe ? `<button class="icon-btn red small" type="button" aria-label="${escapeHtml(episodeLabel(entry.episode))} bewerten" data-rate-episode="${escapeHtml(entry.id)}">${icon('pen')}</button>` : ''}
+                        </div>
+                    </li>`;
+                }).join('');
+
+                const more = items.length > CATCHUP_PREVIEW
+                    ? `<button class="btn btn-quiet catchup-more" type="button" onclick="toggleCatchup(${userArg})">${expanded ? 'Weniger anzeigen' : `Alle ${items.length} anzeigen`}</button>`
+                    : '';
+
+                return `<article class="card catchup-card">
+                    <div class="streak-head">
+                        ${avatarHtml(user.id, user.name)}
+                        <strong>${escapeHtml(user.name)}${isMe ? ' <span class="rank-sub">(du)</span>' : ''}</strong>
+                        <span class="count-pill ${items.length ? 'open' : ''}">${items.length} offen</span>
+                    </div>
+                    ${items.length
+                        ? `<ol class="rank-list">${list}</ol>${more}`
+                        : `<div class="catchup-done">${icon('check')} Alles aufgeholt – keine offenen Folgen.</div>`}
+                </article>`;
+            }).join('');
         }
 
         function userActivity(userId, excludeFromRecordDay = null) {
@@ -2122,11 +2313,6 @@
 
         // --- FALL DES TAGES ---
         const DAILY_SHUFFLE_LIMIT = 3;
-        // TEMPORÄR zum Testen: heute (05.11.2026, bis 24:00 Uhr Berliner Zeit) unbegrenzt mischen. Läuft automatisch ab.
-        const UNLIMITED_SHUFFLE_UNTIL = Date.parse('2026-11-05T23:00:00Z');
-        function shuffleLimit() {
-            return Date.now() < UNLIMITED_SHUFFLE_UNTIL ? Infinity : DAILY_SHUFFLE_LIMIT;
-        }
 
         function setShuffleButton(button, label, remaining = null) {
             const dots = remaining === null ? '' : `<span class="shuffle-dots" aria-hidden="true">${Array.from({ length: DAILY_SHUFFLE_LIMIT }, (_, i) => `<i class="${i < remaining ? 'on' : ''}"></i>`).join('')}</span>`;
@@ -2147,7 +2333,7 @@
 
             const remaining = state && !Number.isNaN(Number(state.remainingShuffles))
                 ? Math.max(0, Number(state.remainingShuffles))
-                : shuffleLimit();
+                : DAILY_SHUFFLE_LIMIT;
             const canShuffle = Boolean(state && state.canShuffle);
             button.disabled = !state || !state.selectedEpisodeId || !canShuffle || remaining <= 0;
             button.title = '';
@@ -2170,7 +2356,6 @@
                 button.disabled = false;
                 return;
             }
-            if (!Number.isFinite(remaining)) return setShuffleButton(button, 'Neu mischen · unbegrenzt');
             setShuffleButton(button, 'Neu mischen', remaining);
         }
         function escapeHtml(value) {
@@ -2413,7 +2598,7 @@
                     caseDate: dailyDoc.caseDate,
                     periodKey: dailyDoc.shufflePeriodKey,
                     resetAt: period.resetAt,
-                    remainingShuffles: Math.max(0, shuffleLimit() - used),
+                    remainingShuffles: Math.max(0, DAILY_SHUFFLE_LIMIT - used),
                     canShuffle: eligibleDailyEpisodeIds().some(id => id !== dailyDoc.selectedEpisodeId)
                 };
             }
@@ -2532,7 +2717,7 @@
                         throw new Error('Der Fall des Tages wurde gerade zurückgesetzt. Bitte erneut versuchen.');
                     }
                     const used = Number((state.shufflesByUser || {})[currentUser.id] || 0);
-                    if (used >= shuffleLimit()) throw new Error('Du hast alle drei Mischungen für diesen Zeitraum verwendet.');
+                    if (used >= DAILY_SHUFFLE_LIMIT) throw new Error('Du hast alle drei Mischungen für diesen Zeitraum verwendet.');
                     const alternatives = eligibleDailyEpisodeIds().filter(id => id !== state.selectedEpisodeId);
                     if (!alternatives.length) throw new Error('Es gibt keine weitere Folge mit höchstens einer Bewertung zum Mischen.');
                     tx.update(ref, {
