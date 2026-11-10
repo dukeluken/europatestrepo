@@ -1,11 +1,14 @@
 rules_version = '2';
 
 // Datenmodell
-//   episodes/{folgeId}      Stammdaten (nur Admin schreibt, per Migrationsskript)
-//   users/{userId}          Nutzer; authUid verknüpft den Google-Login mit dem Nutzer
-//   ratings/{id}            Bewertungen; Dokument-ID == String(id)
-//   inviteCodes/{code}      Einladungscodes zum Verknüpfen (für Clients unsichtbar)
-//   meta/daily              Gemeinsamer "Fall des Tages"
+//   Pro Serie (Die drei ??? / TKKG):
+//     episodes/{folgeId}       | tkkg_episodes/{folgeId}   Stammdaten (nur Admin schreibt, per Skript)
+//     ratings/{id}             | tkkg_ratings/{id}         Bewertungen; Dokument-ID == String(id)
+//     meta/daily               | meta/daily_tkkg           Gemeinsamer "Fall des Tages"
+//   Gemeinsam:
+//     users/{userId}           Nutzer; authUid verknüpft den Google-Login mit dem Nutzer
+//     inviteCodes/{code}       Einladungscodes zum Verknüpfen (für Clients unsichtbar)
+//     emailLinks/{email}       E-Mail -> Nutzer
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -25,7 +28,7 @@ service cloud.firestore {
         && userDoc(userId).data.get('authUid', null) == request.auth.uid;
     }
 
-    function validRating(d) {
+    function validRating(d, episodesCol) {
       return d.keys().hasOnly(['id', 'nutzerId', 'nutzerName', 'folgenNr', 'folgeId',
                                'punkte', 'kommentar', 'datum', 'legacyFolgeId'])
         && d.keys().hasAll(['id', 'nutzerId', 'nutzerName', 'folgenNr', 'folgeId',
@@ -34,12 +37,37 @@ service cloud.firestore {
         && d.kommentar is string && d.kommentar.size() <= 5000
         && d.datum is string
         && d.folgeId is string
-        && exists(/databases/$(database)/documents/episodes/$(d.folgeId))
-        && get(/databases/$(database)/documents/episodes/$(d.folgeId)).data.nr == d.folgenNr
+        && exists(/databases/$(database)/documents/$(episodesCol)/$(d.folgeId))
+        && get(/databases/$(database)/documents/$(episodesCol)/$(d.folgeId)).data.nr == d.folgenNr
         && d.nutzerName == userDoc(d.nutzerId).data.name;
     }
 
+    // Regeln für Bewertungen – gelten für alle Serien gleich.
+    function canCreateRating(ratingId, episodesCol) {
+      return ownsUser(request.resource.data.nutzerId)
+        && validRating(request.resource.data, episodesCol)
+        && request.resource.data.id is int
+        && ratingId == string(request.resource.data.id);
+    }
+
+    function canUpdateRating(episodesCol) {
+      return ownsUser(resource.data.nutzerId)
+        && request.resource.data.id == resource.data.id
+        && request.resource.data.nutzerId == resource.data.nutzerId
+        && validRating(request.resource.data, episodesCol);
+    }
+
+    // Nur der Besitzer darf seine eigene Bewertung löschen.
+    function canDeleteRating() {
+      return ownsUser(resource.data.nutzerId);
+    }
+
     match /episodes/{folgeId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /tkkg_episodes/{folgeId} {
       allow read: if true;
       allow write: if false;
     }
@@ -97,22 +125,23 @@ service cloud.firestore {
 
     match /ratings/{ratingId} {
       allow read: if true;
-      allow create: if ownsUser(request.resource.data.nutzerId)
-        && validRating(request.resource.data)
-        && request.resource.data.id is int
-        && ratingId == string(request.resource.data.id);
-      allow update: if ownsUser(resource.data.nutzerId)
-        && request.resource.data.id == resource.data.id
-        && request.resource.data.nutzerId == resource.data.nutzerId
-        && validRating(request.resource.data);
-      // Nur der Besitzer darf seine eigene Bewertung löschen.
-      allow delete: if ownsUser(resource.data.nutzerId);
+      allow create: if canCreateRating(ratingId, 'episodes');
+      allow update: if canUpdateRating('episodes');
+      allow delete: if canDeleteRating();
     }
 
-    match /meta/daily {
+    match /tkkg_ratings/{ratingId} {
       allow read: if true;
-      allow create: if signedIn() && request.resource.data.shufflesByUser == {};
-      allow update: if signedIn() && (isRoll() || isShuffle());
+      allow create: if canCreateRating(ratingId, 'tkkg_episodes');
+      allow update: if canUpdateRating('tkkg_episodes');
+      allow delete: if canDeleteRating();
+    }
+
+    // Fall des Tages: meta/daily (Die drei ???) und meta/daily_tkkg (TKKG).
+    match /meta/{dailyId} {
+      allow read: if dailyId in ['daily', 'daily_tkkg'];
+      allow create: if dailyId in ['daily', 'daily_tkkg'] && signedIn() && request.resource.data.shufflesByUser == {};
+      allow update: if dailyId in ['daily', 'daily_tkkg'] && signedIn() && (isRoll() || isShuffle());
 
       // Neuer Tag und/oder neuer Halbtag: Zustand darf nur vorwärts laufen.
       function isRoll() {

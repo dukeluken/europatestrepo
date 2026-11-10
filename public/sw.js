@@ -1,9 +1,9 @@
-const CACHE_NAME = 'drei-fragezeichen-v35';
+const CACHE_NAME = 'europa-ranking-v36';
 const ASSETS = [
     './index.html',
     './manifest.json',
-    './dff_app_icon_192.png',
-    './dff_app_icon_512.png'
+    './europa_icon_192.png',
+    './europa_icon_512.png'
 ];
 
 self.addEventListener('install', event => {

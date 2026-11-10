@@ -5,3 +5,6 @@ node_modules/
 # Migration: enthält Namen, Kommentare, Einladungscodes und den Admin-Schlüssel
 migration/backup/
 migration/service-account.json
+
+# Lokale Vorschau (temporär)
+.preview/

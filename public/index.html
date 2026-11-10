@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Die drei ??? - Ranking</title>
+    <title>Europa Ranking</title>
 
     <!-- PWA / App Installation -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="dff_app_icon_192.png">
+    <link rel="apple-touch-icon" href="europa_icon_192.png">
+    <meta name="apple-mobile-web-app-title" content="Europa Ranking">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --white: #FFFFFF;
@@ -32,7 +33,8 @@
             --muted: #94949C;
             --faint: #5E5E66;
 
-            --cyan-soft: rgba(0, 174, 239, 0.14);
+            --accent-rgb: 0, 174, 239;
+            --cyan-soft: rgba(var(--accent-rgb), 0.14);
             --red-soft: rgba(237, 28, 36, 0.14);
 
             --radius-xl: 28px;
@@ -66,7 +68,7 @@
             pointer-events: none;
             z-index: -1;
             background:
-                radial-gradient(60vw 40vh at 100% 0%, rgba(0, 174, 239, 0.10), transparent 70%),
+                radial-gradient(60vw 40vh at 100% 0%, rgba(var(--accent-rgb), 0.10), transparent 70%),
                 radial-gradient(60vw 40vh at 0% 100%, rgba(237, 28, 36, 0.08), transparent 70%);
         }
         button, input, select, textarea { font: inherit; color: inherit; }
@@ -94,7 +96,8 @@
             border-bottom: 1px solid var(--line);
         }
         .logo { font-family: 'Anton', sans-serif; font-size: 24px; text-transform: uppercase; color: white; letter-spacing: 0.01em; }
-        .logo span:nth-child(1) { color: var(--white); } .logo span:nth-child(2) { color: var(--red); } .logo span:nth-child(3) { color: var(--cyan); }
+        .logo-ddf span:nth-child(1) { color: #FFFFFF; } .logo-ddf span:nth-child(2) { color: #ED1C24; } .logo-ddf span:nth-child(3) { color: #00AEEF; }
+        .logo-tkkg { font-family: 'Alfa Slab One', Georgia, serif; color: #FFFFFF; font-size: 0.92em; letter-spacing: 0.01em; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45); }
 
         .user-chip {
             display: inline-flex;
@@ -188,7 +191,7 @@
         }
         .notif-item:hover { background: var(--surface-3); }
         .notif-item + .notif-item { margin-top: 2px; }
-        .notif-item.unread { background: rgba(0, 174, 239, 0.07); }
+        .notif-item.unread { background: rgba(var(--accent-rgb), 0.07); }
         .notif-body { flex: 1; min-width: 0; }
         .notif-text { font-size: 14px; line-height: 1.4; }
         .notif-text strong { font-weight: 800; }
@@ -198,7 +201,7 @@
         .notif-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
         .notif-empty { padding: 24px 18px 28px; text-align: center; color: var(--muted); font-size: 14px; }
         .review-card.flash { animation: reviewFlash 2.2s var(--ease); }
-        @keyframes reviewFlash { 0%, 40% { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.35); } 100% { border-color: var(--line); box-shadow: none; } }
+        @keyframes reviewFlash { 0%, 40% { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.35); } 100% { border-color: var(--line); box-shadow: none; } }
 
         /* ---------- Bottom-Navigation ---------- */
         .bottom-nav {
@@ -283,7 +286,7 @@
         .btn:not(:disabled):hover { filter: brightness(1.12); }
         .btn:not(:disabled):active { transform: scale(0.975); filter: brightness(0.9); }
         .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-        .btn-primary { background: var(--cyan); color: var(--black); border-color: transparent; box-shadow: 0 8px 24px rgba(0, 174, 239, 0.25); }
+        .btn-primary { background: var(--cyan); color: var(--black); border-color: transparent; box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.25); }
         .btn-action { background: var(--red); color: var(--white); border-color: transparent; box-shadow: 0 8px 24px rgba(237, 28, 36, 0.25); }
         .btn-ghost { background: transparent; border-color: var(--line-strong); }
         .btn-quiet { background: transparent; border-color: transparent; color: var(--muted); min-height: 40px; }
@@ -380,8 +383,8 @@
         }
         .rating-btn:hover { color: var(--text); background: var(--surface-3); }
         .rating-btn:active { transform: scale(0.92); }
-        .rating-btn.selected { background: var(--cyan); color: var(--black); border-color: transparent; box-shadow: 0 6px 18px rgba(0, 174, 239, 0.35); }
-        .rating-btn.in-range { color: var(--cyan); border-color: rgba(0, 174, 239, 0.35); }
+        .rating-btn.selected { background: var(--cyan); color: var(--black); border-color: transparent; box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.35); }
+        .rating-btn.in-range { color: var(--cyan); border-color: rgba(var(--accent-rgb), 0.35); }
 
         /* ---------- Badges ---------- */
         .score {
@@ -627,9 +630,9 @@
         .cal-day:disabled { cursor: default; }
         .cal-day.blank { background: transparent; }
         .cal-day.future, .cal-day.before { background: transparent; color: var(--faint); }
-        .cal-day.l1 { background: rgba(0, 174, 239, 0.28); color: var(--text); }
-        .cal-day.l2 { background: rgba(0, 174, 239, 0.5); color: var(--white); }
-        .cal-day.l3 { background: rgba(0, 174, 239, 0.75); color: var(--black); }
+        .cal-day.l1 { background: rgba(var(--accent-rgb), 0.28); color: var(--text); }
+        .cal-day.l2 { background: rgba(var(--accent-rgb), 0.5); color: var(--white); }
+        .cal-day.l3 { background: rgba(var(--accent-rgb), 0.75); color: var(--black); }
         .cal-day.l4 { background: var(--cyan); color: var(--black); }
         .cal-day.today { box-shadow: inset 0 0 0 1.5px var(--white); }
         .cal-day.selected { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--white); z-index: 1; }
@@ -639,9 +642,9 @@
         .cal-detail .rank-item { border-bottom-color: var(--line); }
         .cal-detail-empty { color: var(--muted); font-size: 13px; }
         .heat { width: 11px; height: 11px; border-radius: 3px; background: var(--surface-3); }
-        .heat.l1 { background: rgba(0, 174, 239, 0.28); }
-        .heat.l2 { background: rgba(0, 174, 239, 0.5); }
-        .heat.l3 { background: rgba(0, 174, 239, 0.75); }
+        .heat.l1 { background: rgba(var(--accent-rgb), 0.28); }
+        .heat.l2 { background: rgba(var(--accent-rgb), 0.5); }
+        .heat.l3 { background: rgba(var(--accent-rgb), 0.75); }
         .heat.l4 { background: var(--cyan); }
         .heat-legend { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 10px; color: var(--faint); font-size: 11px; font-weight: 600; }
 
@@ -718,6 +721,105 @@
         .toast.leaving { opacity: 0; transform: translateY(8px); transition: opacity 200ms, transform 200ms; }
         @keyframes toastIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
 
+        /* ---------- Serie TKKG: Dunkelblau der Cover, gelber Akzent ---------- */
+        :root[data-series="tkkg"] {
+            --bg: #040a1c;
+            --surface: #0a1431;
+            --surface-2: #101c3f;
+            --surface-3: #17264f;
+            --line: rgba(160, 190, 255, 0.09);
+            --line-strong: rgba(160, 190, 255, 0.17);
+            --muted: #94A0BE;
+            --faint: #5C6788;
+            --cyan: #F6C90E;
+            --accent-rgb: 246, 201, 14;
+        }
+        :root[data-series="tkkg"] body::before {
+            background:
+                radial-gradient(70vw 50vh at 100% 0%, rgba(40, 80, 190, 0.35), transparent 70%),
+                radial-gradient(60vw 40vh at 0% 100%, rgba(30, 60, 150, 0.30), transparent 70%);
+        }
+        :root[data-series="tkkg"] header,
+        :root[data-series="tkkg"] .profile-topbar { background: rgba(4, 10, 28, 0.78); }
+        :root[data-series="tkkg"] .bottom-nav { background: rgba(10, 20, 49, 0.82); }
+        :root[data-series="tkkg"] .notif-panel { background: rgba(10, 20, 49, 0.97); }
+        :root[data-series="tkkg"] .toast { background: rgba(16, 28, 63, 0.95); }
+        :root[data-series="tkkg"] select option { background: #101c3f; }
+
+        /* Ladeanimation TKKG: vier Buchstaben, nacheinander gedreht */
+        .q-loader-tkkg { gap: 4px; }
+        .q-loader-tkkg span {
+            font-family: 'Alfa Slab One', Georgia, serif;
+            font-size: clamp(30px, 7.5vh, 66px);
+            color: #FFFFFF !important;
+            text-shadow: 0 3px 0 rgba(0, 0, 0, 0.45);
+            animation-name: qSpin4;
+            animation-duration: 2.8s;
+        }
+        .q-loader-tkkg span:nth-child(4) { animation-delay: 2.1s; }
+        @keyframes qSpin4 {
+            0% { transform: rotateY(0deg); }
+            25% { transform: rotateY(360deg); }
+            100% { transform: rotateY(360deg); }
+        }
+
+        /* Serien-Kennzeichen in der Glocke */
+        .series-tag { display: inline-block; padding: 1px 6px; margin-right: 4px; border-radius: 6px; font-size: 10px; font-weight: 800; vertical-align: 1px; }
+        .series-tag-ddf { background: rgba(255, 255, 255, 0.1); color: #FFFFFF; }
+        .series-tag-tkkg { background: #17264f; color: #F6C90E; font-family: 'Alfa Slab One', Georgia, serif; font-weight: 400; }
+
+        /* Startbildschirm: Serie wählen */
+        .series-picker {
+            position: fixed;
+            inset: 0;
+            z-index: 1500;
+            display: none;
+            overflow-y: auto;
+            padding: calc(var(--safe-top) + 32px) 20px calc(var(--safe-bottom) + 32px);
+            background:
+                radial-gradient(80vw 50vh at 100% 0%, rgba(0, 174, 239, 0.12), transparent 70%),
+                radial-gradient(80vw 50vh at 0% 100%, rgba(40, 80, 190, 0.25), transparent 70%),
+                #000;
+        }
+        .series-picker.active { display: flex; animation: fadeIn 320ms var(--ease); }
+        .picker-inner { width: 100%; max-width: 440px; margin: auto; display: flex; flex-direction: column; gap: 14px; }
+        .picker-brand { text-align: center; margin-bottom: 10px; }
+        .picker-brand img { width: 72px; height: 72px; border-radius: 18px; margin-bottom: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
+        .picker-brand h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; }
+        .picker-brand p { color: #94949C; margin-top: 4px; }
+        .picker-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+            width: 100%;
+            padding: 22px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            text-align: left;
+            color: #FFFFFF;
+            overflow: hidden;
+            transition: transform 140ms var(--ease), border-color 160ms var(--ease);
+        }
+        .picker-card:hover { border-color: rgba(255, 255, 255, 0.3); }
+        .picker-card:active { transform: scale(0.98); }
+        .picker-card .picker-logo { font-size: 44px; line-height: 1; }
+        .picker-card .picker-logo.logo-ddf { font-family: 'Anton', sans-serif; }
+        .picker-card .picker-name { font-size: 18px; font-weight: 800; }
+        .picker-card .picker-meta { font-size: 13px; color: rgba(255, 255, 255, 0.65); font-weight: 600; }
+        .picker-card .picker-go { position: absolute; right: 20px; top: 50%; transform: translateY(-50%) scaleX(-1); opacity: 0.6; }
+        .picker-ddf { background: linear-gradient(135deg, #151518, #050505); }
+        .picker-tkkg { background: linear-gradient(135deg, #1a3170, #08122e); }
+        .picker-hint { text-align: center; color: #5E5E66; font-size: 13px; margin-top: 6px; }
+
+        /* Serien-Umschalter im Konto-Fenster */
+        .modal-series { margin-top: 16px; }
+        .segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line-strong); }
+        .segmented button { min-height: 42px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-weight: 800; font-size: 14px; }
+        .segmented button.active { background: var(--cyan); color: var(--black); }
+        .segmented .logo-tkkg { font-size: 15px; text-shadow: none; color: inherit; }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
             .q-loader span { animation: qPulse 2.1s ease-in-out infinite !important; }
@@ -755,7 +857,7 @@
     </svg>
 
     <header>
-        <div class="logo"><span>?</span><span>?</span><span>?</span> Ranking</div>
+        <div class="logo" id="app-logo"><span class="logo-ddf"><span>?</span><span>?</span><span>?</span></span> Ranking</div>
         <div class="header-actions">
             <button class="icon-btn bell-btn" id="bell-btn" type="button" onclick="toggleNotifications()" aria-label="Mitteilungen" aria-expanded="false" style="display:none;">
                 <svg class="icon"><use href="#i-bell"/></svg>
@@ -767,6 +869,30 @@
             </button>
         </div>
     </header>
+
+    <!-- STARTBILDSCHIRM: Serie wählen (nur, solange noch keine gewählt wurde) -->
+    <div class="series-picker" id="series-picker" role="dialog" aria-modal="true" aria-labelledby="picker-title" aria-hidden="true">
+        <div class="picker-inner">
+            <div class="picker-brand">
+                <img src="europa_icon_192.png" alt="">
+                <h1 id="picker-title">Europa Ranking</h1>
+                <p>Welche Serie möchtest du öffnen?</p>
+            </div>
+            <button class="picker-card picker-ddf" type="button" onclick="switchSeries('ddf', { silent: true })">
+                <span class="picker-logo logo-ddf"><span>?</span><span>?</span><span>?</span></span>
+                <span class="picker-name">Die drei ???</span>
+                <span class="picker-meta" id="picker-meta-ddf">&nbsp;</span>
+                <svg class="icon icon-lg picker-go" aria-hidden="true"><use href="#i-back"/></svg>
+            </button>
+            <button class="picker-card picker-tkkg" type="button" onclick="switchSeries('tkkg', { silent: true })">
+                <span class="picker-logo logo-tkkg"><span>T</span><span>K</span><span>K</span><span>G</span></span>
+                <span class="picker-name">TKKG</span>
+                <span class="picker-meta" id="picker-meta-tkkg">&nbsp;</span>
+                <svg class="icon icon-lg picker-go" aria-hidden="true"><use href="#i-back"/></svg>
+            </button>
+            <p class="picker-hint">Wechseln kannst du jederzeit in deinem Konto.</p>
+        </div>
+    </div>
 
     <div class="notif-panel" id="notif-panel" role="dialog" aria-label="Mitteilungen">
         <div class="notif-head"><h2>Mitteilungen</h2><span>Letzte 5</span></div>
@@ -956,7 +1082,9 @@
             </div>
             <p>Diese App ist ein unabhängiges Fanprojekt und kein offizielles Angebot von Franckh-Kosmos, EUROPA oder Sony Music. Sie beansprucht keine Rechte an „Die drei ???“, den Figuren, Hörspielaufnahmen oder Coverabbildungen.</p>
             <p>Die offiziellen Produktangaben nennen Franckh-Kosmos Verlags-GmbH &amp; Co. KG als Rechteinhaber der Marke „Die drei ???“. Die Hörspielaufnahmen werden mit „(P) &amp; © EUROPA a division of Sony Music Entertainment Germany GmbH“ gekennzeichnet. Coverillustrationen und Gestaltung werden den jeweiligen Künstlerinnen, Künstlern und Rechteinhabern zugeordnet. Die Rechte an den Inhalten liegen bei den jeweils genannten Rechteinhabern.</p>
-            <p class="legal-note">Quellen: <a href="https://www.play-europa.de/produktwelt/hoerspiele/die-drei-fragezeichen/" target="_blank" rel="noopener noreferrer">Offizielle EUROPA-Produktseite</a> · <a href="https://www.dreifragezeichen.de/impressum" target="_blank" rel="noopener noreferrer">Impressum der offiziellen Die drei ???-Website</a></p>
+            <p>„TKKG“: Die offizielle TKKG-Website wird von der Sony Music Entertainment Germany GmbH betrieben, die dort auch die Rechte an Inhalten, Logos und Artworks ausweist. Die Hörspiele erscheinen bei EUROPA. Auch an „TKKG“, den Figuren, Hörspielaufnahmen und Coverabbildungen beansprucht diese App keine Rechte.</p>
+            <p>Der Name „Europa Ranking“ bezeichnet nur, dass hier Hörspiele des Labels EUROPA bewertet werden. Es besteht keine Verbindung zu EUROPA oder Sony Music.</p>
+            <p class="legal-note">Quellen: <a href="https://www.play-europa.de/produktwelt/hoerspiele/die-drei-fragezeichen/" target="_blank" rel="noopener noreferrer">Offizielle EUROPA-Produktseite</a> · <a href="https://www.dreifragezeichen.de/impressum" target="_blank" rel="noopener noreferrer">Impressum der offiziellen Die drei ???-Website</a> · <a href="https://www.tkkg.de/service/impressum" target="_blank" rel="noopener noreferrer">Impressum der offiziellen TKKG-Website</a></p>
         </section>
     </div>
 
@@ -995,6 +1123,114 @@
         let linkPromptShown = false;
         let currentUser = { id: '', name: '' };
         const loaded = { episodes: false, ratings: false, users: false };
+
+        // --- SERIEN ---
+        // Jede Serie hat eigene Collections; Nutzer, Login und Glocke sind gemeinsam.
+        const SERIES = {
+            ddf: {
+                id: 'ddf',
+                name: 'Die drei ???',
+                short: '???',
+                searchName: 'Die drei ???',
+                episodesCol: 'episodes',
+                ratingsCol: 'ratings',
+                dailyId: 'daily',
+                coverDir: 'ddf_covers',
+                coverPrefix: 'ddf',
+                loaderChars: ['?', '?', '?'],
+                logoHtml: '<span class="logo-ddf"><span>?</span><span>?</span><span>?</span></span>'
+            },
+            tkkg: {
+                id: 'tkkg',
+                name: 'TKKG',
+                short: 'TKKG',
+                searchName: 'TKKG',
+                episodesCol: 'tkkg_episodes',
+                ratingsCol: 'tkkg_ratings',
+                dailyId: 'daily_tkkg',
+                coverDir: 'tkkg_covers',
+                coverPrefix: 'tkkg',
+                loaderChars: ['T', 'K', 'K', 'G'],
+                logoHtml: '<span class="logo-tkkg"><span>T</span><span>K</span><span>K</span><span>G</span></span>'
+            }
+        };
+        const SERIES_STORAGE_KEY = 'europa_series';
+        const seriesData = Object.fromEntries(Object.keys(SERIES).map(id => [id, {
+            episodes: [], ratings: [], dailyDoc: null, loaded: { episodes: false, ratings: false }
+        }]));
+        let currentSeriesId = (() => {
+            try {
+                const stored = localStorage.getItem(SERIES_STORAGE_KEY);
+                return SERIES[stored] ? stored : null;
+            } catch (err) {
+                return null;
+            }
+        })();
+
+        function series() {
+            return SERIES[currentSeriesId || 'ddf'];
+        }
+
+        // Globale Arbeitsdaten (stammdaten, bewertungen, …) auf die aktuelle Serie setzen.
+        function syncSeriesData() {
+            const store = seriesData[series().id];
+            stammdaten = store.episodes;
+            bewertungen = store.ratings;
+            dailyDoc = store.dailyDoc;
+            loaded.episodes = store.loaded.episodes;
+            loaded.ratings = store.loaded.ratings;
+        }
+
+        function applySeriesLook() {
+            const current = series();
+            document.documentElement.dataset.series = current.id;
+            const themeColor = document.querySelector('meta[name="theme-color"]');
+            if (themeColor) themeColor.setAttribute('content', current.id === 'tkkg' ? '#040a1c' : '#000000');
+            document.getElementById('app-logo').innerHTML = `${current.logoHtml} Ranking`;
+            document.title = `${current.name} – Europa Ranking`;
+        }
+
+        function switchSeries(seriesId, { silent = false } = {}) {
+            if (!SERIES[seriesId]) return;
+            const changed = seriesId !== currentSeriesId;
+            currentSeriesId = seriesId;
+            try { localStorage.setItem(SERIES_STORAGE_KEY, seriesId); } catch (err) { /* nur Komfort */ }
+            hideSeriesPicker();
+            if (!changed) return;
+
+            closeNotifications();
+            closeEpisodeReviews();
+            closeUserProfile();
+            closeUserModal();
+            if (editingRatingOriginalNr !== null) cancelEditRating();
+            closeRateModal();
+            document.getElementById('rate-select').value = '';
+            document.getElementById('rate-comment').value = '';
+            selectedPoints = 0;
+            updateRatingDisplay();
+            document.getElementById('search-input').value = '';
+            chartUserId = 'all';
+
+            applySeriesLook();
+            syncSeriesData();
+            populateDropdown();
+            scheduleRender();
+            generateDailyCase();
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            if (!silent) showToast(`${series().name} ausgewählt.`, 'success');
+        }
+
+        function showSeriesPicker() {
+            const picker = document.getElementById('series-picker');
+            picker.classList.add('active');
+            picker.setAttribute('aria-hidden', 'false');
+        }
+
+        function hideSeriesPicker() {
+            const picker = document.getElementById('series-picker');
+            picker.classList.remove('active');
+            picker.setAttribute('aria-hidden', 'true');
+        }
         let renderScheduled = false;
 
         // --- UI-HELFER ---
@@ -1090,6 +1326,9 @@
         window.addEventListener('orientationchange', () => setTimeout(syncHeaderHeight, 300));
 
         window.onload = () => {
+            applySeriesLook();
+            syncSeriesData();
+            if (!currentSeriesId) showSeriesPicker();
             initRatingScale();
             setRatingFormSaving(false);
             document.addEventListener('visibilitychange', () => {
@@ -1171,6 +1410,17 @@
             };
             // Impressum & Rechtehinweis steht in jedem Zustand ganz unten im Konto-Fenster.
             const addLegal = () => {
+                // Einstellungen: Serie wechseln
+                const seriesSwitch = document.createElement('div');
+                seriesSwitch.className = 'modal-series';
+                seriesSwitch.innerHTML = `<span class="label">Serie</span><div class="segmented" role="radiogroup" aria-label="Serie">${
+                    Object.values(SERIES).map(config => `<button type="button" role="radio" aria-checked="${config.id === series().id}" class="${config.id === series().id ? 'active' : ''}" data-series-switch="${config.id}">${config.id === 'tkkg' ? '<span class="logo-tkkg">TKKG</span>' : escapeHtml(config.name)}</button>`).join('')
+                }</div>`;
+                seriesSwitch.querySelectorAll('[data-series-switch]').forEach(button => {
+                    button.onclick = () => switchSeries(button.dataset.seriesSwitch);
+                });
+                body.appendChild(seriesSwitch);
+
                 const legal = document.createElement('div');
                 legal.className = 'modal-legal';
                 legal.innerHTML = '<button type="button">Impressum &amp; Rechtehinweis</button>';
@@ -1303,11 +1553,13 @@
             return new Date(review.datum).getTime() || Number(review.id) || 0;
         }
 
+        // Mitteilungen aus allen Serien; jedes Element: { review, seriesId }.
         function notificationItems() {
             if (!currentUser.id) return [];
-            return bewertungen
-                .filter(review => String(review.nutzerId) !== currentUser.id)
-                .sort((a, b) => reviewTime(b) - reviewTime(a))
+            return Object.keys(SERIES)
+                .flatMap(seriesId => seriesData[seriesId].ratings.map(review => ({ review, seriesId })))
+                .filter(item => String(item.review.nutzerId) !== currentUser.id)
+                .sort((a, b) => reviewTime(b.review) - reviewTime(a.review))
                 .slice(0, NOTIFICATION_LIMIT);
         }
 
@@ -1328,7 +1580,18 @@
             return '';
         }
 
+        function updatePickerMeta() {
+            for (const config of Object.values(SERIES)) {
+                const store = seriesData[config.id];
+                const element = document.getElementById(`picker-meta-${config.id}`);
+                if (!element || !store.loaded.episodes) continue;
+                const own = currentUser.id ? store.ratings.filter(r => String(r.nutzerId) === currentUser.id).length : 0;
+                element.textContent = `${store.episodes.length} Folgen · ${store.ratings.length} Bewertungen${currentUser.id ? ` · ${own} von dir` : ''}`;
+            }
+        }
+
         function renderNotifications() {
+            updatePickerMeta();
             const bell = document.getElementById('bell-btn');
             const badge = document.getElementById('bell-badge');
             if (!currentUser.id) {
@@ -1341,7 +1604,7 @@
 
             const items = notificationItems();
             const seenAt = notificationsSeenAt();
-            const unread = items.filter(review => reviewTime(review) > seenAt).length;
+            const unread = items.filter(item => reviewTime(item.review) > seenAt).length;
             badge.textContent = String(unread);
             badge.style.display = unread ? '' : 'none';
             bell.setAttribute('aria-label', unread ? `Mitteilungen, ${unread} neu` : 'Mitteilungen');
@@ -1363,17 +1626,17 @@
                 return;
             }
             const baseline = notifBaseline ?? notificationsSeenAt();
-            list.innerHTML = items.map(review => {
+            list.innerHTML = items.map(({ review, seriesId }) => {
                 const time = reviewTime(review);
                 const isUnread = time > baseline;
                 const edited = Number(review.id) && time - Number(review.id) > 60000;
                 const name = review.nutzerName || 'Anonym';
-                const episode = episodeForRating(review);
-                return `<button class="notif-item ${isUnread ? 'unread' : ''}" type="button" data-notif-review="${escapeHtml(String(review.id))}">
+                const episode = episodeForRating(review, seriesId);
+                return `<button class="notif-item ${isUnread ? 'unread' : ''}" type="button" data-notif-review="${escapeHtml(String(review.id))}" data-notif-series="${escapeHtml(seriesId)}">
                     ${avatarHtml(review.nutzerId, name)}
                     <div class="notif-body">
                         <div class="notif-text"><strong>${escapeHtml(name)}</strong> ${edited ? 'hat eine Bewertung aktualisiert' : 'hat eine Folge bewertet'}</div>
-                        <div class="notif-episode">${escapeHtml(episode ? episodeLabel(episode) : `Folge ${review.folgenNr}`)}</div>
+                        <div class="notif-episode"><span class="series-tag series-tag-${seriesId}">${escapeHtml(SERIES[seriesId].short)}</span> ${escapeHtml(episode ? episodeLabel(episode) : `Folge ${review.folgenNr}`)}</div>
                         <div class="notif-time">${isUnread ? '<span class="notif-dot"></span>' : ''}${escapeHtml(relativeTime(time))}</div>
                     </div>
                     <div class="notif-side">${scoreBadge(review.punkte)}</div>
@@ -1393,7 +1656,7 @@
             document.getElementById('notif-list').scrollTop = 0;
 
             // Alles Angezeigte als gelesen markieren.
-            const newest = items.length ? reviewTime(items[0]) : 0;
+            const newest = items.length ? reviewTime(items[0].review) : 0;
             if (newest > notifBaseline) {
                 fb.updateDoc(fb.doc(fb.db, 'users', currentUser.id), { notificationsSeenAt: Math.round(newest) })
                     .catch(err => console.warn('Gelesen-Status konnte nicht gespeichert werden:', err));
@@ -1408,8 +1671,9 @@
             notifBaseline = null;
         }
 
-        function openRatingFromNotification(reviewId) {
+        function openRatingFromNotification(reviewId, seriesId = currentSeriesId) {
             closeNotifications();
+            if (seriesId && seriesId !== currentSeriesId) switchSeries(seriesId, { silent: true });
             closeEpisodeReviews();
             closeUserProfile();
             document.getElementById('review-filter-user').value = 'all';
@@ -1429,7 +1693,7 @@
             const item = event.target.closest('[data-notif-review]');
             if (item) {
                 event.preventDefault();
-                openRatingFromNotification(item.dataset.notifReview);
+                openRatingFromNotification(item.dataset.notifReview, item.dataset.notifSeries);
                 return;
             }
             if (!event.target.closest('#notif-panel, #bell-btn')) closeNotifications();
@@ -1501,29 +1765,42 @@
                 scheduleRender();
             });
 
-            fb.onSnapshot(fb.query(fb.collection(fb.db, 'episodes'), fb.orderBy('order')), snap => {
-                stammdaten = snap.docs.map(d => d.data());
-                loaded.episodes = true;
-                scheduleRender('episodes');
-            }, showLoadError);
+            // Beide Serien werden immer geladen: die Glocke zeigt Mitteilungen aus allen Serien.
+            for (const config of Object.values(SERIES)) {
+                const store = seriesData[config.id];
+                const isCurrent = () => config.id === series().id;
+                const onError = err => (isCurrent() ? showLoadError(err) : console.warn(`${config.name} konnte nicht geladen werden:`, err));
 
-            fb.onSnapshot(fb.collection(fb.db, 'ratings'), snap => {
-                bewertungen = snap.docs.map(d => d.data()).sort((a, b) => Number(a.id) - Number(b.id));
-                loaded.ratings = true;
-                scheduleRender();
-            }, showLoadError);
+                fb.onSnapshot(fb.query(fb.collection(fb.db, config.episodesCol), fb.orderBy('order')), snap => {
+                    store.episodes = snap.docs.map(d => d.data());
+                    store.loaded.episodes = true;
+                    if (!isCurrent()) return renderNotifications();
+                    syncSeriesData();
+                    scheduleRender('episodes');
+                }, onError);
+
+                fb.onSnapshot(fb.collection(fb.db, config.ratingsCol), snap => {
+                    store.ratings = snap.docs.map(d => d.data()).sort((a, b) => Number(a.id) - Number(b.id));
+                    store.loaded.ratings = true;
+                    if (!isCurrent()) return renderNotifications();
+                    syncSeriesData();
+                    scheduleRender();
+                }, onError);
+
+                fb.onSnapshot(fb.doc(fb.db, 'meta', config.dailyId), snap => {
+                    store.dailyDoc = snap.exists() ? snap.data() : null;
+                    if (!isCurrent()) return;
+                    syncSeriesData();
+                    updateDailyView();
+                    refreshSharedDailyState();
+                }, err => console.warn(`FdT (${config.name}) konnte nicht geladen werden:`, err));
+            }
 
             fb.onSnapshot(fb.collection(fb.db, 'users'), snap => {
                 nutzer = snap.docs.map(d => d.data());
                 loaded.users = true;
                 scheduleRender();
             }, showLoadError);
-
-            fb.onSnapshot(fb.doc(fb.db, 'meta', 'daily'), snap => {
-                dailyDoc = snap.exists() ? snap.data() : null;
-                updateDailyView();
-                refreshSharedDailyState();
-            }, err => console.warn('FdT konnte nicht geladen werden:', err));
 
             setInterval(refreshSharedDailyState, 60000);
             return true;
@@ -1575,10 +1852,11 @@
             return Number.isInteger(number) && number > 0 ? `F-${String(number).padStart(3, '0')}` : '';
         }
 
-        function episodeForRating(review) {
+        function episodeForRating(review, seriesId = null) {
+            const episodes = seriesId ? seriesData[seriesId].episodes : stammdaten;
             const id = String(review.folgeId || '');
-            return stammdaten.find(episode => id && episodeId(episode) === id)
-                || stammdaten.find(episode => String(episode.nr) === String(review.folgenNr));
+            return episodes.find(episode => id && episodeId(episode) === id)
+                || episodes.find(episode => String(episode.nr) === String(review.folgenNr));
         }
 
         function ratingEpisodeId(review) {
@@ -1676,7 +1954,7 @@
                         ? bewertungen.find(b => String(b.id) === String(editingRatingId))
                         : null;
                     if (!review) throw new Error('Die Review wurde nicht gefunden.');
-                    await fb.updateDoc(fb.doc(fb.db, 'ratings', String(review.id)), {
+                    await fb.updateDoc(fb.doc(fb.db, series().ratingsCol, String(review.id)), {
                         nutzerName: currentUser.name,
                         folgenNr: episode.nr,
                         folgeId: folgeId,
@@ -1686,7 +1964,7 @@
                     });
                 } else {
                     const id = Date.now();
-                    await fb.setDoc(fb.doc(fb.db, 'ratings', String(id)), {
+                    await fb.setDoc(fb.doc(fb.db, series().ratingsCol, String(id)), {
                         id,
                         nutzerId: currentUser.id,
                         nutzerName: currentUser.name,
@@ -1773,8 +2051,9 @@
             if (!confirmed) return;
 
             const backup = { ...review };
+            const ratingsCol = series().ratingsCol;
             try {
-                await fb.deleteDoc(fb.doc(fb.db, 'ratings', String(review.id)));
+                await fb.deleteDoc(fb.doc(fb.db, ratingsCol, String(review.id)));
             } catch (err) {
                 console.error('Bewertung konnte nicht gelöscht werden:', err);
                 showToast(err && err.code === 'permission-denied'
@@ -1784,12 +2063,12 @@
             }
 
             if (editingRatingId !== null && String(editingRatingId) === String(review.id)) closeRateModal();
-            showToast('Bewertung gelöscht.', 'success', { label: 'Rückgängig', handler: () => restoreRating(backup) });
+            showToast('Bewertung gelöscht.', 'success', { label: 'Rückgängig', handler: () => restoreRating(backup, ratingsCol) });
         }
 
-        async function restoreRating(data) {
+        async function restoreRating(data, ratingsCol = series().ratingsCol) {
             try {
-                await fb.setDoc(fb.doc(fb.db, 'ratings', String(data.id)), data);
+                await fb.setDoc(fb.doc(fb.db, ratingsCol, String(data.id)), data);
                 showToast('Bewertung wiederhergestellt.', 'success');
             } catch (err) {
                 console.error('Bewertung konnte nicht wiederhergestellt werden:', err);
@@ -1862,16 +2141,18 @@
             if (editingRatingOriginalNr !== null) cancelEditRating();
         }
 
-        function getCoverUrl(episode) {
+        function getCoverUrl(episode, seriesId = null) {
+            const config = seriesId ? SERIES[seriesId] : series();
             if (String(episode.nr).toLowerCase() === 'special') {
                 const safeId = episodeId(episode).replace(/[^A-Za-z0-9_-]/g, '_');
-                return `./ddf_covers/ddf_special_${safeId}.jpg`;
+                return `./${config.coverDir}/${config.coverPrefix}_special_${safeId}.jpg`;
             }
-            return `./ddf_covers/ddf_folge_${String(episode.nr).padStart(3, '0')}.jpg`;
+            return `./${config.coverDir}/${config.coverPrefix}_folge_${String(episode.nr).padStart(3, '0')}.jpg`;
         }
 
         function getMusicLinks(folge) {
-            const query = encodeURIComponent(`${String(folge.nr).toLowerCase() === 'special' ? 'Die drei ???' : `Die drei ??? Folge ${folge.nr}`} ${folge.titel}`);
+            const name = series().searchName;
+            const query = encodeURIComponent(`${String(folge.nr).toLowerCase() === 'special' ? name : `${name} Folge ${folge.nr}`} ${folge.titel}`);
             return `<div class="music-links">
                 <a class="music-link" href="https://open.spotify.com/search/${query}" target="_blank" rel="noopener noreferrer">${icon('play', 'icon-sm')} Spotify</a>
                 <a class="music-link" href="https://music.apple.com/de/search?term=${query}" target="_blank" rel="noopener noreferrer">${icon('music', 'icon-sm')} Apple Music</a>
@@ -2617,7 +2898,7 @@
                 return Promise.resolve(true);
             }
             if (dailyRollInProgress) return dailyRollInProgress;
-            const ref = fb.doc(fb.db, 'meta', 'daily');
+            const ref = fb.doc(fb.db, 'meta', series().dailyId);
             dailyRollInProgress = fb.runTransaction(fb.db, async tx => {
                 const snap = await tx.get(ref);
                 const current = snap.exists() ? snap.data() : null;
@@ -2675,7 +2956,7 @@
             const dim = dailyShuffling ? 'daily-dim' : '';
             if (!dailyShuffling) backdrop.style.setProperty('--cover', `url("${getCoverUrl(dailyFolge)}")`);
             const coverHtml = dailyShuffling
-                ? `<div class="q-loader" role="status"><span aria-hidden="true">?</span><span aria-hidden="true">?</span><span aria-hidden="true">?</span><span class="sr-only">Neuer Fall wird gemischt…</span></div>`
+                ? `<div class="q-loader q-loader-${series().id}" role="status">${series().loaderChars.map(char => `<span aria-hidden="true">${escapeHtml(char)}</span>`).join('')}<span class="sr-only">Neuer Fall wird gemischt…</span></div>`
                 : `<img src="${getCoverUrl(dailyFolge)}" class="cover-img-daily" alt="Cover ${escapeHtml(episodeLabel(dailyFolge))}" onerror="showCoverFallback(this)"${openEpisodeAttr(dailyFolge)}>`;
             c.innerHTML = `
                 <div class="daily-kicker ${dim}"><span class="pill">${escapeHtml(episodeMeta(dailyFolge))}</span></div>
@@ -2707,7 +2988,7 @@
             generateDailyCase();
             try {
                 await refreshSharedDailyState();
-                const ref = fb.doc(fb.db, 'meta', 'daily');
+                const ref = fb.doc(fb.db, 'meta', series().dailyId);
                 await fb.runTransaction(fb.db, async tx => {
                     const snap = await tx.get(ref);
                     if (!snap.exists()) throw new Error('Es gibt noch keinen Fall des Tages.');

@@ -1,0 +1,1512 @@
+{
+  "quelle": "Wikipedia-Artikel „TKKG“, Abschnitt Folgenindex (de.wikipedia.org, Revision 271439933), abgerufen am 2026-11-10",
+  "hinweis": "Special 9 (Erscheinungstermin 13.11.2026) ist noch nicht enthalten. Korrigiert auf den Hörspieltitel: F-049, F-156.",
+  "episodes": [
+    {
+      "nr": 1,
+      "titel": "Die Jagd nach den Millionendieben",
+      "jahr": 1981,
+      "folgeId": "F-001"
+    },
+    {
+      "nr": 2,
+      "titel": "Der blinde Hellseher",
+      "jahr": 1981,
+      "folgeId": "F-002"
+    },
+    {
+      "nr": 3,
+      "titel": "Das leere Grab im Moor",
+      "jahr": 1981,
+      "folgeId": "F-003"
+    },
+    {
+      "nr": 4,
+      "titel": "Das Paket mit dem Totenkopf",
+      "jahr": 1981,
+      "folgeId": "F-004"
+    },
+    {
+      "nr": 5,
+      "titel": "Das Phantom auf dem Feuerstuhl",
+      "jahr": 1981,
+      "folgeId": "F-005"
+    },
+    {
+      "nr": 6,
+      "titel": "Angst in der 9a",
+      "jahr": 1981,
+      "folgeId": "F-006"
+    },
+    {
+      "nr": 7,
+      "titel": "Rätsel um die alte Villa",
+      "jahr": 1982,
+      "folgeId": "F-007"
+    },
+    {
+      "nr": 8,
+      "titel": "Auf der Spur der Vogeljäger",
+      "jahr": 1982,
+      "folgeId": "F-008"
+    },
+    {
+      "nr": 9,
+      "titel": "Abenteuer im Ferienlager",
+      "jahr": 1982,
+      "folgeId": "F-009"
+    },
+    {
+      "nr": 10,
+      "titel": "Alarm im Zirkus Sarani",
+      "jahr": 1982,
+      "folgeId": "F-010"
+    },
+    {
+      "nr": 11,
+      "titel": "Die Falschmünzer vom Mäuseweg",
+      "jahr": 1982,
+      "folgeId": "F-011"
+    },
+    {
+      "nr": 12,
+      "titel": "Nachts, wenn der Feuerteufel kommt",
+      "jahr": 1982,
+      "folgeId": "F-012"
+    },
+    {
+      "nr": 13,
+      "titel": "Die Bettelmönche aus Atlantis",
+      "jahr": 1982,
+      "folgeId": "F-013"
+    },
+    {
+      "nr": 14,
+      "titel": "Der Schlangenmensch",
+      "jahr": 1982,
+      "folgeId": "F-014"
+    },
+    {
+      "nr": 15,
+      "titel": "Ufos in Bad Finkenstein",
+      "jahr": 1982,
+      "folgeId": "F-015"
+    },
+    {
+      "nr": 16,
+      "titel": "X7 antwortet nicht",
+      "jahr": 1982,
+      "folgeId": "F-016"
+    },
+    {
+      "nr": 17,
+      "titel": "Die Doppelgängerin",
+      "jahr": 1982,
+      "folgeId": "F-017"
+    },
+    {
+      "nr": 18,
+      "titel": "Hexenjagd in Lerchenbach",
+      "jahr": 1982,
+      "folgeId": "F-018"
+    },
+    {
+      "nr": 19,
+      "titel": "Der Schatz in der Drachenhöhle",
+      "jahr": 1982,
+      "folgeId": "F-019"
+    },
+    {
+      "nr": 20,
+      "titel": "Das Geheimnis der chinesischen Vase",
+      "jahr": 1982,
+      "folgeId": "F-020"
+    },
+    {
+      "nr": 21,
+      "titel": "Die Rache des Bombenlegers",
+      "jahr": 1983,
+      "folgeId": "F-021"
+    },
+    {
+      "nr": 22,
+      "titel": "In den Klauen des Tigers",
+      "jahr": 1983,
+      "folgeId": "F-022"
+    },
+    {
+      "nr": 23,
+      "titel": "Kampf der Spione",
+      "jahr": 1983,
+      "folgeId": "F-023"
+    },
+    {
+      "nr": 24,
+      "titel": "Gefährliche Diamanten",
+      "jahr": 1983,
+      "folgeId": "F-024"
+    },
+    {
+      "nr": 25,
+      "titel": "Die Stunde der schwarzen Maske",
+      "jahr": 1983,
+      "folgeId": "F-025"
+    },
+    {
+      "nr": 26,
+      "titel": "Das Geiseldrama",
+      "jahr": 1984,
+      "folgeId": "F-026"
+    },
+    {
+      "nr": 27,
+      "titel": "Banditen im Palasthotel",
+      "jahr": 1984,
+      "folgeId": "F-027"
+    },
+    {
+      "nr": 28,
+      "titel": "Verrat im Höllental",
+      "jahr": 1984,
+      "folgeId": "F-028"
+    },
+    {
+      "nr": 29,
+      "titel": "Hundediebe kennen keine Gnade",
+      "jahr": 1984,
+      "folgeId": "F-029"
+    },
+    {
+      "nr": 30,
+      "titel": "Die Mafia kommt zur Geisterstunde",
+      "jahr": 1984,
+      "folgeId": "F-030"
+    },
+    {
+      "nr": 31,
+      "titel": "Die Entführung in der Mondscheingasse",
+      "jahr": 1984,
+      "folgeId": "F-031"
+    },
+    {
+      "nr": 32,
+      "titel": "Wilddiebe im Teufelsmoor",
+      "jahr": 1984,
+      "folgeId": "F-032"
+    },
+    {
+      "nr": 33,
+      "titel": "Wer raubte das Millionenpferd?",
+      "jahr": 1984,
+      "folgeId": "F-033"
+    },
+    {
+      "nr": 34,
+      "titel": "Vampir der Autobahn",
+      "jahr": 1984,
+      "folgeId": "F-034"
+    },
+    {
+      "nr": 35,
+      "titel": "Die Nacht des Überfalls",
+      "jahr": 1984,
+      "folgeId": "F-035"
+    },
+    {
+      "nr": 36,
+      "titel": "Das Geschenk des Bösen",
+      "jahr": 1984,
+      "folgeId": "F-036"
+    },
+    {
+      "nr": 37,
+      "titel": "Der letzte Schuss",
+      "jahr": 1985,
+      "folgeId": "F-037"
+    },
+    {
+      "nr": 38,
+      "titel": "Die weiße Schmuggler-Yacht",
+      "jahr": 1985,
+      "folgeId": "F-038"
+    },
+    {
+      "nr": 39,
+      "titel": "Die Gift-Party",
+      "jahr": 1985,
+      "folgeId": "F-039"
+    },
+    {
+      "nr": 40,
+      "titel": "Duell im Morgengrauen",
+      "jahr": 1985,
+      "folgeId": "F-040"
+    },
+    {
+      "nr": 41,
+      "titel": "Heißes Gold im Silbersee",
+      "jahr": 1986,
+      "folgeId": "F-041"
+    },
+    {
+      "nr": 42,
+      "titel": "Anschlag auf den Silberpfeil",
+      "jahr": 1986,
+      "folgeId": "F-042"
+    },
+    {
+      "nr": 43,
+      "titel": "Gefangen in der Schreckenskammer",
+      "jahr": 1986,
+      "folgeId": "F-043"
+    },
+    {
+      "nr": 44,
+      "titel": "Um Mitternacht am schwarzen Fluss",
+      "jahr": 1986,
+      "folgeId": "F-044"
+    },
+    {
+      "nr": 45,
+      "titel": "Unternehmen Grüne Hölle",
+      "jahr": 1987,
+      "folgeId": "F-045"
+    },
+    {
+      "nr": 46,
+      "titel": "Hotel in Flammen",
+      "jahr": 1987,
+      "folgeId": "F-046"
+    },
+    {
+      "nr": 47,
+      "titel": "Todesfracht im Jaguar",
+      "jahr": 1987,
+      "folgeId": "F-047"
+    },
+    {
+      "nr": 48,
+      "titel": "Bestien in der Finsternis",
+      "jahr": 1987,
+      "folgeId": "F-048"
+    },
+    {
+      "nr": 49,
+      "titel": "Bombe an Bord",
+      "jahr": 1987,
+      "folgeId": "F-049"
+    },
+    {
+      "nr": 50,
+      "titel": "Spion auf der Flucht",
+      "jahr": 1987,
+      "folgeId": "F-050"
+    },
+    {
+      "nr": 51,
+      "titel": "Gangster auf der Gartenparty",
+      "jahr": 1987,
+      "folgeId": "F-051"
+    },
+    {
+      "nr": 52,
+      "titel": "Überfall im Hafen",
+      "jahr": 1987,
+      "folgeId": "F-052"
+    },
+    {
+      "nr": 53,
+      "titel": "Schüsse aus der Rosenhecke",
+      "jahr": 1987,
+      "folgeId": "F-053"
+    },
+    {
+      "nr": 54,
+      "titel": "Alarm! Klößchen ist verschwunden",
+      "jahr": 1987,
+      "folgeId": "F-054"
+    },
+    {
+      "nr": 55,
+      "titel": "Der Mörder aus dem Schauerwald",
+      "jahr": 1987,
+      "folgeId": "F-055"
+    },
+    {
+      "nr": 56,
+      "titel": "Todesgruß vom Gelben Drachen",
+      "jahr": 1987,
+      "folgeId": "F-056"
+    },
+    {
+      "nr": 57,
+      "titel": "Jagt das rote Geister-Auto!",
+      "jahr": 1988,
+      "folgeId": "F-057"
+    },
+    {
+      "nr": 58,
+      "titel": "Der doppelte Pedro",
+      "jahr": 1988,
+      "folgeId": "F-058"
+    },
+    {
+      "nr": 59,
+      "titel": "Trickdieb auf Burg Drachenstein",
+      "jahr": 1988,
+      "folgeId": "F-059"
+    },
+    {
+      "nr": 60,
+      "titel": "Der Teufel vom Waiga-See",
+      "jahr": 1988,
+      "folgeId": "F-060"
+    },
+    {
+      "nr": 61,
+      "titel": "Im Schatten des Dämons",
+      "jahr": 1988,
+      "folgeId": "F-061"
+    },
+    {
+      "nr": 62,
+      "titel": "Terror aus dem „Pulverfass“",
+      "jahr": 1989,
+      "folgeId": "F-062"
+    },
+    {
+      "nr": 63,
+      "titel": "Die Falle am Fuchsbach",
+      "jahr": 1989,
+      "folgeId": "F-063"
+    },
+    {
+      "nr": 64,
+      "titel": "Schwarze Pest aus Indien",
+      "jahr": 1989,
+      "folgeId": "F-064"
+    },
+    {
+      "nr": 65,
+      "titel": "Sklaven für Wutawia (1)",
+      "jahr": 1989,
+      "folgeId": "F-065"
+    },
+    {
+      "nr": 66,
+      "titel": "Der Gauner mit der „Goldenen Hand“ (2)",
+      "jahr": 1989,
+      "folgeId": "F-066"
+    },
+    {
+      "nr": 67,
+      "titel": "Hinterhalt im Eulenforst",
+      "jahr": 1989,
+      "folgeId": "F-067"
+    },
+    {
+      "nr": 68,
+      "titel": "Rauschgift-Razzia im Internat",
+      "jahr": 1989,
+      "folgeId": "F-068"
+    },
+    {
+      "nr": 69,
+      "titel": "Achtung: Die „Monsters“ kommen!",
+      "jahr": 1990,
+      "folgeId": "F-069"
+    },
+    {
+      "nr": 70,
+      "titel": "Wer hat Tims Mutter entführt?",
+      "jahr": 1990,
+      "folgeId": "F-070"
+    },
+    {
+      "nr": 71,
+      "titel": "Stimme aus der Unterwelt",
+      "jahr": 1990,
+      "folgeId": "F-071"
+    },
+    {
+      "nr": 72,
+      "titel": "Taschengeld für ein Gespenst",
+      "jahr": 1990,
+      "folgeId": "F-072"
+    },
+    {
+      "nr": 73,
+      "titel": "Herr der Schlangeninsel",
+      "jahr": 1991,
+      "folgeId": "F-073"
+    },
+    {
+      "nr": 74,
+      "titel": "Im Schattenreich des Dr. Mubase",
+      "jahr": 1991,
+      "folgeId": "F-074"
+    },
+    {
+      "nr": 75,
+      "titel": "Lösegeld am Henkersberg",
+      "jahr": 1991,
+      "folgeId": "F-075"
+    },
+    {
+      "nr": 76,
+      "titel": "Die Goldgräber-Bande",
+      "jahr": 1991,
+      "folgeId": "F-076"
+    },
+    {
+      "nr": 77,
+      "titel": "Der erpresste Erpresser",
+      "jahr": 1991,
+      "folgeId": "F-077"
+    },
+    {
+      "nr": 78,
+      "titel": "Heißer Draht nach Paradiso",
+      "jahr": 1991,
+      "folgeId": "F-078"
+    },
+    {
+      "nr": 79,
+      "titel": "Ein Toter braucht Hilfe",
+      "jahr": 1992,
+      "folgeId": "F-079"
+    },
+    {
+      "nr": 80,
+      "titel": "Weißes Gift im Nachtexpress",
+      "jahr": 1992,
+      "folgeId": "F-080"
+    },
+    {
+      "nr": 81,
+      "titel": "Horror-Trip im Luxusauto",
+      "jahr": 1992,
+      "folgeId": "F-081"
+    },
+    {
+      "nr": 82,
+      "titel": "Spuk aus dem Jenseits",
+      "jahr": 1992,
+      "folgeId": "F-082"
+    },
+    {
+      "nr": 83,
+      "titel": "Hilfe! Gaby in Gefahr",
+      "jahr": 1993,
+      "folgeId": "F-083"
+    },
+    {
+      "nr": 84,
+      "titel": "Dynamit im Kofferraum",
+      "jahr": 1993,
+      "folgeId": "F-084"
+    },
+    {
+      "nr": 85,
+      "titel": "Freiheit für gequälte Tiere",
+      "jahr": 1993,
+      "folgeId": "F-085"
+    },
+    {
+      "nr": 86,
+      "titel": "Die Schatzsucher-Mafia schlägt zu",
+      "jahr": 1993,
+      "folgeId": "F-086"
+    },
+    {
+      "nr": 87,
+      "titel": "Der böse Geist vom Waisenhaus",
+      "jahr": 1994,
+      "folgeId": "F-087"
+    },
+    {
+      "nr": 88,
+      "titel": "Kampf um das Zauberschwert „Drachenauge“",
+      "jahr": 1994,
+      "folgeId": "F-088"
+    },
+    {
+      "nr": 89,
+      "titel": "Der Feind aus der Vergangenheit",
+      "jahr": 1994,
+      "folgeId": "F-089"
+    },
+    {
+      "nr": 90,
+      "titel": "Schmuggler reisen unerkannt",
+      "jahr": 1994,
+      "folgeId": "F-090"
+    },
+    {
+      "nr": 91,
+      "titel": "Crash-Kids riskieren ihr Leben",
+      "jahr": 1995,
+      "folgeId": "F-091"
+    },
+    {
+      "nr": 92,
+      "titel": "Der grausame Rächer",
+      "jahr": 1995,
+      "folgeId": "F-092"
+    },
+    {
+      "nr": 93,
+      "titel": "Die Opfer mit der kühlen Schnauze",
+      "jahr": 1995,
+      "folgeId": "F-093"
+    },
+    {
+      "nr": 94,
+      "titel": "In dunkler Nacht am Marmorgrab",
+      "jahr": 1995,
+      "folgeId": "F-094"
+    },
+    {
+      "nr": 95,
+      "titel": "U-Bahn des Schreckens",
+      "jahr": 1995,
+      "folgeId": "F-095"
+    },
+    {
+      "nr": 96,
+      "titel": "Die Entführung des Popstars",
+      "jahr": 1996,
+      "folgeId": "F-096"
+    },
+    {
+      "nr": 97,
+      "titel": "Die Hand an den Sternen",
+      "jahr": 1996,
+      "folgeId": "F-097"
+    },
+    {
+      "nr": 98,
+      "titel": "Die Haie vom Lotus-Garten",
+      "jahr": 1996,
+      "folgeId": "F-098"
+    },
+    {
+      "nr": 99,
+      "titel": "Hilflos in eisiger Nacht",
+      "jahr": 1996,
+      "folgeId": "F-099"
+    },
+    {
+      "nr": 100,
+      "titel": "Fieser Trick mit Nr. 100",
+      "jahr": 1996,
+      "folgeId": "F-100"
+    },
+    {
+      "nr": 101,
+      "titel": "Opfer fliegen 1. Klasse",
+      "jahr": 1997,
+      "folgeId": "F-101"
+    },
+    {
+      "nr": 102,
+      "titel": "Angst auf der Autobahn",
+      "jahr": 1997,
+      "folgeId": "F-102"
+    },
+    {
+      "nr": 103,
+      "titel": "Mörderischer Stammbaum",
+      "jahr": 1997,
+      "folgeId": "F-103"
+    },
+    {
+      "nr": 104,
+      "titel": "Im Wettbüro des Teufels",
+      "jahr": 1997,
+      "folgeId": "F-104"
+    },
+    {
+      "nr": 105,
+      "titel": "Vermißte Kids und Killerpflanzen",
+      "jahr": 1997,
+      "folgeId": "F-105"
+    },
+    {
+      "nr": 106,
+      "titel": "Mädchenraub im Ferienhaus",
+      "jahr": 1997,
+      "folgeId": "F-106"
+    },
+    {
+      "nr": 107,
+      "titel": "Lösegeld für einen Irrtum",
+      "jahr": 1998,
+      "folgeId": "F-107"
+    },
+    {
+      "nr": 108,
+      "titel": "Das Konzert bei den Ratten",
+      "jahr": 1998,
+      "folgeId": "F-108"
+    },
+    {
+      "nr": 109,
+      "titel": "Mörderspiel im Burghotel",
+      "jahr": 1998,
+      "folgeId": "F-109"
+    },
+    {
+      "nr": 110,
+      "titel": "Das Phantom im Schokoladen-Museum",
+      "jahr": 1998,
+      "folgeId": "F-110"
+    },
+    {
+      "nr": 111,
+      "titel": "Die tödliche Falle",
+      "jahr": 1998,
+      "folgeId": "F-111"
+    },
+    {
+      "nr": 112,
+      "titel": "Bombenspaß bei Kies & Knete",
+      "jahr": 1999,
+      "folgeId": "F-112"
+    },
+    {
+      "nr": 113,
+      "titel": "Mit heißer Nadel Jagd auf Kids",
+      "jahr": 1999,
+      "folgeId": "F-113"
+    },
+    {
+      "nr": 114,
+      "titel": "Die Sekte Satans",
+      "jahr": 1999,
+      "folgeId": "F-114"
+    },
+    {
+      "nr": 115,
+      "titel": "Der Diamant im Bauch der Kobra",
+      "jahr": 1999,
+      "folgeId": "F-115"
+    },
+    {
+      "nr": 116,
+      "titel": "Klassenfahrt zur Hexenburg",
+      "jahr": 1999,
+      "folgeId": "F-116"
+    },
+    {
+      "nr": 117,
+      "titel": "Im Schloss der schlafenden Vampire",
+      "jahr": 1999,
+      "folgeId": "F-117"
+    },
+    {
+      "nr": 118,
+      "titel": "Im Kaufhaus ist der Teufel los",
+      "jahr": 2000,
+      "folgeId": "F-118"
+    },
+    {
+      "nr": 119,
+      "titel": "Frische Spur nach 70 Jahren",
+      "jahr": 2000,
+      "folgeId": "F-119"
+    },
+    {
+      "nr": 120,
+      "titel": "Bei Anruf Angst",
+      "jahr": 2000,
+      "folgeId": "F-120"
+    },
+    {
+      "nr": 121,
+      "titel": "Ein cooler Typ aus der Hölle",
+      "jahr": 2000,
+      "folgeId": "F-121"
+    },
+    {
+      "nr": 122,
+      "titel": "Der Goldschatz, der vom Himmel fiel",
+      "jahr": 2000,
+      "folgeId": "F-122"
+    },
+    {
+      "nr": 123,
+      "titel": "Mordkomplott im Luxus-Klo",
+      "jahr": 2000,
+      "folgeId": "F-123"
+    },
+    {
+      "nr": 124,
+      "titel": "Vergebliche Suche nach Gaby",
+      "jahr": 2001,
+      "folgeId": "F-124"
+    },
+    {
+      "nr": 125,
+      "titel": "Der Mörder aus einer anderen Zeit",
+      "jahr": 2001,
+      "folgeId": "F-125"
+    },
+    {
+      "nr": 126,
+      "titel": "Teddy Talers Höllenfahrt",
+      "jahr": 2001,
+      "folgeId": "F-126"
+    },
+    {
+      "nr": 127,
+      "titel": "Im Schlauchboot durch die Unterwelt",
+      "jahr": 2001,
+      "folgeId": "F-127"
+    },
+    {
+      "nr": 128,
+      "titel": "Die Gehilfen des Terrors",
+      "jahr": 2001,
+      "folgeId": "F-128"
+    },
+    {
+      "nr": 129,
+      "titel": "Der Erpresser fährt bis Endstation",
+      "jahr": 2001,
+      "folgeId": "F-129"
+    },
+    {
+      "nr": 130,
+      "titel": "Die gefährliche Zeugin verschwindet",
+      "jahr": 2002,
+      "folgeId": "F-130"
+    },
+    {
+      "nr": 131,
+      "titel": "Stundenlohn für flotte Gangster",
+      "jahr": 2002,
+      "folgeId": "F-131"
+    },
+    {
+      "nr": 132,
+      "titel": "Homejacker machen Überstunden",
+      "jahr": 2002,
+      "folgeId": "F-132"
+    },
+    {
+      "nr": 133,
+      "titel": "Auf vier Pfoten zur Millionenbeute",
+      "jahr": 2002,
+      "folgeId": "F-133"
+    },
+    {
+      "nr": 134,
+      "titel": "Wer stoppt die Weihnachts-Gangster?",
+      "jahr": 2002,
+      "folgeId": "F-134"
+    },
+    {
+      "nr": 135,
+      "titel": "Der Meisterdieb und seine Feinde",
+      "jahr": 2003,
+      "folgeId": "F-135"
+    },
+    {
+      "nr": 136,
+      "titel": "Argentinische Entführung",
+      "jahr": 2003,
+      "folgeId": "F-136"
+    },
+    {
+      "nr": 137,
+      "titel": "Verschleppt ins Tal Diabolo",
+      "jahr": 2003,
+      "folgeId": "F-137"
+    },
+    {
+      "nr": 138,
+      "titel": "Raubzug mit dem Bumerang",
+      "jahr": 2003,
+      "folgeId": "F-138"
+    },
+    {
+      "nr": 139,
+      "titel": "Oskar jagt die Drogendealer",
+      "jahr": 2003,
+      "folgeId": "F-139"
+    },
+    {
+      "nr": 140,
+      "titel": "Draculas Erben",
+      "jahr": 2004,
+      "folgeId": "F-140"
+    },
+    {
+      "nr": 141,
+      "titel": "Todesbiss der schwarzen Mamba",
+      "jahr": 2004,
+      "folgeId": "F-141"
+    },
+    {
+      "nr": 142,
+      "titel": "Bankräuber mit Supertrick",
+      "jahr": 2004,
+      "folgeId": "F-142"
+    },
+    {
+      "nr": 143,
+      "titel": "Das unheimliche Haus",
+      "jahr": 2004,
+      "folgeId": "F-143"
+    },
+    {
+      "nr": 144,
+      "titel": "Schreckensnacht im Schlangenmaul",
+      "jahr": 2004,
+      "folgeId": "F-144"
+    },
+    {
+      "nr": 145,
+      "titel": "Hinterhalt am schwarzen Fels",
+      "jahr": 2005,
+      "folgeId": "F-145"
+    },
+    {
+      "nr": 146,
+      "titel": "Nonstop in die Raketenfalle",
+      "jahr": 2005,
+      "folgeId": "F-146"
+    },
+    {
+      "nr": 147,
+      "titel": "Hölle ohne Hintertür",
+      "jahr": 2005,
+      "folgeId": "F-147"
+    },
+    {
+      "nr": 148,
+      "titel": "Fieser Trick beim Finale",
+      "jahr": 2005,
+      "folgeId": "F-148"
+    },
+    {
+      "nr": 149,
+      "titel": "Tims gefährlichster Gegner",
+      "jahr": 2005,
+      "folgeId": "F-149"
+    },
+    {
+      "nr": 150,
+      "titel": "Heiße Nächte im Dezember",
+      "jahr": 2006,
+      "folgeId": "F-150"
+    },
+    {
+      "nr": 151,
+      "titel": "Gekauftes Spiel",
+      "jahr": 2006,
+      "folgeId": "F-151"
+    },
+    {
+      "nr": 152,
+      "titel": "Max und Anna, ein diebisches Paar",
+      "jahr": 2006,
+      "folgeId": "F-152"
+    },
+    {
+      "nr": 153,
+      "titel": "Es geschah in einer Regennacht",
+      "jahr": 2007,
+      "folgeId": "F-153"
+    },
+    {
+      "nr": 154,
+      "titel": "Das Geheimnis der Burgruine",
+      "jahr": 2007,
+      "folgeId": "F-154"
+    },
+    {
+      "nr": 155,
+      "titel": "Gefangen im Spukhaus",
+      "jahr": 2007,
+      "folgeId": "F-155"
+    },
+    {
+      "nr": 156,
+      "titel": "Erpresser fahren Achterbahn",
+      "jahr": 2007,
+      "folgeId": "F-156"
+    },
+    {
+      "nr": 157,
+      "titel": "Oskar und die sieben Zwerge",
+      "jahr": 2008,
+      "folgeId": "F-157"
+    },
+    {
+      "nr": 158,
+      "titel": "Trainer unter Verdacht",
+      "jahr": 2008,
+      "folgeId": "F-158"
+    },
+    {
+      "nr": 159,
+      "titel": "Böses Spiel im Sommercamp",
+      "jahr": 2008,
+      "folgeId": "F-159"
+    },
+    {
+      "nr": 160,
+      "titel": "Das Grauen naht um Zwölf",
+      "jahr": 2008,
+      "folgeId": "F-160"
+    },
+    {
+      "nr": 161,
+      "titel": "Ein Yeti in der Millionenstadt",
+      "jahr": 2008,
+      "folgeId": "F-161"
+    },
+    {
+      "nr": 162,
+      "titel": "Gefahr für Oskar!",
+      "jahr": 2009,
+      "folgeId": "F-162"
+    },
+    {
+      "nr": 163,
+      "titel": "Die Makler-Mafia",
+      "jahr": 2009,
+      "folgeId": "F-163"
+    },
+    {
+      "nr": 164,
+      "titel": "Operation Hexen-Graffiti",
+      "jahr": 2009,
+      "folgeId": "F-164"
+    },
+    {
+      "nr": 165,
+      "titel": "Advent mit Knall-Effekt",
+      "jahr": 2009,
+      "folgeId": "F-165"
+    },
+    {
+      "nr": 166,
+      "titel": "Das Mädchen mit der Kristallkugel",
+      "jahr": 2009,
+      "folgeId": "F-166"
+    },
+    {
+      "nr": 167,
+      "titel": "Der Unsichtbare",
+      "jahr": 2009,
+      "folgeId": "F-167"
+    },
+    {
+      "nr": 168,
+      "titel": "Millionencoup im Stadion",
+      "jahr": 2010,
+      "folgeId": "F-168"
+    },
+    {
+      "nr": 169,
+      "titel": "Tatort Dschungel",
+      "jahr": 2010,
+      "folgeId": "F-169"
+    },
+    {
+      "nr": 170,
+      "titel": "Schock im Schnee",
+      "jahr": 2010,
+      "folgeId": "F-170"
+    },
+    {
+      "nr": 171,
+      "titel": "Das lebende Gemälde",
+      "jahr": 2010,
+      "folgeId": "F-171"
+    },
+    {
+      "nr": 172,
+      "titel": "Das Geheimnis der Moorleiche",
+      "jahr": 2011,
+      "folgeId": "F-172"
+    },
+    {
+      "nr": 173,
+      "titel": "Die Skelettbande",
+      "jahr": 2011,
+      "folgeId": "F-173"
+    },
+    {
+      "nr": 174,
+      "titel": "Doppelgänger auf der Rennbahn",
+      "jahr": 2011,
+      "folgeId": "F-174"
+    },
+    {
+      "nr": 175,
+      "titel": "Nachtwanderung mit Schrecken",
+      "jahr": 2011,
+      "folgeId": "F-175"
+    },
+    {
+      "nr": 176,
+      "titel": "Verbrechen im Rampenlicht",
+      "jahr": 2012,
+      "folgeId": "F-176"
+    },
+    {
+      "nr": 177,
+      "titel": "Die Spur der Wölfin",
+      "jahr": 2012,
+      "folgeId": "F-177"
+    },
+    {
+      "nr": 178,
+      "titel": "Hai-Alarm im Aqua-Park",
+      "jahr": 2012,
+      "folgeId": "F-178"
+    },
+    {
+      "nr": 179,
+      "titel": "Abzocke im Online-Chat",
+      "jahr": 2012,
+      "folgeId": "F-179"
+    },
+    {
+      "nr": 180,
+      "titel": "Alarm im Raubtierhaus",
+      "jahr": 2012,
+      "folgeId": "F-180"
+    },
+    {
+      "nr": 181,
+      "titel": "Der vertauschte Koffer",
+      "jahr": 2013,
+      "folgeId": "F-181"
+    },
+    {
+      "nr": 182,
+      "titel": "Im Bann des Übersinnlichen",
+      "jahr": 2013,
+      "folgeId": "F-182"
+    },
+    {
+      "nr": 183,
+      "titel": "Blindgänger im Villenviertel",
+      "jahr": 2013,
+      "folgeId": "F-183"
+    },
+    {
+      "nr": 184,
+      "titel": "Die ewige Finsternis",
+      "jahr": 2013,
+      "folgeId": "F-184"
+    },
+    {
+      "nr": 185,
+      "titel": "Der unsichtbare Dieb",
+      "jahr": 2013,
+      "folgeId": "F-185"
+    },
+    {
+      "nr": 186,
+      "titel": "Die schlafende Chinesin",
+      "jahr": 2014,
+      "folgeId": "F-186"
+    },
+    {
+      "nr": 187,
+      "titel": "Ausspioniert!",
+      "jahr": 2014,
+      "folgeId": "F-187"
+    },
+    {
+      "nr": 188,
+      "titel": "Die blauen Schafe von Artelsbach",
+      "jahr": 2014,
+      "folgeId": "F-188"
+    },
+    {
+      "nr": 189,
+      "titel": "Iwan, der Schreckliche",
+      "jahr": 2014,
+      "folgeId": "F-189"
+    },
+    {
+      "nr": 190,
+      "titel": "Der eiskalte Clown",
+      "jahr": 2015,
+      "folgeId": "F-190"
+    },
+    {
+      "nr": 191,
+      "titel": "Nord-Nordwest zum Hexenplatz",
+      "jahr": 2015,
+      "folgeId": "F-191"
+    },
+    {
+      "nr": 192,
+      "titel": "Feuer auf Gut Ribbeck",
+      "jahr": 2015,
+      "folgeId": "F-192"
+    },
+    {
+      "nr": 193,
+      "titel": "Das Weihnachts-Phantom",
+      "jahr": 2015,
+      "folgeId": "F-193"
+    },
+    {
+      "nr": 194,
+      "titel": "Der Friedhof der Namenlosen",
+      "jahr": 2015,
+      "folgeId": "F-194"
+    },
+    {
+      "nr": 195,
+      "titel": "Dem Sonnenkönig auf der Spur",
+      "jahr": 2016,
+      "folgeId": "F-195"
+    },
+    {
+      "nr": 196,
+      "titel": "Tatort Wagenburg",
+      "jahr": 2016,
+      "folgeId": "F-196"
+    },
+    {
+      "nr": 197,
+      "titel": "Bei Anpfiff Übergabe",
+      "jahr": 2016,
+      "folgeId": "F-197"
+    },
+    {
+      "nr": 198,
+      "titel": "Der Golem vom Dunkelsee",
+      "jahr": 2016,
+      "folgeId": "F-198"
+    },
+    {
+      "nr": 199,
+      "titel": "Verfolgungsjagd vor Mitternacht",
+      "jahr": 2016,
+      "folgeId": "F-199"
+    },
+    {
+      "nr": 200,
+      "titel": "Der große Coup",
+      "jahr": 2017,
+      "folgeId": "F-200"
+    },
+    {
+      "nr": 201,
+      "titel": "Vom Goldschatz besessen",
+      "jahr": 2017,
+      "folgeId": "F-201"
+    },
+    {
+      "nr": 202,
+      "titel": "Ein Paradies für Diebe",
+      "jahr": 2017,
+      "folgeId": "F-202"
+    },
+    {
+      "nr": 203,
+      "titel": "Der Räuber mit der Weihnachtsmaske",
+      "jahr": 2017,
+      "folgeId": "F-203"
+    },
+    {
+      "nr": 204,
+      "titel": "Verschwörung auf hoher See",
+      "jahr": 2018,
+      "folgeId": "F-204"
+    },
+    {
+      "nr": 205,
+      "titel": "Teuflische Kaffeefahrt",
+      "jahr": 2018,
+      "folgeId": "F-205"
+    },
+    {
+      "nr": 206,
+      "titel": "Achtung, UFO-Kult!",
+      "jahr": 2018,
+      "folgeId": "F-206"
+    },
+    {
+      "nr": 207,
+      "titel": "Doppelte Entführung",
+      "jahr": 2018,
+      "folgeId": "F-207"
+    },
+    {
+      "nr": 208,
+      "titel": "Geheimnis im Tresor",
+      "jahr": 2019,
+      "folgeId": "F-208"
+    },
+    {
+      "nr": 209,
+      "titel": "Drohbriefe von Unbekannt",
+      "jahr": 2019,
+      "folgeId": "F-209"
+    },
+    {
+      "nr": 210,
+      "titel": "Raubzug im Casino",
+      "jahr": 2019,
+      "folgeId": "F-210"
+    },
+    {
+      "nr": 211,
+      "titel": "Geiselnahme im Villenviertel",
+      "jahr": 2019,
+      "folgeId": "F-211"
+    },
+    {
+      "nr": 212,
+      "titel": "Tyrannei Kommando Eins",
+      "jahr": 2019,
+      "folgeId": "F-212"
+    },
+    {
+      "nr": 213,
+      "titel": "Das unheimliche Dorf",
+      "jahr": 2019,
+      "folgeId": "F-213"
+    },
+    {
+      "nr": 214,
+      "titel": "Diamantenrausch auf der A9",
+      "jahr": 2020,
+      "folgeId": "F-214"
+    },
+    {
+      "nr": 215,
+      "titel": "Verbrechen im Moorsteiner Wald",
+      "jahr": 2020,
+      "folgeId": "F-215"
+    },
+    {
+      "nr": 216,
+      "titel": "Das Geheimnis im Jagdschloss",
+      "jahr": 2020,
+      "folgeId": "F-216"
+    },
+    {
+      "nr": 217,
+      "titel": "Tödliche Klarinette",
+      "jahr": 2021,
+      "folgeId": "F-217"
+    },
+    {
+      "nr": 218,
+      "titel": "Schutzgeld für Dämonen",
+      "jahr": 2021,
+      "folgeId": "F-218"
+    },
+    {
+      "nr": 219,
+      "titel": "Terror frei Haus",
+      "jahr": 2021,
+      "folgeId": "F-219"
+    },
+    {
+      "nr": 220,
+      "titel": "Attentat am Gämsengrat",
+      "jahr": 2021,
+      "folgeId": "F-220"
+    },
+    {
+      "nr": 221,
+      "titel": "Beim Raubzug helfen Ahnungslose",
+      "jahr": 2022,
+      "folgeId": "F-221"
+    },
+    {
+      "nr": 222,
+      "titel": "Roter Drache 222",
+      "jahr": 2022,
+      "folgeId": "F-222"
+    },
+    {
+      "nr": 223,
+      "titel": "Betrüger Super Sauber",
+      "jahr": 2022,
+      "folgeId": "F-223"
+    },
+    {
+      "nr": 224,
+      "titel": "Bilderdiebe haben kein Gesicht",
+      "jahr": 2022,
+      "folgeId": "F-224"
+    },
+    {
+      "nr": 225,
+      "titel": "Tanz mit der Giftschlange",
+      "jahr": 2022,
+      "folgeId": "F-225"
+    },
+    {
+      "nr": 226,
+      "titel": "Der Täter ist unter uns",
+      "jahr": 2023,
+      "folgeId": "F-226"
+    },
+    {
+      "nr": 227,
+      "titel": "Zwei für Zwölf",
+      "jahr": 2023,
+      "folgeId": "F-227"
+    },
+    {
+      "nr": 228,
+      "titel": "Das Geld, das niemand wollte",
+      "jahr": 2023,
+      "folgeId": "F-228"
+    },
+    {
+      "nr": 229,
+      "titel": "Auf den Schwingen des Totenvogels",
+      "jahr": 2023,
+      "folgeId": "F-229"
+    },
+    {
+      "nr": 230,
+      "titel": "Die Tesla-Verschwörung",
+      "jahr": 2024,
+      "folgeId": "F-230"
+    },
+    {
+      "nr": 231,
+      "titel": "Knackis streicheln mit der Faust",
+      "jahr": 2024,
+      "folgeId": "F-231"
+    },
+    {
+      "nr": 232,
+      "titel": "Drohnenaugen in der Nacht",
+      "jahr": 2024,
+      "folgeId": "F-232"
+    },
+    {
+      "nr": 233,
+      "titel": "Räuberwald",
+      "jahr": 2024,
+      "folgeId": "F-233"
+    },
+    {
+      "nr": 234,
+      "titel": "Im Auftrag des Bösen",
+      "jahr": 2024,
+      "folgeId": "F-234"
+    },
+    {
+      "nr": 235,
+      "titel": "Ein Gruselfest für ein Vermögen",
+      "jahr": 2025,
+      "folgeId": "F-235"
+    },
+    {
+      "nr": 236,
+      "titel": "Schatten aus der Unterwelt",
+      "jahr": 2025,
+      "folgeId": "F-236"
+    },
+    {
+      "nr": 237,
+      "titel": "K. I. Kriminelle Illusion",
+      "jahr": 2025,
+      "folgeId": "F-237"
+    },
+    {
+      "nr": 238,
+      "titel": "Nur Tote schlafen länger",
+      "jahr": 2025,
+      "folgeId": "F-238"
+    },
+    {
+      "nr": 239,
+      "titel": "Vollgas ins Verderben",
+      "jahr": 2026,
+      "folgeId": "F-239"
+    },
+    {
+      "nr": 240,
+      "titel": "Das verschollene Zepter von Gizeh",
+      "jahr": 2026,
+      "folgeId": "F-240"
+    },
+    {
+      "nr": 241,
+      "titel": "Das Rätsel der Gruselvilla",
+      "jahr": 2026,
+      "folgeId": "F-241"
+    },
+    {
+      "nr": 242,
+      "titel": "Verbrechen live im Radio",
+      "jahr": 2026,
+      "folgeId": "F-242"
+    },
+    {
+      "nr": 243,
+      "titel": "Die Fährte des Hehlers",
+      "jahr": 2026,
+      "folgeId": "F-243"
+    },
+    {
+      "nr": "Special",
+      "titel": "Die Schatzinsel mit den 7 Rätseln",
+      "jahr": 1995,
+      "folgeId": "S-001"
+    },
+    {
+      "nr": "Special",
+      "titel": "Das Geheimnis um TKKG",
+      "jahr": 1995,
+      "folgeId": "S-002"
+    },
+    {
+      "nr": "Special",
+      "titel": "Ein fast perfektes Weihnachtsmenü",
+      "jahr": 2018,
+      "folgeId": "S-003"
+    },
+    {
+      "nr": "Special",
+      "titel": "Morgen kommt das Weihnachtsgrauen",
+      "jahr": 2020,
+      "folgeId": "S-004"
+    },
+    {
+      "nr": "Special",
+      "titel": "Das verfluchte Osterei",
+      "jahr": 2021,
+      "folgeId": "S-005"
+    },
+    {
+      "nr": "Special",
+      "titel": "Schreckliche Weihnacht überall",
+      "jahr": 2021,
+      "folgeId": "S-006"
+    },
+    {
+      "nr": "Special",
+      "titel": "Auch Gauner feiern Weihnachten",
+      "jahr": 2023,
+      "folgeId": "S-007"
+    },
+    {
+      "nr": "Special",
+      "titel": "Die Weihnachtsgeiseln",
+      "jahr": 2025,
+      "folgeId": "S-008"
+    }
+  ]
+}

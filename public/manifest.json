@@ -1,6 +1,7 @@
 {
-  "name": "Die drei ??? Ranking",
-  "short_name": "Drei ???",
+  "name": "Europa Ranking",
+  "short_name": "Europa Ranking",
+  "description": "Die drei ??? und TKKG bewerten",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -9,16 +10,16 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "dff_app_icon_192.png",
+      "src": "europa_icon_192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "dff_app_icon_512.png",
+      "src": "europa_icon_512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
